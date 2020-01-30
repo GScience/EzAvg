@@ -1,0 +1,20 @@
+#???
+:Init
+
+{Scene.delayTime = 0.1}
+
+:CreateSprite name="background" type=image
+==Begin==
+
+:SetSprite name="background" image="Logo.png"
+??{return Scene.delayTime}
+
+:Wait time={return Scene.delayTime}
+:SetSprite name="background" image=""
+:Wait time={return Scene.delayTime}
+
+{Scene.delayTime = Scene.delayTime + 0.1}
+
+:Goto pos="Begin"
+
+==Exit==
