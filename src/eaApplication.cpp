@@ -7,7 +7,7 @@ eaApplication* eaApplication::instance;
 
 void eaApplication::InitWindow()
 {
-	SDL_Init(SDL_INIT_EVERYTHING);
+	SDL_Init(SDL_INIT_EVERYTHING);  
 	sdlWindow = SDL_CreateWindow(
 		"Window",
 		SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
@@ -24,7 +24,7 @@ void eaApplication::InitApplication()
 
 void eaApplication::Start()
 {
-	lua.DoString("Game.Start()");
+ 	lua.DoString("Game.Start()");
 }
 
 void eaApplication::Update()

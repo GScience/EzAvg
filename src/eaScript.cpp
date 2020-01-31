@@ -1,6 +1,6 @@
 #include <sstream>
 #include <fstream>
-#include "easScript.h"
+#include "eaScript.h"
 
 using namespace std;
 
@@ -22,22 +22,22 @@ bool IsLetter(char c)
 	return (c >= 65 && c <= 90) || (c >= 97 && c <= 122);
 }
 
-std::shared_ptr<easScript> easScript::FromString(std::string str)
+std::shared_ptr<eaScript> eaScript::FromString(std::string str)
 {
 	stringstream ss(str);
 	return FromStream(ss);
 }
 
-std::shared_ptr<easScript> easScript::FromFile(std::string fileName)
+std::shared_ptr<eaScript> eaScript::FromFile(std::string fileName)
 {
 	ifstream file(fileName, ios::binary);
 	return FromStream(file);
 }
 
-std::shared_ptr<easScript> easScript::FromStream(std::istream& stream)
+std::shared_ptr<eaScript> eaScript::FromStream(std::istream& stream)
 {
-	auto script = std::shared_ptr<easScript>(new easScript());
-	easScriptReader reader(stream);
+	auto script = std::shared_ptr<eaScript>(new eaScript());
+	eaScriptReader reader(stream);
 
 	while (!reader.Eof())
 	{
@@ -65,7 +65,7 @@ std::shared_ptr<easScript> easScript::FromStream(std::istream& stream)
 		case '=':
 		{
 			auto label = reader.ReadLabelBlock();
-			auto labelBlock = label.Get<easLabelBlock>();
+			auto labelBlock = label.Get<eaScriptLabelBlock>();
 			auto pos = script->blocks.size();
 			auto name = labelBlock->label;
 			labelBlock->pos = pos;
@@ -84,14 +84,14 @@ std::shared_ptr<easScript> easScript::FromStream(std::istream& stream)
 	return script;
 }
 
-std::string easScript::GetError()
+std::string eaScript::GetError()
 {
 	auto error = scripeLoadError;
 	scripeLoadError = "";
 	return error;
 }
 
-easObject easScriptReader::ReadNoteBlock()
+eaScriptObject eaScriptReader::ReadNoteBlock()
 {
 	// 判断是否为注释块
 	int c = Get();
@@ -105,10 +105,10 @@ easObject easScriptReader::ReadNoteBlock()
 
 	string line;
 	getline(s, line);
-	return easObject::Create<easNoteBlock>(line);
+	return eaScriptObject::Create<eaScriptNoteBlock>(line);
 }
 
-easObject easScriptReader::ReadTaskBlock()
+eaScriptObject eaScriptReader::ReadTaskBlock()
 {
 	// 判断是否为任务块
 	int c = Get();
@@ -129,7 +129,7 @@ easObject easScriptReader::ReadTaskBlock()
 	// 获取命令参数
 	string argName;
 	
-	easTaskBlock::argList args;
+	eaScriptTaskBlock::argList args;
 
 	while (!Eof())
 	{
@@ -156,7 +156,7 @@ easObject easScriptReader::ReadTaskBlock()
 				SkipLine();
 				break;
 			}
-			args.emplace_back(easTaskBlock::arg{ argName , obj });
+			args.emplace_back(eaScriptTaskBlock::arg{ argName , obj });
 			argName = "";
 
 			continue;
@@ -174,10 +174,10 @@ easObject easScriptReader::ReadTaskBlock()
 		argName += c;
 	}
 
-	return easObject::Create<easTaskBlock>(task, args);
+	return eaScriptObject::Create<eaScriptTaskBlock>(task, args);
 }
 
-easObject easScriptReader::ReadLabelBlock()
+eaScriptObject eaScriptReader::ReadLabelBlock()
 {
 	// 判断是否为标签块
 	int c = Get();
@@ -216,10 +216,10 @@ easObject easScriptReader::ReadLabelBlock()
 		AddError(line, pos,
 			"标签末端的等号数量不匹配，期望 "s + to_string(labelStartDepth) + "，实际 " + to_string(labelEndDepth));
 
-	return easObject::Create<easLabelBlock>(labelName,0);
+	return eaScriptObject::Create<eaScriptLabelBlock>(labelName,0);
 }
 
-easObject easScriptReader::ReadLuaBlock()
+eaScriptObject eaScriptReader::ReadLuaBlock()
 {
 	// 判断是否为Lua块
 	int c = Get();
@@ -256,10 +256,10 @@ easObject easScriptReader::ReadLuaBlock()
 		SkipLine();
 	}
 
-	return easObject::Create<easLuaBlock>(code);
+	return eaScriptObject::Create<eaScriptLuaBlock>(code);
 }
 
-easObject easScriptReader::ReadTextBlock()
+eaScriptObject eaScriptReader::ReadTextBlock()
 {
 	string text;
 
@@ -290,10 +290,10 @@ easObject easScriptReader::ReadTextBlock()
 		text += (text == "" ? "" : "\r") + line;
 	}
 
-	return easObject::Create<easTextBlock>(text);
+	return eaScriptObject::Create<eaScriptTextBlock>(text);
 }
 
-easObject easScriptReader::ReadObject()
+eaScriptObject eaScriptReader::ReadObject()
 {
 	while (Peek() == ' ')
 		Get();
@@ -327,7 +327,7 @@ easObject easScriptReader::ReadObject()
 	return nullptr;
 }
 
-easObject easScriptReader::ReadString()
+eaScriptObject eaScriptReader::ReadString()
 {
 	if (Get() != '"')
 	{
@@ -357,10 +357,10 @@ easObject easScriptReader::ReadString()
 
 	Get();
 
-	return easObject::Create<easString>(str);
+	return eaScriptObject::Create<eaScriptString>(str);
 }
 
-easObject easScriptReader::ReadEnum()
+eaScriptObject eaScriptReader::ReadEnum()
 {
 	string str;
 
@@ -375,10 +375,10 @@ easObject easScriptReader::ReadEnum()
 		str += c;
 	}
 
-	return easObject::Create<easEnum>(str);
+	return eaScriptObject::Create<eaScriptEnum>(str);
 }
 
-easObject easScriptReader::ReadLuaObject()
+eaScriptObject eaScriptReader::ReadLuaObject()
 {
 	if (Get() != '{')
 	{
@@ -401,10 +401,10 @@ easObject easScriptReader::ReadLuaObject()
 
 	Get();
 
-	return easObject::Create<easLuaObject>(str);
+	return eaScriptObject::Create<eaScriptLuaObject>(str);
 }
 
-easObject easScriptReader::ReadNumber()
+eaScriptObject eaScriptReader::ReadNumber()
 {
 	string numStr;
 
@@ -419,10 +419,10 @@ easObject easScriptReader::ReadNumber()
 		numStr += c;
 	}
 
-	return easObject::Create<easNumber>(stod(numStr));
+	return eaScriptObject::Create<eaScriptNumber>(stod(numStr));
 }
 
-easObject easScriptReader::ReadArray()
+eaScriptObject eaScriptReader::ReadArray()
 {
 	if (Get() != '[')
 	{
@@ -430,7 +430,7 @@ easObject easScriptReader::ReadArray()
 		return nullptr;
 	}
 
-	easArray objs;
+	eaScriptArray objs;
 	
 	while (Peek() != ']')
 	{
@@ -461,6 +461,6 @@ easObject easScriptReader::ReadArray()
 
 	Get();
 
-	return easObject::Create<easArray>(objs);
+	return eaScriptObject::Create<eaScriptArray>(objs);
 }
 

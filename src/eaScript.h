@@ -7,30 +7,30 @@
 /*
 块基类
 */
-class easBlock
+class eaScriptBlock
 {
 };
 
 /*
 对象
 */
-class easObject
+class eaScriptObject
 {
 	std::shared_ptr<void> ptr;
 	size_t typeHash;
 
-	easObject(std::shared_ptr<void> ptr, size_t typeHash) :ptr(ptr), typeHash(typeHash)
+	eaScriptObject(std::shared_ptr<void> ptr, size_t typeHash) :ptr(ptr), typeHash(typeHash)
 	{
 	}
 public:
-	easObject(nullptr_t ptr) :ptr(ptr), typeHash(typeid(void).hash_code())
+	eaScriptObject(nullptr_t ptr) :ptr(ptr), typeHash(typeid(void).hash_code())
 	{
 	}
 
-	template<class T, class ...Args> static easObject Create(Args&& ... args)
+	template<class T, class ...Args> static eaScriptObject Create(Args&& ... args)
 	{
 		auto ptr = (std::shared_ptr<void>) std::make_shared<T>(args...);
-		return easObject(ptr, typeid(T).hash_code());
+		return eaScriptObject(ptr, typeid(T).hash_code());
 	}
 
 	bool IsType(size_t typeHash) const
@@ -62,64 +62,67 @@ public:
 /*
 数组对象
 */
-using easArray = std::vector<easObject>;
+using eaScriptArray = std::vector<eaScriptObject>;
 
 /*
 Lua对象
 */
-class easLuaObject : public std::string
+class eaScriptLuaObject : public std::string
 {
 public:
-	easLuaObject(const std::string str) :std::string(str) {}
+	eaScriptLuaObject(const std::string str) :std::string(str) {}
 };
 
 /*
 数字对象
 */
-using easNumber = double;
+using eaScriptNumber = double;
 
 /*
 枚举对象
 */
-class easEnum : public std::string
+class eaScriptEnum : public std::string
 {
 public:
-	easEnum(const std::string str) :std::string(str) {}
+	eaScriptEnum(const std::string str) :std::string(str) {}
 };
 
 /*
 字符串对象
 */
-struct easString
+struct eaScriptString
 {
 private:
 	std::string str;
 
 public:
-	easString(const std::string& strWithLua) :str(strWithLua)
+	eaScriptString(const std::string& strWithLua) :str(strWithLua)
 	{
 	}
 
-	std::string GetStr() const;
+	const std::string& GetRawStr() const
+	{
+		return str;
+	}
 };
 
 /*
 任务块
 */
-class easTaskBlock : public easBlock
+class eaScriptTaskBlock : public eaScriptBlock
 {
 public:
 	struct arg
 	{
 		std::string name;
-		easObject obj;
+		eaScriptObject obj;
 	};
-	using argList = std::vector<easTaskBlock::arg>;
+	using argList = std::vector<eaScriptTaskBlock::arg>;
 
 	const std::string task;
 	const argList args;
 
-	easTaskBlock(std::string task, argList args) :task(task), args(args)
+	eaScriptTaskBlock(std::string task, argList args) :task(task), args(args)
 	{
 	}
 };
@@ -127,12 +130,12 @@ public:
 /*
 注释块
 */
-class easNoteBlock : public easBlock
+class eaScriptNoteBlock : public eaScriptBlock
 {
 public:
 	const std::string note;
 
-	easNoteBlock(std::string note) :note(note)
+	eaScriptNoteBlock(std::string note) :note(note)
 	{
 	}
 };
@@ -140,13 +143,13 @@ public:
 /*
 标签块
 */
-class easLabelBlock : public easBlock
+class eaScriptLabelBlock : public eaScriptBlock
 {
 public:
 	const std::string label;
 	long long pos;
 
-	easLabelBlock(std::string label, long long pos) :label(label), pos(pos)
+	eaScriptLabelBlock(std::string label, long long pos) :label(label), pos(pos)
 	{
 	}
 };
@@ -154,12 +157,12 @@ public:
 /*
 Lua块
 */
-class easLuaBlock : public easBlock
+class eaScriptLuaBlock : public eaScriptBlock
 {
 public:
 	const std::string code;
 
-	easLuaBlock(std::string code) :code(code)
+	eaScriptLuaBlock(std::string code) :code(code)
 	{
 	}
 };
@@ -167,17 +170,17 @@ public:
 /*
 文本块
 */
-class easTextBlock : public easBlock
+class eaScriptTextBlock : public eaScriptBlock
 {
 public:	
-	const easString text;
+	const eaScriptString text;
 
-	easTextBlock(std::string text) :text(text)
+	eaScriptTextBlock(std::string text) :text(text)
 	{
 	}
 };
 
-class easScriptReader
+class eaScriptReader
 {
 	std::istream& s;
 
@@ -206,7 +209,7 @@ public:
 		return pos;
 	}
 
-	easScriptReader(std::istream& s) :s(s) {}
+	eaScriptReader(std::istream& s) :s(s) {}
 
 	inline int Get()
 	{
@@ -270,33 +273,33 @@ public:
 		return str;
 	}
 
-	easObject ReadObject();
-	easObject ReadNumber();
-	easObject ReadArray();
-	easObject ReadString();
-	easObject ReadEnum();
-	easObject ReadLuaObject();
+	eaScriptObject ReadObject();
+	eaScriptObject ReadNumber();
+	eaScriptObject ReadArray();
+	eaScriptObject ReadString();
+	eaScriptObject ReadEnum();
+	eaScriptObject ReadLuaObject();
 
-	easObject ReadTaskBlock();
-	easObject ReadNoteBlock();
-	easObject ReadLabelBlock();
-	easObject ReadLuaBlock();
-	easObject ReadTextBlock();
+	eaScriptObject ReadTaskBlock();
+	eaScriptObject ReadNoteBlock();
+	eaScriptObject ReadLabelBlock();
+	eaScriptObject ReadLuaBlock();
+	eaScriptObject ReadTextBlock();
 };
 
 /*
 脚本
 */
-class easScript : public easBlock
+class eaScript : public eaScriptBlock
 {
-	std::vector<easObject> blocks;
+	std::vector<eaScriptObject> blocks;
 	std::map<std::string, long long> labels;
 
 protected:
-	easScript() = default;
+	eaScript() = default;
 
 public:
-	const std::vector<easObject>& Blocks() const
+	const std::vector<eaScriptObject>& Blocks() const
 	{
 		return blocks;
 	}
@@ -309,11 +312,11 @@ public:
 		return result->second;
 	}
 
-	easScript(const easScript&) = delete;
+	eaScript(const eaScript&) = delete;
 
-	static std::shared_ptr<easScript> FromString(std::string str);
-	static std::shared_ptr<easScript> FromFile(std::string fileName);
-	static std::shared_ptr<easScript> FromStream(std::istream& stream);
+	static std::shared_ptr<eaScript> FromString(std::string str);
+	static std::shared_ptr<eaScript> FromFile(std::string fileName);
+	static std::shared_ptr<eaScript> FromStream(std::istream& stream);
 
 	static std::string GetError();
 };

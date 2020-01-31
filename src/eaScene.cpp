@@ -32,7 +32,7 @@ void eaScene::Load()
 
 void eaScene::RunScript(std::string name)
 {
-	auto script = eaResources::Load<easScript>(name);
+	auto script = eaResources::Load<eaScript>(name);
 	runner.Run(script);
 }
 

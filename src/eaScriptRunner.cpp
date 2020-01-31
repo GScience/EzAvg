@@ -1,12 +1,14 @@
 #include <lua.hpp>
 #include <iostream>
-#include "easScriptRunner.h"
+#include "eaScriptRunner.h"
 #include "eaApplication.h"
 
 using namespace std;
 
-void easScriptRunner::Update()
+void eaScriptRunner::Update()
 {
+	auto& L = eaApplication::GetLua();
+
 	if (script == nullptr)
 		return;
 
@@ -24,51 +26,65 @@ void easScriptRunner::Update()
 
 	auto& currentBlock = script->Blocks()[currentPos];
 
-	if (currentBlock.IsType<easTaskBlock>())
+	if (currentBlock.IsType<eaScriptTaskBlock>())
 	{
-		auto block = currentBlock.Get<easTaskBlock>();
-		currentTask = easTask::Create(block->task);
+		auto block = currentBlock.Get<eaScriptTaskBlock>();
+		currentTask = eaScriptTask::Create(this, block->task);
 		currentTask->Start(block->args);
 	}
-	else if (currentBlock.IsType<easTextBlock>())
+	else if (currentBlock.IsType<eaScriptTextBlock>())
 	{
-		auto block = currentBlock.Get<easTextBlock>();
-		cout << block->text.GetStr() << endl;
+		auto block = currentBlock.Get<eaScriptTextBlock>();
+		cout << GetStr(block->text.GetRawStr()) << endl;
 		
 	}
-	else if (currentBlock.IsType<easLuaBlock>())
+	else if (currentBlock.IsType<eaScriptLuaBlock>())
 	{
-		auto block = currentBlock.Get<easLuaBlock>();
-		eaApplication::GetLua().DoString(block->code);
+		auto block = currentBlock.Get<eaScriptLuaBlock>();
+		luaEnv->DoString(L, block->code);
 	}
 
 	++currentPos;
 }
 
-void easScriptRunner::Save()
+eaScriptRunner::~eaScriptRunner()
+{
+	auto& L = eaApplication::GetLua();
+}
+
+void eaScriptRunner::Run(std::shared_ptr<eaScript> script)
+{
+	auto& L = eaApplication::GetLua();
+
+	this->script = script;
+	luaEnv = std::make_shared<eaLuaEnv>(L, "123");
+	enable = true;
+}
+
+void eaScriptRunner::Save()
 {
 	if (currentTask->IsEnabled())
 		currentTask->Save();
 }
 
-void easScriptRunner::Load()
+void eaScriptRunner::Load()
 {
 	currentTask->Load();
 }
 
-easTask::easTask(string name)
+eaScriptTask::eaScriptTask(eaScriptRunner* runner, string name) :runner(runner)
 {
 	auto& L = eaApplication::GetLua();
 	eaApplication::GetLua().DoFile("task/" + name + ".lua");
  	taskRef = luaL_ref(L, LUA_REGISTRYINDEX);
 }
 
-easTask::~easTask()
+eaScriptTask::~eaScriptTask()
 {
 	Dispose();
 }
 
-void easTask::Dispose()
+void eaScriptTask::Dispose()
 {
 	if (taskRef == LUA_REFNIL)
 		return;
@@ -79,7 +95,7 @@ void easTask::Dispose()
 	taskRef = LUA_REFNIL;
 }
 
-bool easTask::IsEnabled()
+bool eaScriptTask::IsEnabled()
 {
 	if (taskRef == LUA_REFNIL)
 		return false;
@@ -99,7 +115,7 @@ bool easTask::IsEnabled()
 	return isEnable;
 }
 
-void easTask::Update()
+void eaScriptTask::Update()
 {
 	if (taskRef == LUA_REFNIL)
 		return;
@@ -111,40 +127,40 @@ void easTask::Update()
 	lua_call(L, 0, 0);
 }
 
-void easPushObject(eaLua& L, easObject obj)
+void easPushObject(eaLua& L, const eaScriptRunner* runner, eaScriptObject obj)
 {
-	if (obj.IsType<easEnum>())
-		lua_pushstring(L, obj.Get<easEnum>()->c_str());
-	else if (obj.IsType<easString>())
-		lua_pushstring(L, obj.Get<easString>()->GetStr().c_str());
-	else if (obj.IsType<easNumber>())
-		lua_pushnumber(L, *obj.Get<easNumber>());
-	else if (obj.IsType<easArray>())
+	if (obj.IsType<eaScriptEnum>())
+		lua_pushstring(L, obj.Get<eaScriptEnum>()->c_str());
+	else if (obj.IsType<eaScriptString>())
+		lua_pushstring(L, runner->GetStr(obj.Get<eaScriptString>()->GetRawStr()).c_str());
+	else if (obj.IsType<eaScriptNumber>())
+		lua_pushnumber(L, *obj.Get<eaScriptNumber>());
+	else if (obj.IsType<eaScriptArray>())
 	{
-		auto& objs = *obj.Get<easArray>();
+		auto& objs = *obj.Get<eaScriptArray>();
 
 		lua_createtable(L, 0, 0);
-
+		
 		int index = 1;
 
 		for (auto& obj : objs)
 		{
 			lua_pushinteger(L, index);
-			easPushObject(L, obj);
+			easPushObject(L, runner, obj);
 			lua_settable(L, -3);
 			++index;
 		}
 	}
-	else if (obj.IsType<easLuaObject>())
+	else if (obj.IsType<eaScriptLuaObject>())
 	{
-		auto block = obj.Get<easLuaObject>();
-		L.DoString(*block);
+		auto block = obj.Get<eaScriptLuaObject>();
+		runner->GetEnv()->DoString(L, *block);
 	}
 	else
 		lua_pushnil(L);
 }
 
-void easTask::Start(easTaskBlock::argList args)
+void eaScriptTask::Start(eaScriptTaskBlock::argList args)
 {
 	if (taskRef == LUA_REFNIL)
 		return;
@@ -162,7 +178,7 @@ void easTask::Start(easTaskBlock::argList args)
 	{
 		lua_pushstring(L, arg.name.c_str());
 		
-		easPushObject(L, arg.obj);
+		easPushObject(L, runner, arg.obj);
 
 		lua_settable(L, -3); 
 	}
@@ -170,17 +186,19 @@ void easTask::Start(easTaskBlock::argList args)
 	lua_call(L, 1, 0);
 }
 
-void easTask::Save()
+void eaScriptTask::Save()
 {
 }
 
-void easTask::Load()
+void eaScriptTask::Load()
 {
 }
 
-string easString::GetStr() const
+std::string eaScriptRunner::GetStr(const eaScriptString& scriptStr) const
 {
 	auto& L = eaApplication::GetLua();
+	auto& str = scriptStr.GetRawStr();
+
 	string buffer;
 
 	for (size_t i = 0; i < str.size(); ++i)
@@ -204,7 +222,7 @@ string easString::GetStr() const
 			luaCode += c;
 		}
 
-		L.DoString(luaCode);
+		luaEnv->DoString(L, luaCode);
 		if (!lua_isnil(L, -1))
 			buffer += lua_tostring(L, -1);
 		lua_pop(L, 1);

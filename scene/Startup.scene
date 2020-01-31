@@ -1,19 +1,37 @@
-#???
+#初始化
 :Init
 
-{Scene.delayTime = 0.1}
+{delayTime = 0.1}
 
-:CreateSprite name="background" type=image
+{
+	print("===SceneTable===")
+	Sprite.create("background", "image")
+	print("===_ENV===")
+	for key, value in pairs(_ENV) do
+		print(key)
+	end
+
+	print("===_G===")
+	for key, value in pairs(_G) do
+		print(key)
+	end
+	
+	print("===Domain===")
+	print(domain)
+	print("================")
+}
+
+#:CreateSprite name="background" type=image
 ==Begin==
 
 :SetSprite name="background" image="Logo.png"
-??{return Scene.delayTime}
+Domain{return domain}
 
-:Wait time={return Scene.delayTime}
+:Wait time={return delayTime}
 :SetSprite name="background" image=""
-:Wait time={return Scene.delayTime}
+:Wait time={return delayTime}
 
-{Scene.delayTime = Scene.delayTime + 0.1}
+{delayTime = delayTime + 0.1}
 
 :Goto pos="Begin"
 

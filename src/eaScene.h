@@ -3,7 +3,7 @@
 #include <vector>
 #include "eaSprite.h"
 #include "eaSaveable.h"
-#include "easScriptRunner.h"
+#include "eaScriptRunner.h"
 
 /*
 场景，负责管理精灵
@@ -13,7 +13,7 @@ class eaScene : public eaSaveable
 	std::vector<std::shared_ptr<eaSprite>> sprites;
 
 public:
-	easScriptRunner runner;
+	eaScriptRunner runner;
 
 	eaScene() = default;
 	eaScene(const eaScene&) = delete;

@@ -1,8 +1,6 @@
 #pragma once
 #include <string>
 #include <functional>
-#pragma once
-
 #include <memory>
 
 using eaLuaNumber = double;
@@ -10,6 +8,7 @@ using eaLuaBoolean = bool;
 using eaLuaString = std::string;
 
 struct lua_State;
+class eaLuaEnv;
 
 class eaLua
 {

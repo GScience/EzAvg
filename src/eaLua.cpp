@@ -1,9 +1,10 @@
 #include <lua.hpp>
 #include <string>
 #include <tuple>
-#include "eaLuaFunctionDefines.h"
-#include "eaLua.h"
 #include <iostream>
+#include "eaLuaFunctionDefines.h"
+#include "eaLuaEnv.h"
+#include "eaLua.h"
 
 #define L reinterpret_cast<lua_State*>(state)
 

@@ -5,7 +5,7 @@
 #include <string>
 #include <map>
 #include "eaResources.h"
-#include "easScript.h"
+#include "eaScript.h"
 
 using namespace std;
 
@@ -45,9 +45,9 @@ std::shared_ptr<void> eaResources::Load(string rawName, size_t type)
 		return texture;
 	}
 
-	if (type == typeid(easScript).hash_code())
+	if (type == typeid(eaScript).hash_code())
 	{
-		auto result = easScript::FromFile("scene/" + name);
+		auto result = eaScript::FromFile("scene/" + name);
 		resDict[name] = result;
 		return result;
 	}

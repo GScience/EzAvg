@@ -21,7 +21,7 @@ class eaGlobalFunction
 	{
 		string str = GetString(1);
 
-		cout << str << endl;
+ 		cout << str << endl;
 
 		return 0;
 	}
