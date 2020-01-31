@@ -18,13 +18,14 @@ void eaApplication::InitWindow()
 
 void eaApplication::InitApplication()
 {
-	lua.DoFile("Game.lua");
+	globalDomain = eaLuaDomain::Create("Global");
+	globalDomain->DoFile("Game.lua");
 	auto defaultScene = CreateScene();
 }
 
 void eaApplication::Start()
 {
- 	lua.DoString("Game.Start()");
+	globalDomain->DoString("Game.start()");
 }
 
 void eaApplication::Update()

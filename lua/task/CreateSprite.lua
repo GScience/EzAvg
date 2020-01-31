@@ -2,15 +2,15 @@ local p = {}
 
 function p.start(args)
 	if args.name == nil then
-		logError("Î´Ö¸¶¨name")
+		logError("æœªæŒ‡å®šname")
 		return
 	end
 	if args.type == nil then
-		logError("Î´Ö¸¶¨type")
+		logError("æœªæŒ‡å®štype")
 		return
 	end
 	if not Sprite.create(args.name, args.type) then
-		logError("¾«Áé" .. args.name .. "ÒÑ´æÔÚ")
+		logError("ç²¾çµ" .. args.name .. "å·²å­˜åœ¨")
 		return
 	end
 end

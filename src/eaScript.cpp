@@ -9,7 +9,7 @@ string scripeLoadError;
 void AddError(int line, int pos, string msg)
 {
 	scripeLoadError += 
-		"Line: "s + to_string(line) + " pos: " + to_string(pos) + " " + msg + "\r";
+		"Line: "s + to_string(line) + " pos: " + to_string(pos) + " " + msg + "\n";
 }
 
 bool IsDigit(char c)
@@ -30,7 +30,7 @@ std::shared_ptr<eaScript> eaScript::FromString(std::string str)
 
 std::shared_ptr<eaScript> eaScript::FromFile(std::string fileName)
 {
-	ifstream file(fileName, ios::binary);
+	ifstream file(fileName);
 	return FromStream(file);
 }
 
@@ -45,7 +45,7 @@ std::shared_ptr<eaScript> eaScript::FromStream(std::istream& stream)
 
 		switch (c)
 		{
-		case '\r':
+		case '\n':
 		case '\t':
 			reader.Get();
 			break;
@@ -91,6 +91,24 @@ std::string eaScript::GetError()
 	return error;
 }
 
+int eaScriptReader::Get()
+{
+	int result = s.get();
+	if (result == '\n')
+	{
+		++line;
+		pos = 0;
+	}
+	++pos;
+	return result;
+}
+
+int eaScriptReader::Peek()
+{
+	auto result = s.peek();
+	return result;
+}
+
 eaScriptObject eaScriptReader::ReadNoteBlock()
 {
 	// 判断是否为注释块
@@ -103,9 +121,7 @@ eaScriptObject eaScriptReader::ReadNoteBlock()
 		return nullptr;
 	}
 
-	string line;
-	getline(s, line);
-	return eaScriptObject::Create<eaScriptNoteBlock>(line);
+	return eaScriptObject::Create<eaScriptNoteBlock>(GetLine());
 }
 
 eaScriptObject eaScriptReader::ReadTaskBlock()
@@ -131,19 +147,17 @@ eaScriptObject eaScriptReader::ReadTaskBlock()
 	
 	eaScriptTaskBlock::argList args;
 
-	while (!Eof())
+	while (Peek() != '\n' && !Eof())
 	{
 		c = Get();
 
 		// 跳过空格
 		if (c == ' ')
 		{
+			if (argName != "")
+				AddError(line, pos, "参数\"" + argName + "\"必须指定一个值");
 			continue;
 		}
-
-		// 换行终止
-		if (c == '\r')
-			break;
 
 		// 遇到等号后开始读对象
 		if (c == '=')
@@ -152,8 +166,7 @@ eaScriptObject eaScriptReader::ReadTaskBlock()
 
 			if (obj == nullptr)
 			{
-				AddError(line, pos, "读取任务块失败");
-				SkipLine();
+				AddError(line, pos, "读取任务块失败，因为参数\"" + argName + "\"的值非法");
 				break;
 			}
 			args.emplace_back(eaScriptTaskBlock::arg{ argName , obj });
@@ -166,8 +179,9 @@ eaScriptObject eaScriptReader::ReadTaskBlock()
 		if ((IsDigit(c) && argName == "") ||
 			(!IsDigit(c) && !IsLetter(c)))
 		{
-			AddError(line, pos, "检测到非法字符"s + (char) c);
-			SkipToSpace();
+			AddError(line, pos, "检测到非法字符，参数\"" + argName + "\"的名称中包含非法字符");
+			SkipToNext();
+			argName = "";
 			continue;
 		}
 
@@ -182,7 +196,7 @@ eaScriptObject eaScriptReader::ReadLabelBlock()
 	// 判断是否为标签块
 	int c = Get();
 	int labelStartDepth = 0;
-
+	
 	while (c == '=')
 	{
 		c = Get();
@@ -192,7 +206,7 @@ eaScriptObject eaScriptReader::ReadLabelBlock()
 	string labelName;
 	while (c != '=')
 	{
-		if (Eof() || c == '\r')
+		if (Eof() || c == '\n')
 		{
 			AddError(line, pos, "未找到标签末端的等号");
 			SkipLine();
@@ -239,7 +253,7 @@ eaScriptObject eaScriptReader::ReadLuaBlock()
 	{
 		if (Eof())
 		{
-			AddError(line, pos, "未找到Lua块末端花括号");
+			AddError(line, pos, "意外的访问到了文件结尾，未找到Lua块末端花括号");
 			SkipLine();
 			return nullptr;
 		}
@@ -250,7 +264,7 @@ eaScriptObject eaScriptReader::ReadLuaBlock()
 	// 读到新行
 	c = Get();
 
-	if (c != '\r')
+	if (c != '\n')
 	{
 		AddError(line, pos, "Lua块末端花括号后应换行");
 		SkipLine();
@@ -268,11 +282,11 @@ eaScriptObject eaScriptReader::ReadTextBlock()
 		auto rawLine = GetLine();
 
 		// 获取行
-		string line;
+		string textLine;
 		for (auto c : rawLine)
 		{
 			// 空行跳过空格
-			if (line == "")
+			if (textLine == "")
 			{
 				if (c == '\t')
 					continue;
@@ -280,14 +294,14 @@ eaScriptObject eaScriptReader::ReadTextBlock()
 					continue;
 			}
 
-			line += c;
+			textLine += c;
 		}
 		
 		// 空行跳出
-		if (line == "")
+		if (textLine == "")
 			break;
 
-		text += (text == "" ? "" : "\r") + line;
+		text += (text == "" ? "" : "\n") + textLine;
 	}
 
 	return eaScriptObject::Create<eaScriptTextBlock>(text);
@@ -321,7 +335,7 @@ eaScriptObject eaScriptReader::ReadObject()
 		return ReadLuaObject();
 
 	AddError(line, pos, "未知对象");
-	while (c != ' ' && c != '\r' && !Eof())
+	while (c != ' ' && c != '\n' && !Eof())
 		c = Get();
 
 	return nullptr;
@@ -347,9 +361,9 @@ eaScriptObject eaScriptReader::ReadString()
 
 		int c = Get();
 
-		if (c == '\r')
+		if (c == '\n')
 		{
-			AddError(line, pos, "未找到字符串末端引号");
+			AddError(line, pos, "意外的访问到了行结尾，未找到字符串末端引号");
 			return nullptr;
 		}
 		str += c;
@@ -369,7 +383,7 @@ eaScriptObject eaScriptReader::ReadEnum()
 		int c = Get();
 		if (!IsDigit(c) && !IsLetter(c))
 		{
-			AddError(line, pos, "枚举类型只允许由数字和字母组成，发现" + c);
+			AddError(line, pos, "枚举类型只允许由数字和字母组成");
 			return nullptr;
 		}
 		str += c;
@@ -437,7 +451,7 @@ eaScriptObject eaScriptReader::ReadArray()
 		auto obj = ReadObject();
 		if (obj == nullptr)
 		{
-			AddError(line, pos, "读取数组失败");
+			AddError(line, pos, "无法读取数组第 " + to_string(objs.size()) + " 个元素");
 			return nullptr;
 		}
 		objs.push_back(obj);
@@ -447,7 +461,7 @@ eaScriptObject eaScriptReader::ReadArray()
 		{
 			if (Eof())
 			{
-				AddError(line, pos, "未找到数组对象末端的方括号");
+				AddError(line, pos, "意外的访问到了文件结尾，未找到数组对象末端的方括号");
 				return nullptr;
 			}
 

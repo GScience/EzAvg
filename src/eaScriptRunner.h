@@ -2,15 +2,20 @@
 #include "eaSaveable.h"
 #include "eaScript.h"
 #include "eaSaveable.h"
-#include "eaLuaEnv.h"
+#include "eaLuaDomain.h"
 
 class eaScriptRunner;
 
+/*
+任务，由Lua控制
+*/
 class eaScriptTask : public eaSaveable
 {
 	int taskRef;
+	const std::string name;
 
 	eaScriptTask(eaScriptRunner* runner, std::string name);
+	std::shared_ptr<eaLuaDomain> domain;
 public:
 	const eaScriptRunner* runner;
 
@@ -40,7 +45,7 @@ class eaScriptRunner : public eaSaveable
 	long long currentPos = 0;
 
 	std::shared_ptr<eaScriptTask> currentTask;
-	std::shared_ptr<eaLuaEnv> luaEnv;
+	std::shared_ptr<eaLuaDomain> domain;
 
 public:
 	eaScriptRunner() = default;
@@ -49,9 +54,9 @@ public:
 
 	std::string GetStr(const eaScriptString& scriptStr) const;
 
-	const std::shared_ptr<eaLuaEnv> GetEnv() const
+	const std::shared_ptr<eaLuaDomain> GetDomain() const
 	{
-		return luaEnv;
+		return domain;
 	}
 
 	/*

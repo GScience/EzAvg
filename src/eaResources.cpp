@@ -1,4 +1,5 @@
 #include <SDL.h>
+#include <iostream>
 #include "eaTexture.h"
 #include <SDL_image.h>
 #include <algorithm>
@@ -48,6 +49,9 @@ std::shared_ptr<void> eaResources::Load(string rawName, size_t type)
 	if (type == typeid(eaScript).hash_code())
 	{
 		auto result = eaScript::FromFile("scene/" + name);
+		auto error = eaScript::GetError();
+		if (error != "")
+			cout << error << endl;
 		resDict[name] = result;
 		return result;
 	}

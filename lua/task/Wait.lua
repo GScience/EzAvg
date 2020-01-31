@@ -13,7 +13,7 @@ end
 
 function p.start(args)
 	if args.time == nil then
-		logError("δָ��time")
+		logError("未指定time")
 		p.waitTime = 0
 		return
 	end

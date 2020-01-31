@@ -190,13 +190,13 @@ class eaScriptReader
 	bool IsObjectEnd()
 	{
 		char c = Peek();
-		return c == ' ' || c == ',' || c == ']' || c == '\r' || c == EOF;
+		return c == ' ' || c == ',' || c == ']' || c == '\n' || c == EOF;
 	}
 
 public:
 	inline bool Eof()
 	{
-		return s.peek() == EOF;
+		return Peek() == EOF;
 	}
 
 	inline int Line()
@@ -211,60 +211,27 @@ public:
 
 	eaScriptReader(std::istream& s) :s(s) {}
 
-	inline int Get()
-	{
-		int result = s.get();
-
-		while (result == '\n')
-			result = s.get();
-
-		if (result == '\r')
-		{
-			++line;
-			pos = 0;
-		}
-
-		++pos;
-
-		return result;
-	}
-
-	inline int Peek()
-	{
-		auto result = s.peek();
-		while (result == '\n')
-		{
-			s.get();
-			result = s.peek();
-		}
-		return result;
-	}
+	int Get();
+	int Peek();
 
 	inline void SkipLine()
 	{
-		auto str = GetLine();
+		while (!Eof() && Get() != '\n')
+			Get();
 	}
 
-	inline void SkipToSpace()
+	inline void SkipToNext()
 	{
-		char c;
-		do
-		{
-			c = Get();
-			if (c == ' ')
-				break;
-		} while (c > 0 && c != '\r');
+		while (!IsObjectEnd())
+			Get();
 	}
 
 	inline std::string GetLine()
 	{
-		++line;
-		pos = 0;
-
 		std::string str;
 		
 		char c = Get();
-		while (!Eof() && c != '\r')
+		while (!Eof() && c != '\n')
 		{
 			str += c;
 			c = Get();

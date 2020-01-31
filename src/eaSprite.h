@@ -72,6 +72,15 @@ struct eaPropertyValue
 };
 
 /*
+精灵的行为，由Lua控制
+*/
+class eaSpriteBehaviour : public eaSaveable
+{
+public:
+	eaSpriteBehaviour(std::string name);
+};
+
+/*
 场景中所有元素均为精灵
 */
 class eaSprite : public eaSaveable

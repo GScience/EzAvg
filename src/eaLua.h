@@ -8,7 +8,6 @@ using eaLuaBoolean = bool;
 using eaLuaString = std::string;
 
 struct lua_State;
-class eaLuaEnv;
 
 class eaLua
 {
@@ -22,10 +21,7 @@ private:
 	void LoadFunction();
 
 public:
-	void DoString(const std::string& str);
-	void DoFile(const std::string& str);
-
-	operator lua_State* ()
+	operator lua_State* () const
 	{
 		return state;
 	}

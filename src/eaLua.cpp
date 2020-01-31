@@ -3,7 +3,7 @@
 #include <tuple>
 #include <iostream>
 #include "eaLuaFunctionDefines.h"
-#include "eaLuaEnv.h"
+#include "eaLuaDomain.h"
 #include "eaLua.h"
 
 #define L reinterpret_cast<lua_State*>(state)
@@ -16,16 +16,6 @@ eaLua::eaLua()
 	luaL_openlibs(L);
 
 	LoadFunction();
-}
-
-void eaLua::DoString(const std::string& str)
-{
-	luaL_dostring(L, str.c_str());
-}
-
-void eaLua::DoFile(const std::string& str)
-{
-	luaL_dofile(L, str.c_str());
 }
 
 void eaLua::LoadFunction()

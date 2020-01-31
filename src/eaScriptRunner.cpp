@@ -41,7 +41,7 @@ void eaScriptRunner::Update()
 	else if (currentBlock.IsType<eaScriptLuaBlock>())
 	{
 		auto block = currentBlock.Get<eaScriptLuaBlock>();
-		luaEnv->DoString(L, block->code);
+		domain->DoString(block->code);
 	}
 
 	++currentPos;
@@ -54,10 +54,8 @@ eaScriptRunner::~eaScriptRunner()
 
 void eaScriptRunner::Run(std::shared_ptr<eaScript> script)
 {
-	auto& L = eaApplication::GetLua();
-
+	domain = eaLuaDomain::Create("ScriptRunner", eaApplication::GetDomain());
 	this->script = script;
-	luaEnv = std::make_shared<eaLuaEnv>(L, "123");
 	enable = true;
 }
 
@@ -72,10 +70,11 @@ void eaScriptRunner::Load()
 	currentTask->Load();
 }
 
-eaScriptTask::eaScriptTask(eaScriptRunner* runner, string name) :runner(runner)
+eaScriptTask::eaScriptTask(eaScriptRunner* runner, string name) :runner(runner), name(name)
 {
 	auto& L = eaApplication::GetLua();
-	eaApplication::GetLua().DoFile("task/" + name + ".lua");
+	domain = eaLuaDomain::Create("Task:"s + name, runner->GetDomain());
+	domain->DoFile("task/" + name + ".lua");
  	taskRef = luaL_ref(L, LUA_REGISTRYINDEX);
 }
 
@@ -121,10 +120,17 @@ void eaScriptTask::Update()
 		return;
 
 	auto& L = eaApplication::GetLua();
+	lua_settop(L, 0);
+
 	lua_rawgeti(L, LUA_REGISTRYINDEX, taskRef);
 	lua_pushstring(L, "update");
 	lua_gettable(L, -2);
-	lua_call(L, 0, 0);
+
+	if (lua_pcall(L, 0, 0, 0) != LUA_OK)
+	{
+		cout << "刷新任务" << name << "时出现异常" << endl;
+		throw eaLuaError();
+	}
 }
 
 void easPushObject(eaLua& L, const eaScriptRunner* runner, eaScriptObject obj)
@@ -154,7 +160,7 @@ void easPushObject(eaLua& L, const eaScriptRunner* runner, eaScriptObject obj)
 	else if (obj.IsType<eaScriptLuaObject>())
 	{
 		auto block = obj.Get<eaScriptLuaObject>();
-		runner->GetEnv()->DoString(L, *block);
+		runner->GetDomain()->DoString(*block);
 	}
 	else
 		lua_pushnil(L);
@@ -166,7 +172,8 @@ void eaScriptTask::Start(eaScriptTaskBlock::argList args)
 		return;
 
 	auto& L = eaApplication::GetLua();
-	
+	lua_settop(L, 0);
+
 	// task.start
 	lua_rawgeti(L, LUA_REGISTRYINDEX, taskRef);
 	lua_pushstring(L, "start");
@@ -183,7 +190,11 @@ void eaScriptTask::Start(eaScriptTaskBlock::argList args)
 		lua_settable(L, -3); 
 	}
 
-	lua_call(L, 1, 0);
+	if (lua_pcall(L, 1, 0, 0) != LUA_OK)
+	{
+		cout << "启动任务" << name << "时出现异常" << endl;
+		throw eaLuaError();
+	}
 }
 
 void eaScriptTask::Save()
@@ -222,7 +233,7 @@ std::string eaScriptRunner::GetStr(const eaScriptString& scriptStr) const
 			luaCode += c;
 		}
 
-		luaEnv->DoString(L, luaCode);
+		domain->DoString(luaCode);
 		if (!lua_isnil(L, -1))
 			buffer += lua_tostring(L, -1);
 		lua_pop(L, 1);

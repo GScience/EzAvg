@@ -1,25 +1,9 @@
 #初始化
-:Init
-
-{delayTime = 0.1}
-
 {
-	print("===SceneTable===")
+	delayTime = 0.1
 	Sprite.create("background", "image")
-	print("===_ENV===")
-	for key, value in pairs(_ENV) do
-		print(key)
-	end
-
-	print("===_G===")
-	for key, value in pairs(_G) do
-		print(key)
-	end
-	
-	print("===Domain===")
-	print(domain)
-	print("================")
 }
+:Init
 
 #:CreateSprite name="background" type=image
 ==Begin==

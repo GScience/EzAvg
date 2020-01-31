@@ -19,6 +19,9 @@ class eaApplication : public eaSaveable
 	*/
 	std::vector<std::shared_ptr<eaScene>> scenes;
 
+	std::shared_ptr<eaLuaDomain> globalDomain;
+
+	eaLua lua;
 public:
 	static eaApplication* instance;
 
@@ -71,7 +74,10 @@ public:
 		return instance->lua;
 	}
 
-	eaLua lua;
+	static std::shared_ptr<eaLuaDomain> GetDomain()
+	{
+		return instance->globalDomain;
+	}
 
 	void Run(std::vector<std::string> argv);
 };

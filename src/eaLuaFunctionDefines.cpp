@@ -236,7 +236,7 @@ class eaResourcesFunction
 	/*
 	void loadImage(string name)
 	*/
-	LuaFunc(loadImage, Scene)
+	LuaFunc(loadImage, Resources)
 	{
 		string name = GetString(1);
 
