@@ -7,7 +7,9 @@ using namespace std;
 
 eaScene::eaScene(string name)
 {
+	domain = eaLuaDomain::Create(name, eaApplication::GetDomain());
 	auto script = eaResources::Load<eaScript>(name);
+	runner.sceneDomain = domain;
 	runner.Run(script);
 }
 

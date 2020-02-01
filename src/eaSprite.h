@@ -3,6 +3,9 @@
 #include <vector>
 #include <string>
 #include <memory>
+#include <map>
+#include "eaLuaBridge.h"
+#include "eaLuaDomain.h"
 #include "eaSaveable.h"
 
 struct SDL_Renderer;
@@ -71,20 +74,34 @@ struct eaPropertyValue
 	}
 };
 
+class eaSprite;
+
 /*
 精灵的行为，由Lua控制
 */
-class eaSpriteBehaviour : public eaSaveable
+class eaSpriteBehaviour : public eaLuaBridge
 {
 public:
-	eaSpriteBehaviour(std::string name);
+	eaSpriteBehaviour(eaSprite* scene, const std::string& name);
+
+	void Update();
+	void Start();
 };
+
+class eaScene;
 
 /*
 场景中所有元素均为精灵
 */
 class eaSprite : public eaSaveable
 {
+	friend class eaScene;
+
+	int behaviourIndex = 1;
+
+	std::map<int, std::shared_ptr<eaSpriteBehaviour>> behaviours;
+	std::shared_ptr<eaLuaDomain> sceneDomain;
+
 public:
 	std::string name;
 
@@ -112,4 +129,17 @@ public:
 	刷新
 	*/
 	virtual void Update();
+
+	/*
+	添加脚本，返回的数值为此行为的索引，若无手动添加则可保证唯一性
+	*/
+	int AddBehaviour(std::string name);
+
+	/*
+	获取域
+	*/
+	std::shared_ptr<eaLuaDomain> GetDomain()
+	{
+		return sceneDomain;
+	}
 };

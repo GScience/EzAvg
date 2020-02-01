@@ -100,18 +100,18 @@ class eaScriptFunction
 	*/
 	LuaFunc(jump, Script)
 	{
-		auto activeScene = eaApplication::instance->CurrentScene();
+		auto scene = eaApplication::instance->CurrentScene();
 
 		// ±êÇ©
 		if (lua_type(L, 1) == LUA_TSTRING)
 		{
 			string labelName = lua_tostring(L, 1);
-			lua_pushboolean(L, activeScene->runner.Jump(labelName));
+			lua_pushboolean(L, scene->runner.Jump(labelName));
 		}
 		else if (lua_type(L, 1) == LUA_TNUMBER)
 		{
 			long long pos = lua_tointeger(L, 1);
-			lua_pushboolean(L, activeScene->runner.Jump(pos));
+			lua_pushboolean(L, scene->runner.Jump(pos));
 		}
 		else
 			lua_pushboolean(L, false);
@@ -123,6 +123,25 @@ class eaScriptFunction
 class eaSpriteFunction
 {
 	/*
+	void addBehaviour(string spriteName, string behaviourName, table dataTable)
+	*/
+	LuaFunc(addBehaviour, Sprite)
+	{
+		string spriteName = GetString(1);
+		string behaviourName = GetString(2);
+
+		auto scene = eaApplication::instance->CurrentScene();
+		auto sprite = scene->GetSprite(spriteName);
+
+		if (sprite == nullptr)
+			lua_pushinteger(L, 0);
+		else
+			lua_pushinteger(L, sprite->AddBehaviour(behaviourName));
+
+		return 1;
+	}
+
+	/*
 	bool create(string spriteName, string spriteType)
 	*/
 	LuaFunc(create, Sprite)
@@ -130,12 +149,12 @@ class eaSpriteFunction
 		string spriteName = GetString(1);
 		string spriteType = GetString(2);
 
-		auto activeScene = eaApplication::instance->CurrentScene();
+		auto scene = eaApplication::instance->CurrentScene();
 
 		std::shared_ptr<eaSprite> sprite;
 
 		if (spriteType == "image")
-			sprite = activeScene->AddSprite<eaSpriteImage>(spriteName);
+			sprite = scene->AddSprite<eaSpriteImage>(spriteName);
 
 		lua_pushboolean(L, sprite != nullptr);
 
@@ -163,8 +182,8 @@ class eaSpriteFunction
 	{
 		string spriteName = GetString(1);
 
-		auto activeScene = eaApplication::instance->CurrentScene();
-		auto sprite = activeScene->GetSprite(spriteName);
+		auto scene = eaApplication::instance->CurrentScene();
+		auto sprite = scene->GetSprite(spriteName);
 		if (sprite == nullptr)
 			return 0;
 
@@ -209,8 +228,8 @@ class eaSpriteFunction
 		string spriteName = GetString(1);
 		string property = GetString(2);
 
-		auto activeScene = eaApplication::instance->CurrentScene();
-		auto sprite = activeScene->GetSprite(spriteName);
+		auto scene = eaApplication::instance->CurrentScene();
+		auto sprite = scene->GetSprite(spriteName);
 		if (sprite == nullptr)
 		{
 			lua_pushnil(L);

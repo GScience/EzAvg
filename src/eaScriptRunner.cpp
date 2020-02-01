@@ -41,7 +41,7 @@ void eaScriptRunner::Update()
 	else if (currentBlock.IsType<eaScriptLuaBlock>())
 	{
 		auto block = currentBlock.Get<eaScriptLuaBlock>();
-		domain->DoString(block->code);
+		sceneDomain->DoString(block->code);
 	}
 
 	++currentPos;
@@ -54,7 +54,8 @@ eaScriptRunner::~eaScriptRunner()
 
 void eaScriptRunner::Run(std::shared_ptr<eaScript> script)
 {
-	domain = eaLuaDomain::Create("ScriptRunner", eaApplication::GetDomain());
+	if (sceneDomain == nullptr)
+		sceneDomain = eaLuaDomain::Create("ScriptRunner", eaApplication::GetDomain());
 	this->script = script;
 	enable = true;
 }
@@ -70,39 +71,20 @@ void eaScriptRunner::Load()
 	currentTask->Load();
 }
 
-eaScriptTask::eaScriptTask(eaScriptRunner* runner, string name) :runner(runner), name(name)
+eaScriptTask::eaScriptTask(eaScriptRunner* runner, string name) 
+	:eaLuaBridge(runner->GetDomain(), "task/"s + name), runner(runner)
 {
-	auto& L = eaApplication::GetLua();
-	domain = eaLuaDomain::Create("Task:"s + name, runner->GetDomain());
-	domain->DoFile("task/" + name + ".lua");
- 	taskRef = luaL_ref(L, LUA_REGISTRYINDEX);
-}
-
-eaScriptTask::~eaScriptTask()
-{
-	Dispose();
-}
-
-void eaScriptTask::Dispose()
-{
-	if (taskRef == LUA_REFNIL)
-		return;
-
-	auto& L = eaApplication::GetLua();
-
-	luaL_unref(L, LUA_REGISTRYINDEX, taskRef);
-	taskRef = LUA_REFNIL;
 }
 
 bool eaScriptTask::IsEnabled()
 {
-	if (taskRef == LUA_REFNIL)
+	if (objRef == LUA_REFNIL)
 		return false;
 
 	auto& L = eaApplication::GetLua();
 
 	// task.enabled
-	lua_rawgeti(L, LUA_REGISTRYINDEX, taskRef);
+	lua_rawgeti(L, LUA_REGISTRYINDEX, objRef);
 	lua_pushstring(L, "enabled");
 	lua_gettable(L, -2);
 	bool isEnable = lua_toboolean(L, -1);
@@ -116,13 +98,13 @@ bool eaScriptTask::IsEnabled()
 
 void eaScriptTask::Update()
 {
-	if (taskRef == LUA_REFNIL)
+	if (objRef == LUA_REFNIL)
 		return;
 
 	auto& L = eaApplication::GetLua();
 	lua_settop(L, 0);
 
-	lua_rawgeti(L, LUA_REGISTRYINDEX, taskRef);
+	lua_rawgeti(L, LUA_REGISTRYINDEX, objRef);
 	lua_pushstring(L, "update");
 	lua_gettable(L, -2);
 
@@ -168,14 +150,14 @@ void easPushObject(eaLua& L, const eaScriptRunner* runner, eaScriptObject obj)
 
 void eaScriptTask::Start(eaScriptTaskBlock::argList args)
 {
-	if (taskRef == LUA_REFNIL)
+	if (objRef == LUA_REFNIL)
 		return;
 
 	auto& L = eaApplication::GetLua();
 	lua_settop(L, 0);
 
 	// task.start
-	lua_rawgeti(L, LUA_REGISTRYINDEX, taskRef);
+	lua_rawgeti(L, LUA_REGISTRYINDEX, objRef);
 	lua_pushstring(L, "start");
 	lua_gettable(L, -2);
 
@@ -233,7 +215,7 @@ std::string eaScriptRunner::GetStr(const eaScriptString& scriptStr) const
 			luaCode += c;
 		}
 
-		domain->DoString(luaCode);
+		sceneDomain->DoString(luaCode);
 		if (!lua_isnil(L, -1))
 			buffer += lua_tostring(L, -1);
 		lua_pop(L, 1);

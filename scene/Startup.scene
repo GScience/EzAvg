@@ -9,6 +9,7 @@
 ==Begin==
 
 :SetSprite name="background" image="Logo.png"
+:AddBehaviour name="background" behaviour="AnimFadeIn" time=10
 Domain{return domain}
 
 :Wait time={return delayTime}

@@ -3,26 +3,22 @@
 #include "eaScript.h"
 #include "eaSaveable.h"
 #include "eaLuaDomain.h"
+#include "eaLuaBridge.h"
 
 class eaScriptRunner;
 
 /*
 任务，由Lua控制
 */
-class eaScriptTask : public eaSaveable
+class eaScriptTask : public eaLuaBridge
 {
-	int taskRef;
-	const std::string name;
-
 	eaScriptTask(eaScriptRunner* runner, std::string name);
 	std::shared_ptr<eaLuaDomain> domain;
 public:
 	const eaScriptRunner* runner;
 
 	eaScriptTask(const eaScriptTask&) = delete;
-	~eaScriptTask();
 
-	void Dispose();
 	bool IsEnabled();
 	void Update();
 	void Start(eaScriptTaskBlock::argList args);
@@ -36,16 +32,20 @@ public:
 	}
 };
 
+class eaScene;
+
 /*
 脚本执行器
 */
 class eaScriptRunner : public eaSaveable
 {
+	friend class eaScene;
+
 	std::shared_ptr<eaScript> script;
 	long long currentPos = 0;
 
 	std::shared_ptr<eaScriptTask> currentTask;
-	std::shared_ptr<eaLuaDomain> domain;
+	std::shared_ptr<eaLuaDomain> sceneDomain;
 
 public:
 	eaScriptRunner() = default;
@@ -56,7 +56,7 @@ public:
 
 	const std::shared_ptr<eaLuaDomain> GetDomain() const
 	{
-		return domain;
+		return sceneDomain;
 	}
 
 	/*
