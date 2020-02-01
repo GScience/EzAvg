@@ -2,6 +2,7 @@
 #include <lua.hpp>
 #include "eaApplication.h"
 #include "eaTime.h"
+#include "eaInput.h"
 
 eaApplication* eaApplication::instance;
 
@@ -30,6 +31,7 @@ void eaApplication::Start()
 void eaApplication::Update()
 {
 	eaTime::Update();
+	eaInput::Update();
 	scene->Update();
 	lua.Update();
 }
@@ -61,12 +63,11 @@ void eaApplication::Run(std::vector<std::string> argv)
 				shouldWindowClose = true;
 		}
 
+		SDL_PumpEvents();
 		Update();
 
 		SDL_RenderClear(sdlRenderer);
-
 		scene->Draw(sdlRenderer);
-
 		SDL_RenderPresent(sdlRenderer);
 	}
 

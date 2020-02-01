@@ -7,6 +7,7 @@
 #include "eaApplication.h"
 #include "eaLuaFunctionDefines.h"
 #include "eaTime.h"
+#include "eaInput.h"
 
 using namespace std;
 
@@ -309,10 +310,44 @@ class eaTimeFunction
 	}
 };
 
+class eaInputFunc
+{
+	/*
+	bool getButton(int button)
+	*/
+	LuaFunc(getButton, Input)
+	{
+		auto button = (MouseButton)(int)GetNumber(1);
+		lua_pushboolean(L, eaInput::GetButton(button));
+		return 1;
+	}
+
+	/*
+	bool getButtonDown(int button)
+	*/
+	LuaFunc(getButtonDown, Input)
+	{
+		auto button = (MouseButton)(int)GetNumber(1);
+		lua_pushboolean(L, eaInput::GetButtonDown(button));
+		return 1;
+	}
+
+	/*
+	bool getButtonUp(int button)
+	*/
+	LuaFunc(getButtonUp, Input)
+	{
+		auto button = (MouseButton)(int)GetNumber(1);
+		lua_pushboolean(L, eaInput::GetButtonUp(button));
+		return 1;
+	}
+};
+
 eaGlobalFunction globalFunc;
 eaApplicationFunction applicationFunc;
 
 eaTimeFunction timeFunc;
+eaInputFunc inputFunc;
 
 eaScriptFunction scriptFunc;
 eaSpriteFunction spriteFunc;

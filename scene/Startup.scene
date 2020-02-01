@@ -6,7 +6,7 @@
 :Init
 
 #:CreateSprite name="background" type=image
-:AddBehaviour name="background" behaviour="AnimFadeIn" time=10
+:AddBehaviour name="background" behaviour="ControlButton"
 
 ==Begin==
 
@@ -15,7 +15,7 @@
 
 {
 	s = Sprite.get("background")
-	if (s.alpha > 0.5) then
+	if (s.alpha > 0.3) then
 		Script.jump("Begin")
 	end
 }
