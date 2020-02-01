@@ -20,7 +20,6 @@ void eaApplication::InitApplication()
 {
 	globalDomain = eaLuaDomain::Create("Global");
 	globalDomain->DoFile("Game.lua");
-	auto defaultScene = CreateScene();
 }
 
 void eaApplication::Start()
@@ -31,22 +30,17 @@ void eaApplication::Start()
 void eaApplication::Update()
 {
 	eaTime::Update();
-
-	auto activeScene = GetActiveScene();
-	if (activeScene != nullptr)
-		activeScene->Update();
+	scene->Update();
 }
 
 void eaApplication::Save()
 {
-	for (auto& scene : scenes)
-		scene->Save();
+	scene->Save();
 }
 
 void eaApplication::Load()
 {
-	for (auto& scene : scenes)
-		scene->Load();
+	scene->Load();
 }
 
 void eaApplication::Run(std::vector<std::string> argv)
@@ -70,8 +64,7 @@ void eaApplication::Run(std::vector<std::string> argv)
 
 		SDL_RenderClear(sdlRenderer);
 
-		for (auto& scene : scenes)
-			scene->Draw(sdlRenderer);
+		scene->Draw(sdlRenderer);
 
 		SDL_RenderPresent(sdlRenderer);
 	}

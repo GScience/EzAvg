@@ -11,11 +11,10 @@
 class eaScene : public eaSaveable
 {
 	std::vector<std::shared_ptr<eaSprite>> sprites;
-
 public:
 	eaScriptRunner runner;
 
-	eaScene() = default;
+	eaScene(std::string name);
 	eaScene(const eaScene&) = delete;
 
 	virtual ~eaScene() = default;
@@ -25,8 +24,6 @@ public:
 
 	void Save() override;
 	void Load() override;
-
-	void RunScript(std::string name);
 
 	template<class T> std::shared_ptr<T> AddSprite(std::string name)
 	{

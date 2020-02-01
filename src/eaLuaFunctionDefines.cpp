@@ -78,37 +78,29 @@ class eaApplicationFunction
 		SDL_SetWindowTitle(eaApplication::GetWindow(), title.c_str());
 		return 0;
 	}
-};
-
-class eaActiveSceneFunction
-{
-	/*
-	void createSubScene()
-	*/
-	LuaFunc(createSubScene, ActiveScene)
-	{
-		return 0;
-	}
 
 	/*
-	void scriptRun(string name)
+	void loadScene(string scriptName)
 	*/
-	LuaFunc(scriptRun, ActiveScene)
+	LuaFunc(loadScene, Application)
 	{
 		string name = GetString(1);
 
-		eaApplication::instance->GetActiveScene()->RunScript(name);
+		eaApplication::instance->LoadScene(name);
 
 		return 0;
 	}
+};
 
+class eaScriptFunction
+{
 	/*
 	bool scriptJump(string name)
 	bool scriptJump(int pos)
 	*/
-	LuaFunc(scriptJump, ActiveScene)
+	LuaFunc(jump, Script)
 	{
-		auto activeScene = eaApplication::instance->GetActiveScene();
+		auto activeScene = eaApplication::instance->CurrentScene();
 
 		// ±êÇ©
 		if (lua_type(L, 1) == LUA_TSTRING)
@@ -128,7 +120,6 @@ class eaActiveSceneFunction
 	}
 };
 
-
 class eaSpriteFunction
 {
 	/*
@@ -139,7 +130,7 @@ class eaSpriteFunction
 		string spriteName = GetString(1);
 		string spriteType = GetString(2);
 
-		auto activeScene = eaApplication::instance->GetActiveScene();
+		auto activeScene = eaApplication::instance->CurrentScene();
 
 		std::shared_ptr<eaSprite> sprite;
 
@@ -158,7 +149,7 @@ class eaSpriteFunction
 	{
 		string spriteName = GetString(1);
 
-		auto activeScene = eaApplication::instance->GetActiveScene();
+		auto activeScene = eaApplication::instance->CurrentScene();
 
 		activeScene->RemoveSprite(spriteName);
 
@@ -172,7 +163,7 @@ class eaSpriteFunction
 	{
 		string spriteName = GetString(1);
 
-		auto activeScene = eaApplication::instance->GetActiveScene();
+		auto activeScene = eaApplication::instance->CurrentScene();
 		auto sprite = activeScene->GetSprite(spriteName);
 		if (sprite == nullptr)
 			return 0;
@@ -218,7 +209,7 @@ class eaSpriteFunction
 		string spriteName = GetString(1);
 		string property = GetString(2);
 
-		auto activeScene = eaApplication::instance->GetActiveScene();
+		auto activeScene = eaApplication::instance->CurrentScene();
 		auto sprite = activeScene->GetSprite(spriteName);
 		if (sprite == nullptr)
 		{
@@ -262,6 +253,6 @@ eaApplicationFunction applicationFunc;
 
 eaTimeFunction timeFunc;
 
-eaActiveSceneFunction activesceneFunc;
+eaScriptFunction scriptFunc;
 eaSpriteFunction spriteFunc;
 eaResourcesFunction resourceFunc;

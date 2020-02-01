@@ -5,7 +5,7 @@ function p.start(args)
 		logError("未指定pos")
 		return
 	end
-	ActiveScene.scriptJump(args.pos)
+	Script.jump(args.pos)
 end
 
 return p

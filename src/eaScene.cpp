@@ -3,6 +3,14 @@
 #include "eaResources.h"
 #include "eaScene.h"
 
+using namespace std;
+
+eaScene::eaScene(string name)
+{
+	auto script = eaResources::Load<eaScript>(name);
+	runner.Run(script);
+}
+
 void eaScene::Draw(SDL_Renderer* renderer)
 {
 	for (auto& sprite : sprites)
@@ -28,12 +36,6 @@ void eaScene::Load()
 {
 	for (auto& sprite : sprites)
 		sprite->Load();
-}
-
-void eaScene::RunScript(std::string name)
-{
-	auto script = eaResources::Load<eaScript>(name);
-	runner.Run(script);
 }
 
 void eaScene::RemoveSprite(std::string name)

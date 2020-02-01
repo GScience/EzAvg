@@ -16,5 +16,5 @@ end
 
 function Game.loadScene(sceneName)
 	Game.activeSceneName = sceneName
-	ActiveScene.scriptRun(sceneName)
+	Application.loadScene(sceneName)
 end

@@ -14,11 +14,7 @@ class eaApplication : public eaSaveable
 	void Start();
 	void Update();
 
-	/*
-	支持同时加载多个场景，但是只能有一个场景在刷新
-	*/
-	std::vector<std::shared_ptr<eaScene>> scenes;
-
+	std::shared_ptr<eaScene> scene;
 	std::shared_ptr<eaLuaDomain> globalDomain;
 
 	eaLua lua;
@@ -33,27 +29,17 @@ public:
 		instance = this;
 	}
 
-	std::shared_ptr<eaScene> GetActiveScene()
+	/*
+	加载场景并卸载当前场景
+	*/
+	void LoadScene(std::string scriptName)
 	{
-		if (scenes.size() == 0)
-			return nullptr;
-		auto index = scenes.size() - 1;
-		return scenes[index];
+		scene = std::make_shared<eaScene>(scriptName);
 	}
-
-	std::shared_ptr<eaScene> CreateScene()
+	
+	std::shared_ptr<eaScene> CurrentScene()
 	{
-		auto ptr = std::make_shared<eaScene>();
-		scenes.push_back(ptr);
-		return ptr;
-	}
-
-	void RemoveActiveScene()
-	{
-		if (scenes.size() == 1)
-			return;
-
-		scenes.pop_back();
+		return scene;
 	}
 
 	void Save() override;
