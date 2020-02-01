@@ -2,7 +2,7 @@
 #include "eaApplication.h"
 #include <lua.hpp>
 
-eaLuaBridge::eaLuaBridge(std::shared_ptr<eaLuaDomain> owner, std::string name)
+eaLuaBridge::eaLuaBridge(std::shared_ptr<eaLuaDomain> owner, std::string name) :name(name)
 {
 	auto& L = eaApplication::GetLua();
 	domain = eaLuaDomain::Create(name, owner);

@@ -9,15 +9,17 @@
 /*
 场景，负责管理精灵
 */
-class eaScene : public eaSaveable
+class eaScene : public eaSaveable, public std::enable_shared_from_this<eaScene>
 {
 	std::vector<std::shared_ptr<eaSprite>> sprites;
 	std::shared_ptr<eaLuaDomain> domain;
-
-public:
-	eaScriptRunner runner;
-
+	
 	eaScene(std::string name);
+
+	void InitScript(std::string name);
+public:
+	std::unique_ptr<eaScriptRunner> runner;
+
 	eaScene(const eaScene&) = delete;
 
 	virtual ~eaScene() = default;
@@ -38,13 +40,13 @@ public:
 		if (GetSprite(name) != nullptr)
 			return nullptr;
 
-		auto sprite = std::make_shared<T>();
-		sprite->sceneDomain = GetDomain();
-		sprite->name = name;
+		auto sprite = eaSprite::Create<T>(this->shared_from_this(), name);
 		sprites.emplace_back(sprite);
 		return sprite;
 	}
 
 	void RemoveSprite(std::string name);
 	std::shared_ptr<eaSprite> GetSprite(std::string name);
+
+	static std::shared_ptr<eaScene> Load(std::string name);
 };

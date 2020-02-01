@@ -9,6 +9,8 @@
 #include "eaSaveable.h"
 
 struct SDL_Renderer;
+class eaSprite;
+class eaScene;
 
 /*
 属性
@@ -17,6 +19,18 @@ struct eaPropertyValue
 {
 	size_t typeHash;
 	std::shared_ptr<void> ptr;
+
+	eaPropertyValue(bool value)
+		: eaPropertyValue(std::make_shared<bool>(value)) {}
+
+	eaPropertyValue(std::string value)
+		: eaPropertyValue(std::make_shared<std::string>(value)) {}
+
+	eaPropertyValue(double value)
+		: eaPropertyValue(std::make_shared<double>(value)) {}
+
+	eaPropertyValue(int value)
+		: eaPropertyValue(std::make_shared<double>(value)) {}
 
 	eaPropertyValue(std::shared_ptr<bool> ptr) :ptr(ptr)
 	{
@@ -74,8 +88,6 @@ struct eaPropertyValue
 	}
 };
 
-class eaSprite;
-
 /*
 精灵的行为，由Lua控制
 */
@@ -88,19 +100,35 @@ public:
 	void Start();
 };
 
-class eaScene;
+struct eaPropertyBinder
+{
+public:
+	std::function<void(eaPropertyValue)> set;
+	std::function<eaPropertyValue()> get;
+
+	eaPropertyBinder(std::function<eaPropertyValue()> get, std::function<void(eaPropertyValue)> set) :
+		get(get), set(set) {}
+
+	eaPropertyBinder() = default;
+};
 
 /*
 场景中所有元素均为精灵
 */
-class eaSprite : public eaSaveable
+class eaSprite : public eaSaveable, public std::enable_shared_from_this<eaSprite>
 {
-	friend class eaScene;
-
 	int behaviourIndex = 1;
 
 	std::map<int, std::shared_ptr<eaSpriteBehaviour>> behaviours;
-	std::shared_ptr<eaLuaDomain> sceneDomain;
+	std::shared_ptr<eaLuaDomain> domain;
+	std::shared_ptr<eaScene> scene;
+
+	void CreateDomain();
+
+protected:
+	std::map<std::string, eaPropertyBinder> propertyBinder;
+
+	eaSprite() = default;
 
 public:
 	std::string name;
@@ -108,12 +136,32 @@ public:
 	/*
 	设置属性
 	*/
-	virtual void SetProperty(std::string name, eaPropertyValue obj) = 0;
+	virtual void SetProperty(std::string name, eaPropertyValue obj)
+	{
+		auto binder = propertyBinder.find(name);
+		if (binder == propertyBinder.end())
+			return;
+
+		if (binder->second.set == nullptr)
+			return;
+
+		binder->second.set(obj);
+	}
 
 	/*
 	获取属性
 	*/
-	virtual eaPropertyValue GetProperty(std::string name) = 0;
+	virtual eaPropertyValue GetProperty(std::string name) 
+	{
+		auto binder = propertyBinder.find(name);
+		if (binder == propertyBinder.end())
+			return nullptr;
+
+		if (binder->second.get == nullptr)
+			return nullptr;
+
+		return binder->second.get();
+	}
 
 	/*
 	绘制
@@ -140,6 +188,15 @@ public:
 	*/
 	std::shared_ptr<eaLuaDomain> GetDomain()
 	{
-		return sceneDomain;
+		return domain;
+	}
+
+	template<class T> static std::shared_ptr<T> Create(std::shared_ptr<eaScene> scene, std::string name)
+	{
+		auto obj = std::shared_ptr<T>(new T());
+		obj->scene = scene;
+		obj->name = name;
+		obj->CreateDomain();
+		return obj;
 	}
 };

@@ -1,8 +1,9 @@
 #pragma once
 #include <string>
 #include <memory>
-#include "eaLuaDomain.h"
 #include "eaSaveable.h"
+
+class eaLuaDomain;
 
 class eaLuaBridge : public eaSaveable
 {

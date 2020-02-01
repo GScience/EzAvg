@@ -18,6 +18,11 @@ eaLua::eaLua()
 	LoadFunction();
 }
 
+void eaLua::Update()
+{
+	lua_settop(L, 0);
+}
+
 void eaLua::LoadFunction()
 {
 	auto& funcTable = eaLuaFuncTable;

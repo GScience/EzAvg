@@ -42,6 +42,7 @@ std::shared_ptr<void> eaResources::Load(string rawName, size_t type)
 		auto surface = IMG_Load(("image/" + name).c_str());
 		auto texture = make_shared<eaTexture>(surface);
 		SDL_FreeSurface(surface);
+		SDL_SetTextureBlendMode(*texture, SDL_BLENDMODE_BLEND);
 		resDict[name] = texture;
 		return texture;
 	}

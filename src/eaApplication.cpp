@@ -31,6 +31,7 @@ void eaApplication::Update()
 {
 	eaTime::Update();
 	scene->Update();
+	lua.Update();
 }
 
 void eaApplication::Save()

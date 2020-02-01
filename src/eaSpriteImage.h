@@ -7,16 +7,10 @@ class eaSpriteImage : public eaSprite
 {
 	std::shared_ptr<eaTexture> image;
 
-public:
-	/*
-	设置属性
-	*/
-	void SetProperty(std::string name, eaPropertyValue obj) override;
+	double alpha = 1;
 
-	/*
-	获取属性
-	*/
-	eaPropertyValue GetProperty(std::string name) override;
+public:
+	eaSpriteImage();
 
 	/*
 	绘制

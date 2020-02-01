@@ -25,4 +25,6 @@ public:
 	{
 		return state;
 	}
+	
+	void Update();
 };

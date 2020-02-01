@@ -45,19 +45,17 @@ class eaScriptRunner : public eaSaveable
 	long long currentPos = 0;
 
 	std::shared_ptr<eaScriptTask> currentTask;
-	std::shared_ptr<eaLuaDomain> sceneDomain;
+	std::shared_ptr<eaScene> scene;
 
 public:
-	eaScriptRunner() = default;
+	eaScriptRunner::eaScriptRunner(std::shared_ptr<eaScene> scene) 
+		:scene(scene) {}
 	eaScriptRunner(const eaScriptRunner&) = delete;
 	~eaScriptRunner();
 
 	std::string GetStr(const eaScriptString& scriptStr) const;
 
-	const std::shared_ptr<eaLuaDomain> GetDomain() const
-	{
-		return sceneDomain;
-	}
+	const std::shared_ptr<eaLuaDomain> GetDomain() const;
 
 	/*
 	½Å±¾ÊÇ·ñ¼¤»î

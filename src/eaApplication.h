@@ -1,3 +1,4 @@
+#pragma once
 #include <string>
 #include <vector>
 #include "eaLua.h"
@@ -34,7 +35,7 @@ public:
 	*/
 	void LoadScene(std::string scriptName)
 	{
-		scene = std::make_shared<eaScene>(scriptName);
+		scene = eaScene::Load(scriptName);
 	}
 	
 	std::shared_ptr<eaScene> CurrentScene()

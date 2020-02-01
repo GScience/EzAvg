@@ -41,7 +41,7 @@ void eaScriptRunner::Update()
 	else if (currentBlock.IsType<eaScriptLuaBlock>())
 	{
 		auto block = currentBlock.Get<eaScriptLuaBlock>();
-		sceneDomain->DoString(block->code);
+		GetDomain()->DoString(block->code);
 	}
 
 	++currentPos;
@@ -54,8 +54,6 @@ eaScriptRunner::~eaScriptRunner()
 
 void eaScriptRunner::Run(std::shared_ptr<eaScript> script)
 {
-	if (sceneDomain == nullptr)
-		sceneDomain = eaLuaDomain::Create("ScriptRunner", eaApplication::GetDomain());
 	this->script = script;
 	enable = true;
 }
@@ -102,7 +100,6 @@ void eaScriptTask::Update()
 		return;
 
 	auto& L = eaApplication::GetLua();
-	lua_settop(L, 0);
 
 	lua_rawgeti(L, LUA_REGISTRYINDEX, objRef);
 	lua_pushstring(L, "update");
@@ -154,7 +151,6 @@ void eaScriptTask::Start(eaScriptTaskBlock::argList args)
 		return;
 
 	auto& L = eaApplication::GetLua();
-	lua_settop(L, 0);
 
 	// task.start
 	lua_rawgeti(L, LUA_REGISTRYINDEX, objRef);
@@ -215,11 +211,16 @@ std::string eaScriptRunner::GetStr(const eaScriptString& scriptStr) const
 			luaCode += c;
 		}
 
-		sceneDomain->DoString(luaCode);
+		GetDomain()->DoString(luaCode);
 		if (!lua_isnil(L, -1))
 			buffer += lua_tostring(L, -1);
 		lua_pop(L, 1);
 	}
 
 	return buffer;
+}
+
+const shared_ptr<eaLuaDomain> eaScriptRunner::GetDomain() const
+{
+	return scene->GetDomain();
 }

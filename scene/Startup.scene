@@ -6,17 +6,22 @@
 :Init
 
 #:CreateSprite name="background" type=image
+:AddBehaviour name="background" behaviour="AnimFadeIn" time=10
+
 ==Begin==
 
 :SetSprite name="background" image="Logo.png"
-:AddBehaviour name="background" behaviour="AnimFadeIn" time=10
-Domain{return domain}
-
 :Wait time={return delayTime}
+
+{
+	s = Sprite.get("background")
+	if (s.alpha > 0.5) then
+		Script.jump("Begin")
+	end
+}
+
 :SetSprite name="background" image=""
 :Wait time={return delayTime}
-
-{delayTime = delayTime + 0.1}
 
 :Goto pos="Begin"
 

@@ -27,5 +27,10 @@ public:
 	void DoString(std::string str);
 	void DoFile(std::string str);
 
+	int GetEnvTableRef()
+	{
+		return envTableRef;
+	}
+
 	static std::shared_ptr<eaLuaDomain> Create(const std::string& domain, std::shared_ptr<eaLuaDomain> owner = nullptr);
 };
