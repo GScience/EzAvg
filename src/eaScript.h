@@ -190,7 +190,7 @@ class eaScriptReader
 	bool IsObjectEnd()
 	{
 		char c = Peek();
-		return c == ' ' || c == ',' || c == ']' || c == '\n' || c == EOF;
+		return c == ' ' || c == ',' || c == ']' || c == '\n' || c == '\t' || c == EOF;
 	}
 
 public:

@@ -1,11 +1,19 @@
 local p = {}
 
 function p.start(args)
-	if args.pos == nil then
-		logError("未指定pos")
+
+	if args.scene == nil and args.pos == nil then
+		logError("未指定pos或scene")
 		return
 	end
-	Script.jump(args.pos)
+
+	if args.scene ~= nil then
+		Application.loadScene(args.scene)
+	end
+
+	if args.pos ~= nil then
+		Script.jump(args.pos)
+	end
 end
 
 return p

@@ -119,13 +119,25 @@ class eaScriptFunction
 
 		return 1;
 	}
+
+	/*
+	int getCurrentPos(string name)
+	*/
+	LuaFunc(getNextPos, Script)
+	{
+		auto scene = eaApplication::instance->CurrentScene();
+
+		lua_pushinteger(L, scene->runner->GetNextPos());
+
+		return 1;
+	}
 };
 
 class eaSpriteFunction
 {
 	/*
 	为精灵添加行为脚本
-	void addBehaviour(string spriteName, string behaviourName, table dataTable)
+	table addBehaviour(string spriteName, string behaviour, string type)
 	*/
 	LuaFunc(addBehaviour, Sprite)
 	{
@@ -136,12 +148,14 @@ class eaSpriteFunction
 		auto scene = eaApplication::instance->CurrentScene();
 		sprite = scene->GetSprite(spriteName);
 
-		string behaviourName = GetString(2);
-
 		if (sprite == nullptr)
-			lua_pushinteger(L, 0);
-		else
-			lua_pushinteger(L, sprite->AddBehaviour(behaviourName));
+			return 0;
+
+		string behaviour = GetString(2);
+		string type = GetString(3);
+
+		auto obj = sprite->AddBehaviour(behaviour, type);
+		lua_rawgeti(L, LUA_REGISTRYINDEX, obj->GetObjRef());
 
 		return 1;
 	}
@@ -165,21 +179,6 @@ class eaSpriteFunction
 		lua_pushboolean(L, sprite != nullptr);
 
 		return 1;
-	}
-
-	/*
-	移除精灵
-	void remove(string spriteName)
-	*/
-	LuaFunc(remove, Sprite)
-	{
-		string spriteName = GetString(1);
-
-		auto activeScene = eaApplication::instance->CurrentScene();
-
-		activeScene->RemoveSprite(spriteName);
-
-		return 0;
 	}
 
 	/*
@@ -262,24 +261,6 @@ class eaSpriteFunction
 		}
 
 		auto value = sprite->GetProperty(property);
-		return 1;
-	}
-
-	/*
-	获取精灵对象
-	table get(string spriteName)
-	*/
-	LuaFunc(get, Sprite)
-	{
-		string spriteName = GetString(1);
-
-		auto scene = eaApplication::instance->CurrentScene();
-		auto sprite = scene->GetSprite(spriteName);
-
-		lua_rawgeti(L, LUA_REGISTRYINDEX, sprite->GetDomain()->GetEnvTableRef());
-		lua_pushstring(L, "sprite");
-		lua_gettable(L, -2);
-
 		return 1;
 	}
 };

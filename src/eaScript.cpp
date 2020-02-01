@@ -152,7 +152,7 @@ eaScriptObject eaScriptReader::ReadTaskBlock()
 		c = Get();
 
 		// 跳过空格
-		if (c == ' ')
+		if (c == ' ' || c == '\t')
 		{
 			if (argName != "")
 				AddError(line, pos, "参数\"" + argName + "\"必须指定一个值");
@@ -309,13 +309,13 @@ eaScriptObject eaScriptReader::ReadTextBlock()
 
 eaScriptObject eaScriptReader::ReadObject()
 {
-	while (Peek() == ' ')
+	while (Peek() == ' ' || Peek() == '\t')
 		Get();
 
 	int c = Peek();
 
 	// 数字
-	if (IsDigit(c))
+	if (IsDigit(c) || c == '-')
 		return ReadNumber();
 
 	// 枚举
@@ -425,9 +425,14 @@ eaScriptObject eaScriptReader::ReadNumber()
 	while (!IsObjectEnd())
 	{
 		int c = Get();
-		if (!IsDigit(c) && c != '.')
+		if (!IsDigit(c) && c != '.' && c != '-')
 		{
 			AddError(line, pos, "数字类型只允许由数字和小数点组成，发现" + c);
+			return nullptr;
+		}
+		if (c == '-' && numStr != "")
+		{
+			AddError(line, pos, "负号只允许出现在首位" + c);
 			return nullptr;
 		}
 		numStr += c;

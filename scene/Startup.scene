@@ -1,28 +1,26 @@
-#初始化
-{
-	delayTime = 0.1
-	Sprite.create("background", "image")
-}
-:Init
-
-#:CreateSprite name="background" type=image
-:AddBehaviour name="background" behaviour="ControlButton"
-
 ==Begin==
-
-:SetSprite name="background" image="Logo.png"
-:Wait time={return delayTime}
+:SpriteCreate	name="background" type=image
+:SpriteSet		name="background" image="Logo.png" alpha=0
+:BehaviourAdd	name="background" behaviour="fader" type="AnimFadeIn" speed=1
 
 {
-	s = Sprite.get("background")
-	if (s.alpha > 0.3) then
-		Script.jump("Begin")
+	if scene.background.alpha < 1 then
+		Script.jump(Script.getNextPos() - 1)
 	end
 }
 
-:SetSprite name="background" image=""
-:Wait time={return delayTime}
+:BehaviourRemove	name="background" behaviour="fader"
+:Wait time=3
+:BehaviourAdd		name="background" behaviour="fader" type="AnimFadeIn" speed=-1
 
-:Goto pos="Begin"
+{
+	if scene.background.alpha > 0 then
+		Script.jump(Script.getNextPos() - 1)
+	end
+}
+
+:SpriteRemove name="background"
+
+:Goto pos="Exit"
 
 ==Exit==

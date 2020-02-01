@@ -86,6 +86,16 @@ struct eaPropertyValue
 	{
 		return *std::reinterpret_pointer_cast<bool>(ptr);
 	}
+
+	bool operator ==(nullptr_t)
+	{
+		return ptr == nullptr;
+	}
+
+	bool operator !=(nullptr_t)
+	{
+		return ptr != nullptr;
+	}
 };
 
 /*
@@ -94,10 +104,14 @@ struct eaPropertyValue
 class eaSpriteBehaviour : public eaLuaBridge
 {
 public:
-	eaSpriteBehaviour(eaSprite* scene, const std::string& name);
+	std::string name;
+
+	eaSpriteBehaviour(eaSprite* scene, const std::string& name, const std::string& type);
 
 	void Update();
 	void Start();
+
+	bool IsEnabled();
 };
 
 struct eaPropertyBinder
@@ -117,9 +131,7 @@ public:
 */
 class eaSprite : public eaSaveable, public std::enable_shared_from_this<eaSprite>
 {
-	int behaviourIndex = 1;
-
-	std::map<int, std::shared_ptr<eaSpriteBehaviour>> behaviours;
+	std::vector<std::shared_ptr<eaSpriteBehaviour>> behaviours;
 	std::shared_ptr<eaLuaDomain> domain;
 	std::shared_ptr<eaScene> scene;
 
@@ -128,9 +140,10 @@ class eaSprite : public eaSaveable, public std::enable_shared_from_this<eaSprite
 protected:
 	std::map<std::string, eaPropertyBinder> propertyBinder;
 
-	eaSprite() = default;
+	eaSprite();
 
 public:
+	bool enabled = true;
 	std::string name;
 
 	/*
@@ -179,9 +192,14 @@ public:
 	virtual void Update();
 
 	/*
-	添加脚本，返回的数值为此行为的索引，若无手动添加则可保证唯一性
+	添加行为
 	*/
-	int AddBehaviour(std::string name);
+	std::shared_ptr<eaSpriteBehaviour> AddBehaviour(std::string name, std::string type);
+
+	/*
+	获取行为
+	*/
+	std::shared_ptr<eaSpriteBehaviour> GetBehaviour(std::string name);
 
 	/*
 	获取域
@@ -194,8 +212,8 @@ public:
 	template<class T> static std::shared_ptr<T> Create(std::shared_ptr<eaScene> scene, std::string name)
 	{
 		auto obj = std::shared_ptr<T>(new T());
-		obj->scene = scene;
 		obj->name = name;
+		obj->scene = scene;
 		obj->CreateDomain();
 		return obj;
 	}

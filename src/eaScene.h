@@ -45,7 +45,6 @@ public:
 		return sprite;
 	}
 
-	void RemoveSprite(std::string name);
 	std::shared_ptr<eaSprite> GetSprite(std::string name);
 
 	static std::shared_ptr<eaScene> Load(std::string name);

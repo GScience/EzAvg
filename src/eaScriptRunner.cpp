@@ -107,7 +107,7 @@ void eaScriptTask::Update()
 
 	if (lua_pcall(L, 0, 0, 0) != LUA_OK)
 	{
-		cout << "刷新任务" << name << "时出现异常" << endl;
+		cout << "刷新任务" << type << "时出现异常" << endl;
 		throw eaLuaError();
 	}
 }
@@ -170,7 +170,7 @@ void eaScriptTask::Start(eaScriptTaskBlock::argList args)
 
 	if (lua_pcall(L, 1, 0, 0) != LUA_OK)
 	{
-		cout << "启动任务" << name << "时出现异常" << endl;
+		cout << "启动任务" << type << "时出现异常" << endl;
 		throw eaLuaError();
 	}
 }

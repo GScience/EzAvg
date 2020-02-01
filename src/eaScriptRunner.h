@@ -83,6 +83,11 @@ public:
 		return Jump(pos);
 	}
 
+	long long GetNextPos()
+	{
+		return currentPos;
+	}
+
 	/*
 	Ë¢ÐÂ
 	*/

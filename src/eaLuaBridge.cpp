@@ -2,11 +2,11 @@
 #include "eaApplication.h"
 #include <lua.hpp>
 
-eaLuaBridge::eaLuaBridge(std::shared_ptr<eaLuaDomain> owner, std::string name) :name(name)
+eaLuaBridge::eaLuaBridge(std::shared_ptr<eaLuaDomain> owner, std::string type) :type(type)
 {
 	auto& L = eaApplication::GetLua();
-	domain = eaLuaDomain::Create(name, owner);
-	domain->DoFile(name + ".lua");
+	domain = eaLuaDomain::Create(type, owner);
+	domain->DoFile(type + ".lua");
 	objRef = luaL_ref(L, LUA_REGISTRYINDEX);
 }
 
