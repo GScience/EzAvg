@@ -124,6 +124,7 @@ void eaSpriteText::SetText(std::string str)
 
 		SDL_Color color = { 255,0,0 };
 		auto charSurface = TTF_RenderUTF8_Blended(*font, c.c_str(), color);
+		SDL_SetSurfaceBlendMode(charSurface, SDL_BLENDMODE_NONE);
 		SDL_BlitSurface(charSurface, nullptr, textSurface, &rect);
 		SDL_FreeSurface(charSurface);
 
@@ -134,6 +135,7 @@ void eaSpriteText::SetText(std::string str)
 		SDL_DestroyTexture(textTexture);
 
 	textTexture = SDL_CreateTextureFromSurface(eaApplication::GetRenderer(), textSurface);
+	SDL_SetTextureBlendMode(textTexture, SDL_BLENDMODE_BLEND);
 	text = str;
 }
 
