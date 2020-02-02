@@ -9,8 +9,6 @@ using namespace std;
 eaSpriteText::eaSpriteText()
 {
 	SetFont("Font.ttf", 20);
-	textSurface = SDL_CreateRGBSurface(0, 600, 500, 32, 0xff, 0xff00, 0xff0000, 0xff000000);
-	
 
 	propertyBinder["text"] = eaPropertyBinder(
 		[&]()->eaPropertyValue
@@ -23,6 +21,12 @@ eaSpriteText::eaSpriteText()
 		}
 	);
 }
+
+void eaSpriteText::OnResize()
+{
+	textSurface = SDL_CreateRGBSurface(0, size.width, size.height, 32, 0xff, 0xff00, 0xff0000, 0xff000000);
+}
+
 eaSpriteText::~eaSpriteText()
 {
 	SDL_FreeSurface(textSurface);
@@ -75,10 +79,23 @@ void eaSpriteText::SetText(std::string str)
 			i += count - 1;
 		}
 
+		auto wordSize = font->GetStringSize(c);
+
+		// ÏÂÒ»ÐÐ
+		if (cursorX + wordSize.width > size.width)
+		{
+			cursorX = 0;
+			cursorY += font->GetLineHeight();
+		}
+
+		auto rect = SDL_Rect{ cursorX , cursorY, wordSize.width , wordSize.height };
+
 		SDL_Color color = { 255,0,0 };
 		auto charSurface = TTF_RenderUTF8_Blended(*font, c.c_str(), color);
-		SDL_BlitSurface(charSurface, nullptr, textSurface, nullptr);
+		SDL_BlitSurface(charSurface, nullptr, textSurface, &rect);
 		SDL_FreeSurface(charSurface);
+
+		cursorX += wordSize.width;
 	}
 
 	if (textTexture != nullptr)
@@ -90,7 +107,10 @@ void eaSpriteText::SetText(std::string str)
 void eaSpriteText::Draw(SDL_Renderer* renderer)
 {
 	if (textTexture != nullptr)
-		SDL_RenderCopy(renderer, textTexture, nullptr, nullptr);
+	{
+		auto rect = SDL_Rect{ pos.x,pos.y,size.width,size.height };
+		SDL_RenderCopy(renderer, textTexture, nullptr, &rect);
+	}
 }
 
 void eaSpriteText::Save()

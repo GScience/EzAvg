@@ -28,3 +28,15 @@ eaFont::~eaFont()
 {
 	TTF_CloseFont(font);
 }
+
+int eaFont::GetLineHeight()
+{
+	return TTF_FontLineSkip(font);
+}
+
+eaStringSize eaFont::GetStringSize(const std::string str)
+{
+	eaStringSize size;
+	TTF_SizeUTF8(font, str.c_str(), &size.width, &size.height);
+	return size;
+}

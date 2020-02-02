@@ -49,6 +49,75 @@ eaSprite::eaSprite()
 			enabled = value.ToBoolean();
 		}
 	);
+	propertyBinder["size"] = eaPropertyBinder
+	(
+		[&]()->eaPropertyValue
+		{
+			return { size.width,size.height };
+		},
+		[&](eaPropertyValue value)
+		{
+			size.width = value[1];
+			size.height = value[2];
+			OnResize();
+		}
+	);
+	propertyBinder["pos"] = eaPropertyBinder
+	(
+		[&]()->eaPropertyValue
+		{
+			return { pos.x,pos.y };
+		},
+		[&](eaPropertyValue value)
+		{
+			pos.x = value[1];
+			pos.y = value[2];
+			OnMove();
+		}
+	);
+}
+
+static eaPropertyValue ToPropertyValue(lua_State* L, int index);
+
+static eaPropertyValue::eaTable ToTableValue(lua_State* L, int index)
+{
+	eaPropertyValue::eaTable table;
+
+	if (index < 0)
+		--index;
+
+	lua_pushnil(L);
+	while (lua_next(L, index))
+	{
+		eaPropertyValue name = ToPropertyValue(L, -2);
+		eaPropertyValue value = ToPropertyValue(L, -1);
+
+		table[name] = value;
+		lua_pop(L, 1);
+	}
+
+	return table;
+}
+
+static eaPropertyValue ToPropertyValue(lua_State* L, int index)
+{
+	switch (lua_type(L, index))
+	{
+	case LUA_TNUMBER:
+		return make_shared<double>(lua_tonumber(L, index));
+	case LUA_TBOOLEAN:
+		return make_shared<bool>(lua_toboolean(L, index));
+		break;
+	case LUA_TSTRING:
+		return make_shared<string>(lua_tostring(L, index));
+		break;
+	case LUA_TTABLE:
+		return ToTableValue(L, index);
+		break;
+	default:
+		return nullptr;
+		break;
+	}
 }
 
 /*
@@ -59,27 +128,7 @@ static int SpritePropertySet(lua_State* L)
 	auto sprite = (eaSprite*)lua_tointeger(L, lua_upvalueindex(1));
 	string name = lua_tostring(L, 2);
 
-	switch (lua_type(L, 3))
-	{
-	case LUA_TNUMBER:
-		sprite->SetProperty(name,
-			make_shared<double>(lua_tonumber(L, 3))
-		);
-		break;
-	case LUA_TBOOLEAN:
-		sprite->SetProperty(name,
-			make_shared<bool>(lua_toboolean(L, 3))
-		);
-		break;
-	case LUA_TSTRING:
-		sprite->SetProperty(name,
-			make_shared<string>(lua_tostring(L, 3))
-		);
-		break;
-	default:
-		sprite->SetProperty(name, nullptr);
-		break;
-	}
+	sprite->SetProperty(name, ToPropertyValue(L, 3));
 
 	return 0;
 }

@@ -7,7 +7,16 @@ function p.start(args)
 		return
 	end
 
-	Sprite.setProperties(args.name, args)
+	local sprite = scene[args.name]
+
+	if sprite == nil then
+		logError("未找到精灵")
+		return
+	end
+
+	for k,v in pairs(args) do
+		sprite[k] = v
+	end
 end
 
 return p

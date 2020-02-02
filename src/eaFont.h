@@ -3,6 +3,12 @@
 
 typedef struct _TTF_Font TTF_Font;
 
+struct eaStringSize
+{
+	int width = 0;
+	int height = 0;
+};
+
 class eaFont
 {
 	TTF_Font* font;
@@ -16,6 +22,9 @@ public:
 	{
 		return fontSize;
 	}
+
+	int GetLineHeight();
+	eaStringSize GetStringSize(const std::string str);
 
 	operator TTF_Font* () const
 	{

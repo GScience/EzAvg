@@ -10,8 +10,9 @@ void eaSpriteImage::Draw(SDL_Renderer* renderer)
 
 	if (image != nullptr)
 	{
+		auto rect = SDL_Rect{ pos.x,pos.y,size.width,size.height };
 		SDL_SetTextureAlphaMod(*image, (uint8_t)(alpha * 255));
-		SDL_RenderCopy(renderer, *image, nullptr, nullptr);
+		SDL_RenderCopy(renderer, *image, nullptr, &rect);
 	}
 }
 

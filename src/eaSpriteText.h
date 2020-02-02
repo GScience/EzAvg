@@ -28,6 +28,8 @@ public:
 	void SetText(std::string str);
 	void SetFont(std::string fontName, int fontSize);
 
+	void OnResize() override;
+
 	/*
 	»æÖÆ
 	*/
