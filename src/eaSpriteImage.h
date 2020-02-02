@@ -17,11 +17,6 @@ public:
 	*/
 	void Draw(SDL_Renderer* renderer) override;
 
-	/*
-	´´½¨
-	*/
-	void OnCreate() override;
-
 	void Save() override;
 	void Load() override;
 };

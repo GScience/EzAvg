@@ -8,6 +8,7 @@
 #include "eaLuaFunctionDefines.h"
 #include "eaTime.h"
 #include "eaInput.h"
+#include "eaSpriteText.h"
 
 using namespace std;
 
@@ -175,6 +176,8 @@ class eaSpriteFunction
 
 		if (spriteType == "image")
 			sprite = scene->AddSprite<eaSpriteImage>(spriteName);
+		else if (spriteType == "text")
+			sprite = scene->AddSprite<eaSpriteText>(spriteName);
 
 		lua_pushboolean(L, sprite != nullptr);
 

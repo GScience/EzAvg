@@ -30,7 +30,7 @@ std::shared_ptr<eaScript> eaScript::FromString(std::string str)
 
 std::shared_ptr<eaScript> eaScript::FromFile(std::string fileName)
 {
-	ifstream file(fileName);
+	ifstream file("scene/" + fileName);
 	return FromStream(file);
 }
 

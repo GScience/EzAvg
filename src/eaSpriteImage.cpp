@@ -15,10 +15,6 @@ void eaSpriteImage::Draw(SDL_Renderer* renderer)
 	}
 }
 
-void eaSpriteImage::OnCreate()
-{
-}
-
 void eaSpriteImage::Save()
 {
 }

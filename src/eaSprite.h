@@ -143,6 +143,8 @@ protected:
 	eaSprite();
 
 public:
+	virtual ~eaSprite() = default;
+
 	bool enabled = true;
 	std::string name;
 
@@ -180,11 +182,6 @@ public:
 	绘制
 	*/
 	virtual void Draw(SDL_Renderer* renderer) = 0;
-
-	/*
-	创建
-	*/
-	virtual void OnCreate() = 0;
 
 	/*
 	刷新

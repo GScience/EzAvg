@@ -1,5 +1,6 @@
 #include <SDL.h>
 #include <lua.hpp>
+#include <SDL2\SDL_ttf.h>
 #include "eaApplication.h"
 #include "eaTime.h"
 #include "eaInput.h"
@@ -8,7 +9,8 @@ eaApplication* eaApplication::instance;
 
 void eaApplication::InitWindow()
 {
-	SDL_Init(SDL_INIT_EVERYTHING);  
+	SDL_Init(SDL_INIT_EVERYTHING);
+	TTF_Init();
 	sdlWindow = SDL_CreateWindow(
 		"Window",
 		SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,

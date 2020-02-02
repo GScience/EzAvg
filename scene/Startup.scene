@@ -9,6 +9,9 @@
 	end
 }
 
+:SpriteCreate	name="loadingStage" type=text
+:SpriteSet		name="loadingStage" text="测试"
+
 :BehaviourRemove	name="background" behaviour="fader"
 :Wait time=3
 :BehaviourAdd		name="background" behaviour="fader" type="AnimFadeIn" speed=-1
