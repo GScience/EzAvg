@@ -1,9 +1,12 @@
 #include <SDL.h>
 #include <lua.hpp>
+#include <iostream>
 #include <SDL2\SDL_ttf.h>
 #include "eaApplication.h"
 #include "eaTime.h"
 #include "eaInput.h"
+
+using namespace std;
 
 eaApplication* eaApplication::instance;
 
@@ -48,10 +51,19 @@ void eaApplication::Load()
 	scene->Load();
 }
 
-void eaApplication::Run(std::vector<std::string> argv)
+void eaApplication::Run(std::vector<std::string> args)
 {
+	bool debugMode = false;
+	for (auto& arg : args)
+	{
+		if (arg == "debug")
+			debugMode = true;
+	}
+
 	InitWindow();
 	InitApplication();
+	if (debugMode)
+		InitDebuger();
 	Start();
 
 	bool shouldWindowClose = false;
@@ -74,4 +86,18 @@ void eaApplication::Run(std::vector<std::string> argv)
 	}
 
 	SDL_Quit();
+}
+
+static void DebugHook(lua_State* L, lua_Debug* ar)
+{
+	lua_getinfo(L, "Sln", ar);
+	if (ar->name != nullptr)
+		cout << ar->short_src << ":" << ar->currentline << " " << ar->name << endl;
+	else
+		cout << ar->short_src << ":" << ar->currentline << endl;
+}
+
+void eaApplication::InitDebuger()
+{
+	lua_sethook(lua, DebugHook, LUA_MASKLINE, 0);
 }

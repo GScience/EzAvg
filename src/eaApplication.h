@@ -10,11 +10,6 @@ struct SDL_Surface;
 
 class eaApplication : public eaSaveable
 {
-	void InitWindow();
-	void InitApplication();
-	void Start();
-	void Update();
-
 	std::shared_ptr<eaScene> scene;
 	std::shared_ptr<eaLuaDomain> globalDomain;
 
@@ -30,6 +25,14 @@ public:
 		instance = this;
 	}
 
+private:
+	void InitWindow();
+	void InitApplication();
+	void InitDebuger();
+	void Start();
+	void Update();
+
+public:
 	/*
 	加载场景并卸载当前场景
 	*/
@@ -66,5 +69,5 @@ public:
 		return instance->globalDomain;
 	}
 
-	void Run(std::vector<std::string> argv);
+	void Run(std::vector<std::string> args);
 };

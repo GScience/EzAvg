@@ -1,5 +1,6 @@
 #include <SDL.h>
 #include <SDL_ttf.h>
+#include <iostream>
 #include "eaSpriteText.h"
 #include "eaResources.h"
 #include "eaApplication.h"
@@ -22,9 +23,40 @@ eaSpriteText::eaSpriteText()
 	);
 }
 
+void eaSpriteText::Clear()
+{
+	cursorX = 0;
+	cursorY = 0;
+
+	text = "";
+
+	if (textSurface != nullptr && 
+		textSurface->w != size.width && 
+		textSurface->h != size.height)
+	{
+		SDL_FillRect(textSurface, nullptr, SDL_MapRGBA(textSurface->format, 0, 0, 0, 0));
+	}
+	else
+	{
+		if (textSurface != nullptr)
+			SDL_FreeSurface(textSurface);
+
+		textSurface = SDL_CreateRGBSurface(0, size.width, size.height, 32, 0xff, 0xff00, 0xff0000, 0xff000000);
+	}
+
+	if (textTexture != nullptr)
+	{
+		SDL_DestroyTexture(textTexture);
+		textTexture = nullptr;
+	}
+}
+
 void eaSpriteText::OnResize()
 {
-	textSurface = SDL_CreateRGBSurface(0, size.width, size.height, 32, 0xff, 0xff00, 0xff0000, 0xff000000);
+	auto oldText = text;
+	Clear();
+	if (oldText != "")
+		SetText(oldText);
 }
 
 eaSpriteText::~eaSpriteText()
@@ -37,8 +69,8 @@ void eaSpriteText::SetFont(string fontName, int fontSize)
 	auto fullFontName = fontName + ":" + to_string(fontSize);
 
 	font = eaResources::Load<eaFont>(fullFontName);
-	auto oldText = text;
-	SetText(oldText);
+	if (text != "")
+		SetText(text);
 }
 
 void eaSpriteText::SetText(std::string str)
@@ -48,7 +80,7 @@ void eaSpriteText::SetText(std::string str)
 	{
 		if (str[i] == text[i])
 			continue;
-		text = "";
+		Clear();
 		break;
 	}
 
@@ -88,7 +120,7 @@ void eaSpriteText::SetText(std::string str)
 			cursorY += font->GetLineHeight();
 		}
 
-		auto rect = SDL_Rect{ cursorX , cursorY, wordSize.width , wordSize.height };
+		SDL_Rect rect = SDL_Rect{ cursorX , cursorY, wordSize.width , wordSize.height };
 
 		SDL_Color color = { 255,0,0 };
 		auto charSurface = TTF_RenderUTF8_Blended(*font, c.c_str(), color);
@@ -102,6 +134,7 @@ void eaSpriteText::SetText(std::string str)
 		SDL_DestroyTexture(textTexture);
 
 	textTexture = SDL_CreateTextureFromSurface(eaApplication::GetRenderer(), textSurface);
+	text = str;
 }
 
 void eaSpriteText::Draw(SDL_Renderer* renderer)

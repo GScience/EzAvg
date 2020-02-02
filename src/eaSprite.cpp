@@ -133,6 +133,33 @@ static int SpritePropertySet(lua_State* L)
 	return 0;
 }
 
+static void PushPropertyValue(lua_State* L, eaPropertyValue value);
+
+static void PushTable(lua_State* L, eaPropertyValue::eaTable table)
+{
+	lua_createtable(L, 0, 0);
+	for (auto& pair : table)
+	{
+		PushPropertyValue(L, pair.first);
+		PushPropertyValue(L, pair.second);
+		lua_settable(L, -3);
+	}
+}
+
+static void PushPropertyValue(lua_State* L, eaPropertyValue value)
+{
+	if (value.IsBoolean())
+		lua_pushboolean(L, value.ToBoolean());
+	else if (value.IsNumber())
+		lua_pushnumber(L, value.ToNumber());
+	else if (value.IsString())
+		lua_pushstring(L, value.ToString().c_str());
+	else if (value.IsTable())
+		PushTable(L, value.ToTable());
+	else
+		lua_pushnil(L);
+}
+
 /*
 …Ë÷√ Ù–‘
 */
@@ -146,14 +173,7 @@ static int SpritePropertyGet(lua_State* L)
 
 	if (value != nullptr)
 	{
-		if (value.IsBoolean())
-			lua_pushboolean(L, value.ToBoolean());
-		else if (value.IsNumber())
-			lua_pushnumber(L, value.ToNumber());
-		else if (value.IsString())
-			lua_pushstring(L, value.ToString().c_str());
-		else
-			lua_pushnil(L);
+		PushPropertyValue(L, value);
 
 		return 1;
 	}

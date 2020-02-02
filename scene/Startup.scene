@@ -10,11 +10,28 @@
 }
 
 :SpriteCreate	name="loadingStage" type=text
-:SpriteSet		name="loadingStage" text="测试" size=[600,100] pos=[200,400]
+:SpriteSet		name="loadingStage" size=[100,100] pos=[200,400]
+:SpriteSet		name="loadingStage" text="测"
+:wait time=0.1
+:SpriteSet		name="loadingStage" text="测试"
+:wait time=0.1
+:SpriteSet		name="loadingStage" text="测试一"
+:wait time=0.1
+:SpriteSet		name="loadingStage" text="测试一下"
+:wait time=0.1
+:SpriteSet		name="loadingStage" text="测试一下"
+:wait time=0.3
+:SpriteSet		name="loadingStage" text="能不能正常加载文字"
+:wait time=0.1
+:SpriteSet		name="loadingStage" size=[200,100] pos=[{scene.loadingStage.pos[1] + 20},{scene.loadingStage.pos[2] - 20}]
+:wait time=0.1
+:SpriteSet		name="loadingStage" size=[120,100] pos=[{scene.loadingStage.pos[1] - 20},{scene.loadingStage.pos[2] + 20}]
 
 :BehaviourRemove	name="background" behaviour="fader"
 :Wait time=3
 :BehaviourAdd		name="background" behaviour="fader" type="AnimFadeIn" speed=-1
+
+:SpriteRemove	name="loadingStage"
 
 {
 	if scene.background.alpha > 0 then

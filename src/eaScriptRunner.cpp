@@ -139,7 +139,13 @@ void easPushObject(eaLua& L, const eaScriptRunner* runner, eaScriptObject obj)
 	else if (obj.IsType<eaScriptLuaObject>())
 	{
 		auto block = obj.Get<eaScriptLuaObject>();
-		runner->GetDomain()->DoString(*block);
+
+		// 单行允许省略return
+		if (block->find('\r') == string::npos &&
+			block->find("return") == string::npos)
+			runner->GetDomain()->DoString("return " + *block);
+		else
+			runner->GetDomain()->DoString(*block);
 	}
 	else
 		lua_pushnil(L);

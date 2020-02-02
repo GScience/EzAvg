@@ -16,6 +16,8 @@ class eaSpriteText : public eaSprite
 	SDL_Surface* textSurface = nullptr;
 	SDL_Texture* textTexture = nullptr;
 
+	void Clear();
+
 public:
 	eaSpriteText();
 	~eaSpriteText();
