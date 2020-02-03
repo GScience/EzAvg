@@ -9,11 +9,18 @@
 	end
 }
 
-:SpriteCreate	name="loadingStage" type=text
-:SpriteSet		name="loadingStage" anchor=[0,0.7,1,0.7]
-:SpriteSet		name="loadingStage" rect=[-50,50,0,50]
-:BehaviourAdd	name="loadingStage" behaviour="textPrinter" type="AnimTextPrinter" text="能不能正常加载文字"
-:wait time=5
+:SpriteCreate	name="loadingStage" type=text anchor=[0,0.7,1,0.7] layout=center
+:SpriteSet		name="loadingStage" rect=[-50,150,-50,150]
+:BehaviourAdd	name="loadingStage" behaviour="textPrinter" type="AnimTextPrinter" text="能不能正常加载文字，文字布局测试，支持在运行脚本的同时更改文本布局" speed=10
+:wait time=0.5
+:SpriteSet		name="loadingStage" anchor=[0,0.7,1,0.7] layout=right
+:wait time=0.5
+:SpriteSet		name="loadingStage" anchor=[0,0.7,1,0.7] layout=left
+:wait time=0.5
+:SpriteSet		name="loadingStage" anchor=[0,0.7,1,0.7] layout=right
+:wait time=0.5
+:SpriteSet		name="loadingStage" anchor=[0,0.7,1,0.7] layout=center
+:wait time=0.5
 
 :BehaviourRemove	name="background" behaviour="fader"
 :Wait time=3

@@ -163,7 +163,7 @@ class eaSpriteFunction
 
 	/*
 	´´½¨¾«Áé
-	bool create(string spriteName, string spriteType)
+	table create(string spriteName, string spriteType)
 	*/
 	LuaFunc(create, Sprite)
 	{
@@ -179,7 +179,11 @@ class eaSpriteFunction
 		else if (spriteType == "text")
 			sprite = scene->AddSprite<eaSpriteText>(spriteName);
 
-		lua_pushboolean(L, sprite != nullptr);
+		if (sprite == nullptr)
+			lua_pushnil(L);
+		lua_rawgeti(L, LUA_REGISTRYINDEX, sprite->GetDomain()->GetEnvTableRef());
+		lua_pushstring(L, "sprite");
+		lua_gettable(L, -2);
 
 		return 1;
 	}

@@ -5,6 +5,11 @@
 
 struct SDL_Surface;
 
+enum eaTextLayout
+{
+	TextLayoutLeft, TextLayoutCenter, TextLayoutRight
+};
+
 class eaSpriteText : public eaSprite
 {
 	std::string text;
@@ -13,10 +18,14 @@ class eaSpriteText : public eaSprite
 	int cursorX = 0;
 	int cursorY = 0;
 
+	eaTextLayout textLayout = TextLayoutLeft;
+
 	SDL_Surface* textSurface = nullptr;
 	SDL_Texture* textTexture = nullptr;
 
 	void Clear();
+
+	void Redraw();
 
 public:
 	eaSpriteText();

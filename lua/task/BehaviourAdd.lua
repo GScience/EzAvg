@@ -32,7 +32,6 @@ function p.start(args)
 	for k,v in pairs(args) do
 		if k ~= "name" and k ~= "behaviour" and k ~= "type" then
 			result[k] = v
-			print(k.." = "..v)
 		end
 	end
 end

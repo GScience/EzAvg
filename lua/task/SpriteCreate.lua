@@ -18,9 +18,13 @@ function p.start(args)
 		logError("无法创建精灵，精灵或属性" .. args.name .. "已存在")
 		return
 	end
-	if not Sprite.create(args.name, args.type) then
+	local sprite = Sprite.create(args.name, args.type)
+	if sprite == nil then
 		logError("无法创建精灵，精灵" .. args.name .. "创建失败")
 		return
+	end
+	for k,v in pairs(args) do
+		sprite[k] = v
 	end
 end
 

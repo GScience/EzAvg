@@ -21,6 +21,33 @@ eaSpriteText::eaSpriteText()
 			SetText(value.ToString());
 		}
 	);
+	propertyBinder["layout"] = eaPropertyBinder(
+		[&]()->eaPropertyValue
+		{
+			switch (textLayout)
+			{
+			case TextLayoutLeft:
+				return "left";
+			case TextLayoutCenter:
+				return "center";
+			case TextLayoutRight:
+				return "right";
+			default:
+				return nullptr;
+			}
+		},
+		[&](eaPropertyValue value)
+		{
+			if (value.ToString() == "left")
+				textLayout = TextLayoutLeft;
+			else if (value.ToString() == "center")
+				textLayout = TextLayoutCenter;
+			else if (value.ToString() == "right")
+				textLayout = TextLayoutRight;
+
+			Redraw();
+		}
+	);
 }
 
 void eaSpriteText::Clear()
@@ -47,6 +74,7 @@ void eaSpriteText::Clear()
 			SDL_FreeSurface(textSurface);
 
 		textSurface = SDL_CreateRGBSurface(0, renderRect.width, renderRect.height, 32, 0xff, 0xff00, 0xff0000, 0xff000000);
+		SDL_SetSurfaceBlendMode(textSurface, SDL_BLENDMODE_NONE);
 	}
 
 	if (textTexture != nullptr)
@@ -57,6 +85,10 @@ void eaSpriteText::Clear()
 }
 
 void eaSpriteText::OnResize()
+{
+	Redraw();
+}
+void eaSpriteText::Redraw()
 {
 	auto oldText = text;
 	Clear();
@@ -130,14 +162,59 @@ void eaSpriteText::SetText(std::string str)
 			cursorY += font->GetLineHeight();
 		}
 
-		SDL_Rect rect = SDL_Rect{ cursorX , cursorY, wordSize.width , wordSize.height };
-
 		SDL_Color color = { 255,0,0 };
 		auto charSurface = TTF_RenderUTF8_Blended(*font, c.c_str(), color);
 		SDL_SetSurfaceBlendMode(charSurface, SDL_BLENDMODE_NONE);
-		SDL_BlitSurface(charSurface, nullptr, textSurface, &rect);
-		SDL_FreeSurface(charSurface);
 
+		switch (textLayout)
+		{
+			case TextLayoutLeft:
+			{
+				SDL_Rect rect = SDL_Rect{ cursorX , cursorY, wordSize.width , wordSize.height };
+
+				SDL_BlitSurface(charSurface, nullptr, textSurface, &rect);
+				break;
+			}
+			case TextLayoutCenter:
+			{
+				// 当前一行左移
+				SDL_Rect currentLineRect = SDL_Rect{ 0 , cursorY, renderRect.width , font->GetLineHeight() };
+				SDL_Rect updatedLineRect = SDL_Rect{ -wordSize.width / 2, cursorY, renderRect.width , font->GetLineHeight() };
+
+				SDL_BlitSurface(textSurface, &currentLineRect, textSurface, &updatedLineRect);
+
+				// 渲染文字
+				SDL_Rect rect = SDL_Rect
+				{ 
+					renderRect.width / 2 + cursorX / 2 - wordSize.width / 2,
+					cursorY, 
+					wordSize.width , 
+					wordSize.height 
+				};
+				SDL_BlitSurface(charSurface, nullptr, textSurface, &rect);
+				break;
+			}
+			case TextLayoutRight:
+			{
+				// 当前一行左移
+				SDL_Rect currentLineRect = SDL_Rect{ 0 , cursorY, renderRect.width , font->GetLineHeight() };
+				SDL_Rect updatedLineRect = SDL_Rect{ -wordSize.width, cursorY, renderRect.width , font->GetLineHeight() };
+
+				SDL_BlitSurface(textSurface, &currentLineRect, textSurface, &updatedLineRect);
+
+				// 渲染文字
+				SDL_Rect rect = SDL_Rect
+				{
+					renderRect.width - wordSize.width,
+					cursorY,
+					wordSize.width ,
+					wordSize.height
+				};
+				SDL_BlitSurface(charSurface, nullptr, textSurface, &rect);
+				break;
+			}
+		}
+		SDL_FreeSurface(charSurface);
 		cursorX += wordSize.width;
 	}
 
