@@ -25,14 +25,19 @@ eaSpriteText::eaSpriteText()
 
 void eaSpriteText::Clear()
 {
+	auto renderRect = GetRenderRect();
+
+	if (renderRect.width <= 0 || renderRect.height <= 0)
+		return;
+
 	cursorX = 0;
 	cursorY = 0;
 
 	text = "";
 
 	if (textSurface != nullptr && 
-		textSurface->w != size.width && 
-		textSurface->h != size.height)
+		textSurface->w == renderRect.width &&
+		textSurface->h == renderRect.height)
 	{
 		SDL_FillRect(textSurface, nullptr, SDL_MapRGBA(textSurface->format, 0, 0, 0, 0));
 	}
@@ -41,7 +46,7 @@ void eaSpriteText::Clear()
 		if (textSurface != nullptr)
 			SDL_FreeSurface(textSurface);
 
-		textSurface = SDL_CreateRGBSurface(0, size.width, size.height, 32, 0xff, 0xff00, 0xff0000, 0xff000000);
+		textSurface = SDL_CreateRGBSurface(0, renderRect.width, renderRect.height, 32, 0xff, 0xff00, 0xff0000, 0xff000000);
 	}
 
 	if (textTexture != nullptr)
@@ -75,6 +80,11 @@ void eaSpriteText::SetFont(string fontName, int fontSize)
 
 void eaSpriteText::SetText(std::string str)
 {
+	if (textSurface == nullptr)
+		return;
+
+	auto renderRect = GetRenderRect();
+
 	// 判断是否只是增加字符
 	for (size_t i = 0; i < text.size(); ++i)
 	{
@@ -114,7 +124,7 @@ void eaSpriteText::SetText(std::string str)
 		auto wordSize = font->GetStringSize(c);
 
 		// 下一行
-		if (cursorX + wordSize.width > size.width)
+		if (cursorX + wordSize.width > renderRect.width)
 		{
 			cursorX = 0;
 			cursorY += font->GetLineHeight();
@@ -143,7 +153,8 @@ void eaSpriteText::Draw(SDL_Renderer* renderer)
 {
 	if (textTexture != nullptr)
 	{
-		auto rect = SDL_Rect{ pos.x,pos.y,size.width,size.height };
+		auto renderRect = GetRenderRect();
+		auto rect = SDL_Rect{ renderRect.x,renderRect.y,renderRect.width,renderRect.height };
 		SDL_SetTextureAlphaMod(textTexture, (uint8_t)(alpha * 255));
 		SDL_RenderCopy(renderer, textTexture, nullptr, &rect);
 	}

@@ -175,16 +175,34 @@ public:
 	eaPropertyBinder() = default;
 };
 
-struct eaSpriteSize
+struct eaRenderRect
 {
-	int width = 100;
-	int height = 100;
+	int x;
+	int y;
+	int width;
+	int height;
 };
 
-struct eaSpritePos
+struct eaSpriteAnchor
 {
-	int x = 0;
-	int y = 0;
+	double minX = 0;
+	double minY = 0;
+	double maxX = 1;
+	double maxY = 1;
+};
+
+struct eaSpritePivot
+{
+	double x = 0.5;
+	double y = 0.5;
+};
+
+struct eaSpriteRect
+{
+	int up = 0;
+	int right = 0;
+	int bottom = 0;
+	int left = 0;
 };
 
 /*
@@ -196,23 +214,31 @@ class eaSprite : public eaSaveable, public std::enable_shared_from_this<eaSprite
 	std::shared_ptr<eaLuaDomain> domain;
 	std::shared_ptr<eaScene> scene;
 
-	void CreateDomain();
-	
 protected:
 	std::map<std::string, eaPropertyBinder> propertyBinder;
-
-	eaSprite();
 	
-	eaSpriteSize size;
-	eaSpritePos pos;
-
-	double alpha = 1;
+	eaSprite();
 
 public:
 	virtual ~eaSprite() = default;
 
+private:
+	eaSpriteRect rect;
+	eaSpriteAnchor anchor;
+	eaSpritePivot pivot;
+
+protected:
+	double alpha = 1;
+
+public:
+
 	bool enabled = true;
 	std::string name;
+
+protected:
+	eaRenderRect GetRenderRect();
+
+public:
 
 	/*
 	设置属性
@@ -285,4 +311,9 @@ public:
 		obj->CreateDomain();
 		return obj;
 	}
+private:
+	/*
+	初始化域
+	*/
+	void CreateDomain();
 };

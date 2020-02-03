@@ -22,7 +22,6 @@ eaFont::eaFont(const string& fontName)
 	}
 	fontSize = stoi(fontSizeStr);
 	font = TTF_OpenFont(("font/" + fileName).c_str(), fontSize);
-	TTF_SetFontHinting(font, TTF_HINTING_MONO);
 }
 
 eaFont::~eaFont()
