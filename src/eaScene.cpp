@@ -1,5 +1,6 @@
 #include <SDL.h>
 #include <lua.hpp>
+#include <algorithm>
 #include "eaApplication.h"
 #include "eaResources.h"
 #include "eaScene.h"
@@ -67,6 +68,11 @@ void eaScene::InitScript(std::string name)
 
 void eaScene::Draw(SDL_Renderer* renderer)
 {
+	sort(sprites.begin(), sprites.end(), [](std::shared_ptr<eaSprite> a, std::shared_ptr<eaSprite> b)
+	{
+		return (a->GetZOrder() < b->GetZOrder());
+	});
+
 	for (auto& sprite : sprites)
 		sprite->Draw(renderer);
 }

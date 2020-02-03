@@ -1,59 +1,30 @@
-==Begin==
-:SpriteCreate	name="background" type=image
-:SpriteSet		name="background" image="Logo.png" alpha=0 rect=[0,0,0,0]
-:BehaviourAdd	name="background" behaviour="fader" type="AnimFadeIn" speed=1
+# 背景
+:SpriteCreate	sprite="background" type=image image="Logo.png" alpha=0 rect=[0,0,0,0] zOrder=-1
+:BehaviourAdd	sprite="background" behaviour="fader" type="AnimFadeIn" speed=1
 
-{
-	if scene.background.alpha < 1 then
-		Script.jump(Script.getNextPos() - 1)
-	end
-}
+# 等待背景加载完成
+:Wait sprite="background" behaviour="fader"
 
-:SpriteCreate	name="loadingStage" type=text anchor=[0,0.7,1,0.7] layout=center fontSize=24
-:SpriteSet		name="loadingStage" color=[0,0,1] shadowColor=[0,0,0.8,0.5]
-:SpriteSet		name="loadingStage" rect=[-50,150,-50,150]
-:BehaviourAdd	name="loadingStage" behaviour="textPrinter" type="AnimTextPrinter" text="能不能正常加载文字，文字布局测试，支持在运行脚本的同时更改文本布局" speed=10
-:wait time=0.5
-:SpriteSet		name="loadingStage" anchor=[0,0.7,1,0.7] layout=right
-:wait time=0.5
-:SpriteSet		name="loadingStage" anchor=[0,0.7,1,0.7] layout=left
-:wait time=0.5
-:SpriteSet		name="loadingStage" anchor=[0,0.7,1,0.7] layout=right
-:wait time=0.5
-:SpriteSet		name="loadingStage" anchor=[0,0.7,1,0.7] layout=center
-:wait time=0.5
+# 版本号信息
+:SpriteCreate	sprite="version" type=text anchor=[0,1,1,1] rect=[-25,0,0,0] layout=center fontSize=15 alpha=0
+:SpriteSet		sprite="version"
+:SpriteSet		sprite="version" color=[0,0,0] text="Version beta 1.0.0"
+:BehaviourAdd	sprite="version" behaviour="fader" type="AnimFadeIn" speed=1
 
-{
-	if Input.getButtonDown(0) or Input.getButton(1) then
-		print(scene.loadingStage.layout)
-		if scene.loadingStage.layout == "center" then
-			print("center")
-			scene.loadingStage.layout = "left"
-		elseif scene.loadingStage.layout == "left" then
-			print("left")
-			scene.loadingStage.layout = "right"
-		elseif scene.loadingStage.layout == "right" then
-			print("right")
-			scene.loadingStage.layout = "center"
-		end
-	end
-	Script.jump(Script.getNextPos() - 1)
-}
+# 加载资源缓存
+:SpriteCreate	sprite="loadingStage" type=text anchor=[0,0.8,1,0.8] layout=center fontSize=24
+:SpriteSet		sprite="loadingStage" color=[0,0,1] shadowColor=[0,0,0.8,0.5]
+:SpriteSet		sprite="loadingStage" rect=[-50,150,-50,150]
+:SpriteSet		sprite="loadingStage" text="加载资源中"
 
-:BehaviourRemove	name="background" behaviour="fader"
-:Wait time=3
-:BehaviourAdd		name="background" behaviour="fader" type="AnimFadeIn" speed=-1
+:Wait time=5
+:SpriteSet		sprite="loadingStage" text="加载完毕"
+:Wait time=1
 
-:SpriteRemove	name="loadingStage"
+:BehaviourAdd	sprite="background" behaviour="fader" type="AnimFadeIn" speed=-1
+:SpriteRemove	sprite="loadingStage"
 
-{
-	if scene.background.alpha > 0 then
-		Script.jump(Script.getNextPos() - 1)
-	end
-}
+# 等待最后淡出
+:Wait sprite="background" behaviour="fader"
 
-:SpriteRemove name="background"
-
-:Goto pos="Exit"
-
-==Exit==
+:SpriteRemove sprite="background"

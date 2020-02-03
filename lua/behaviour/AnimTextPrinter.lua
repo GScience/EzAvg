@@ -39,6 +39,11 @@ function p.update()
 	end
 end
 
+function p.isFinished()
+
+	return p.currentPos >= string.len(p.text)
+end
+
 function p.start()
 end
 

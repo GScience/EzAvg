@@ -111,13 +111,20 @@ void eaSpriteText::Clear()
 {
 	auto renderRect = GetRenderRect();
 
-	if (renderRect.width <= 0 || renderRect.height <= 0)
-		return;
-
 	cursorX = 0;
 	cursorY = 0;
 
 	text = "";
+
+	if (renderRect.width <= 0 || renderRect.height <= 0)
+	{
+		if (textSurface != nullptr)
+		{
+			SDL_FreeSurface(textSurface);
+			textSurface = nullptr;
+		}
+		return;
+	}
 
 	if (textSurface != nullptr && 
 		textSurface->w == renderRect.width &&
@@ -128,7 +135,10 @@ void eaSpriteText::Clear()
 	else
 	{
 		if (textSurface != nullptr)
+		{
 			SDL_FreeSurface(textSurface);
+			textSurface = nullptr;
+		}
 
 		textSurface = SDL_CreateRGBSurface(0, renderRect.width, renderRect.height, 32, 0xff, 0xff00, 0xff0000, 0xff000000);
 		SDL_FillRect(textSurface, nullptr, SDL_MapRGBA(textSurface->format, 0, 0, 0, 0));
@@ -212,6 +222,9 @@ void eaSpriteText::SetText(std::string str)
 		}
 
 		auto wordSize = font->GetStringSize(c);
+
+		wordSize.width += shadowOffset;
+		wordSize.height += shadowOffset;
 
 		// ÏÂÒ»ÐÐ
 		if (cursorX + wordSize.width + shadowOffset > renderRect.width)

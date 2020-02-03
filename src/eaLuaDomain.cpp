@@ -52,7 +52,7 @@ void eaLuaDomain::DoFile(string str)
 	lua_setupvalue(L, -2, 1);
 	auto result = lua_pcall(L, 0, LUA_MULTRET, 0);
 	if (result != LUA_OK)
-		throw eaLuaError();
+ 		throw eaLuaError();
 }
 
 std::shared_ptr<eaLuaDomain> eaLuaDomain::Create(const std::string& domain, std::shared_ptr<eaLuaDomain> owner)

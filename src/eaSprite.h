@@ -227,6 +227,7 @@ private:
 
 protected:
 	double alpha = 1;
+	int zOrder = 0;
 
 public:
 
@@ -237,6 +238,11 @@ protected:
 	eaRenderRect GetRenderRect();
 
 public:
+
+	int GetZOrder() const
+	{
+		return zOrder;
+	}
 
 	/*
 	…Ë÷√ Ù–‘

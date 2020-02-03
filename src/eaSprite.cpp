@@ -43,11 +43,22 @@ eaSprite::eaSprite()
 	(
 		[&]()->eaPropertyValue
 		{
-			return enabled;
+			return eaPropertyValue(std::make_shared<bool>(enabled));
 		},
 		[&](eaPropertyValue value)
 		{
 			enabled = value.ToBoolean();
+		}
+	);
+	propertyBinder["zOrder"] = eaPropertyBinder
+	(
+		[&]()->eaPropertyValue
+		{
+			return zOrder;
+		},
+		[&](eaPropertyValue value)
+		{
+			zOrder = value;
 		}
 	);
 	propertyBinder["size"] = eaPropertyBinder
@@ -137,6 +148,7 @@ eaSprite::eaSprite()
 			anchor.minY = value[2];
 			anchor.maxX = value[3];
 			anchor.maxY = value[4];
+			shared_from_this()->OnResize();
 		}
 	);
 	propertyBinder["pivot"] = eaPropertyBinder

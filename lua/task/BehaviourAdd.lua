@@ -2,8 +2,8 @@ local p = {}
 
 function p.start(args)
 
-	if args.name == nil then
-		logError("无法创建行为，未指定name")
+	if args.sprite == nil then
+		logError("无法创建行为，未指定sprite")
 		return
 	end
 
@@ -17,7 +17,7 @@ function p.start(args)
 		return
 	end
 
-	local sprite = scene[args.name]
+	local sprite = scene[args.sprite]
 	if sprite == nil then
 		logError("无法创建行为，未找到精灵对象")
 		return
@@ -28,9 +28,9 @@ function p.start(args)
 		return
 	end
 
-	local result = Sprite.addBehaviour(args.name, args.behaviour, args.type, args)
+	local result = Sprite.addBehaviour(args.sprite, args.behaviour, args.type, args)
 	for k,v in pairs(args) do
-		if k ~= "name" and k ~= "behaviour" and k ~= "type" then
+		if k ~= "sprite" and k ~= "behaviour" and k ~= "type" then
 			result[k] = v
 		end
 	end

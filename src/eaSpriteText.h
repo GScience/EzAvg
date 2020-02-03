@@ -29,8 +29,8 @@ class eaSpriteText : public eaSprite
 	int shadowOffset = 1;
 
 	eaTextLayout textLayout = TextLayoutLeft;
-	eaTextColor fontColor = eaTextColor{ 1,0.1,0.1,1 };
-	eaTextColor shadowColor = eaTextColor{ 0.8,0.1,0.1,0.5 };
+	eaTextColor fontColor = eaTextColor{ 0.2,0.2,0.2,1 };
+	eaTextColor shadowColor = eaTextColor{ 0.1,0.1,0.1,0.5 };
 
 	SDL_Surface* textSurface = nullptr;
 	SDL_Texture* textTexture = nullptr;

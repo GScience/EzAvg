@@ -91,10 +91,10 @@ void eaApplication::Run(std::vector<std::string> args)
 static void DebugHook(lua_State* L, lua_Debug* ar)
 {
 	lua_getinfo(L, "Sln", ar);
-	if (ar->name != nullptr)
+	/*if (ar->name != nullptr)
 		cout << ar->short_src << ":" << ar->currentline << " " << ar->name << endl;
 	else
-		cout << ar->short_src << ":" << ar->currentline << endl;
+		cout << ar->short_src << ":" << ar->currentline << endl;*/
 }
 
 void eaApplication::InitDebuger()

@@ -17,4 +17,15 @@ end
 function p.start()
 end
 
+function p.isFinished()
+
+	if p.speed > 0 then
+		return sprite.alpha >= 1
+	elseif p.speed < 0 then
+		return sprite.alpha <= 0
+	else
+		return true
+	end
+end
+
 return p
