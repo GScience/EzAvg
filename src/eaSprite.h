@@ -206,6 +206,8 @@ protected:
 	eaSpriteSize size;
 	eaSpritePos pos;
 
+	double alpha = 1;
+
 public:
 	virtual ~eaSprite() = default;
 

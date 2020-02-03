@@ -144,6 +144,7 @@ void eaSpriteText::Draw(SDL_Renderer* renderer)
 	if (textTexture != nullptr)
 	{
 		auto rect = SDL_Rect{ pos.x,pos.y,size.width,size.height };
+		SDL_SetTextureAlphaMod(textTexture, (uint8_t)(alpha * 255));
 		SDL_RenderCopy(renderer, textTexture, nullptr, &rect);
 	}
 }

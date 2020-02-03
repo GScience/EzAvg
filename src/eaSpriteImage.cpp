@@ -37,15 +37,4 @@ eaSpriteImage::eaSpriteImage()
 				image = eaResources::Load<eaTexture>(name);
 		}
 	);
-
-	propertyBinder["alpha"] = eaPropertyBinder(
-		[&]()->eaPropertyValue
-		{
-			return alpha;
-		},
-		[&](eaPropertyValue obj)
-		{
-			alpha = obj.ToNumber();
-		}
-	);
 }

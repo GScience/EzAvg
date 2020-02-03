@@ -7,8 +7,6 @@ class eaSpriteImage : public eaSprite
 {
 	std::shared_ptr<eaTexture> image;
 
-	double alpha = 1;
-
 public:
 	eaSpriteImage();
 

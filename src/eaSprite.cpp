@@ -75,6 +75,16 @@ eaSprite::eaSprite()
 			OnMove();
 		}
 	);
+	propertyBinder["alpha"] = eaPropertyBinder(
+		[&]()->eaPropertyValue
+		{
+			return alpha;
+		},
+		[&](eaPropertyValue obj)
+		{
+			alpha = obj.ToNumber();
+		}
+		);
 }
 
 static eaPropertyValue ToPropertyValue(lua_State* L, int index);
