@@ -15,7 +15,6 @@ function p.update()
 end
 
 function p.start()
-	print(p.speed)
 end
 
 return p

@@ -12,21 +12,8 @@
 :SpriteCreate	name="loadingStage" type=text
 :SpriteSet		name="loadingStage" anchor=[0,0.7,1,0.7]
 :SpriteSet		name="loadingStage" rect=[-50,50,0,50]
-:SpriteSet		name="loadingStage" text="测"
-:wait time=0.1
-:SpriteSet		name="loadingStage" text="测试"
-:wait time=0.1
-:SpriteSet		name="loadingStage" text="测试一"
-:wait time=0.1
-:SpriteSet		name="loadingStage" text="测试一下"
-:wait time=0.1
-:SpriteSet		name="loadingStage" text="测试一下"
-:wait time=0.3
-:SpriteSet		name="loadingStage" text="能不能正常加载文字"
-:wait time=0.1
-:SpriteSet		name="loadingStage" size=[200,100] pos=[{scene.loadingStage.pos[1] + 20},{scene.loadingStage.pos[2] - 20}]
-:wait time=0.1
-:SpriteSet		name="loadingStage" size=[120,100] pos=[{scene.loadingStage.pos[1] - 20},{scene.loadingStage.pos[2] + 20}]
+:BehaviourAdd	name="loadingStage" behaviour="textPrinter" type="AnimTextPrinter" text="能不能正常加载文字"
+:wait time=5
 
 :BehaviourRemove	name="background" behaviour="fader"
 :Wait time=3
