@@ -10,7 +10,6 @@ using namespace std;
 eaSpriteText::eaSpriteText()
 {
 	SetFont("Font.ttf", 20);
-
 	propertyBinder["text"] = eaPropertyBinder(
 		[&]()->eaPropertyValue
 		{
@@ -19,6 +18,64 @@ eaSpriteText::eaSpriteText()
 		[&](eaPropertyValue value)
 		{
 			SetText(value.ToString());
+		}
+	);
+	propertyBinder["color"] = eaPropertyBinder(
+		[&]()->eaPropertyValue
+		{
+			return { fontColor.r,fontColor.g,fontColor.b,fontColor.a };
+		},
+		[&](eaPropertyValue value)
+		{
+			auto table = value.ToTable();
+
+			fontColor.r = table[1];
+			fontColor.g = table[2];
+			fontColor.b = table[3];
+			auto alpha = table.find(4);
+			if (alpha != table.end())
+				fontColor.a = alpha->second;
+			else
+				fontColor.a = 1;
+		}
+	);
+	propertyBinder["fontName"] = eaPropertyBinder(
+		[&]()->eaPropertyValue
+		{
+			return font->GetFontName();
+		},
+		[&](eaPropertyValue value)
+		{
+			SetFont(value, font->GetFontSize());
+		}
+	);
+	propertyBinder["fontSize"] = eaPropertyBinder(
+		[&]()->eaPropertyValue
+		{
+			return font->GetFontSize();
+		},
+		[&](eaPropertyValue value)
+		{
+			SetFont(font->GetFontName(), value);
+		}
+	);
+	propertyBinder["shadowColor"] = eaPropertyBinder(
+		[&]()->eaPropertyValue
+		{
+			return { shadowColor.r,shadowColor.g,shadowColor.b,shadowColor.a };
+		},
+		[&](eaPropertyValue value)
+		{
+			auto table = value.ToTable();
+
+			shadowColor.r = table[1];
+			shadowColor.g = table[2];
+			shadowColor.b = table[3];
+			auto alpha = table.find(4);
+			if (alpha != table.end())
+				shadowColor.a = alpha->second;
+			else
+				fontColor.a = 1;
 		}
 	);
 	propertyBinder["layout"] = eaPropertyBinder(
@@ -74,6 +131,7 @@ void eaSpriteText::Clear()
 			SDL_FreeSurface(textSurface);
 
 		textSurface = SDL_CreateRGBSurface(0, renderRect.width, renderRect.height, 32, 0xff, 0xff00, 0xff0000, 0xff000000);
+		SDL_FillRect(textSurface, nullptr, SDL_MapRGBA(textSurface->format, 0, 0, 0, 0));
 		SDL_SetSurfaceBlendMode(textSurface, SDL_BLENDMODE_NONE);
 	}
 
@@ -156,22 +214,38 @@ void eaSpriteText::SetText(std::string str)
 		auto wordSize = font->GetStringSize(c);
 
 		// 下一行
-		if (cursorX + wordSize.width > renderRect.width)
+		if (cursorX + wordSize.width + shadowOffset > renderRect.width)
 		{
 			cursorX = 0;
 			cursorY += font->GetLineHeight();
 		}
 
-		SDL_Color color = { 255,0,0 };
+		SDL_Color color =
+		{
+			(uint8_t)(fontColor.r * 255),
+			(uint8_t)(fontColor.g * 255),
+			(uint8_t)(fontColor.b * 255),
+			(uint8_t)(fontColor.a * 255)
+		};
+		SDL_Color shadow =
+		{
+			(uint8_t)(shadowColor.r * 255),
+			(uint8_t)(shadowColor.g * 255),
+			(uint8_t)(shadowColor.b * 255),
+			(uint8_t)(shadowColor.a * 255)
+		};
 		auto charSurface = TTF_RenderUTF8_Blended(*font, c.c_str(), color);
-		SDL_SetSurfaceBlendMode(charSurface, SDL_BLENDMODE_NONE);
+		auto shadowSurface = TTF_RenderUTF8_Blended(*font, c.c_str(), shadow);
+		SDL_SetSurfaceBlendMode(charSurface, SDL_BLENDMODE_BLEND);
+		SDL_SetSurfaceBlendMode(shadowSurface, SDL_BLENDMODE_NONE);
 
 		switch (textLayout)
 		{
 			case TextLayoutLeft:
 			{
 				SDL_Rect rect = SDL_Rect{ cursorX , cursorY, wordSize.width , wordSize.height };
-
+				SDL_Rect shadowRect = SDL_Rect{ rect.x + shadowOffset , rect.y + shadowOffset,rect.w , rect.h };
+				SDL_BlitSurface(shadowSurface, nullptr, textSurface, &shadowRect);
 				SDL_BlitSurface(charSurface, nullptr, textSurface, &rect);
 				break;
 			}
@@ -185,12 +259,17 @@ void eaSpriteText::SetText(std::string str)
 
 				// 渲染文字
 				SDL_Rect rect = SDL_Rect
-				{ 
+				{
 					renderRect.width / 2 + cursorX / 2 - wordSize.width / 2,
-					cursorY, 
-					wordSize.width , 
-					wordSize.height 
+					cursorY,
+					wordSize.width ,
+					wordSize.height
 				};
+
+				SDL_Rect shadowRect = SDL_Rect{ rect.x + shadowOffset , rect.y + shadowOffset,rect.w , rect.h };
+				SDL_Rect clearRect = SDL_Rect{ rect.x,rect.y,rect.w + shadowOffset,rect.h + shadowOffset };
+				SDL_FillRect(textSurface, &clearRect, SDL_MapRGBA(textSurface->format, 0, 0, 0, 0));
+				SDL_BlitSurface(shadowSurface, nullptr, textSurface, &shadowRect);
 				SDL_BlitSurface(charSurface, nullptr, textSurface, &rect);
 				break;
 			}
@@ -210,11 +289,16 @@ void eaSpriteText::SetText(std::string str)
 					wordSize.width ,
 					wordSize.height
 				};
+				SDL_Rect shadowRect = SDL_Rect{ rect.x + shadowOffset , rect.y + shadowOffset,rect.w , rect.h };
+				SDL_Rect clearRect = SDL_Rect{ rect.x,rect.y,rect.w + shadowOffset,rect.h + shadowOffset };
+				SDL_FillRect(textSurface, &clearRect, SDL_MapRGBA(textSurface->format, 0, 0, 0, 0));
+				SDL_BlitSurface(shadowSurface, nullptr, textSurface, &shadowRect);
 				SDL_BlitSurface(charSurface, nullptr, textSurface, &rect);
 				break;
 			}
 		}
 		SDL_FreeSurface(charSurface);
+		SDL_FreeSurface(shadowSurface);
 		cursorX += wordSize.width;
 	}
 

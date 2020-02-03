@@ -22,8 +22,6 @@ struct eaPropertyValue
 	size_t typeHash;
 	std::shared_ptr<void> ptr;
 
-	eaPropertyValue(bool value)
-		: eaPropertyValue(std::make_shared<bool>(value)) {}
 	eaPropertyValue(std::string value)
 		: eaPropertyValue(std::make_shared<std::string>(value)) {}
 	eaPropertyValue(double value)

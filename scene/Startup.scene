@@ -9,7 +9,8 @@
 	end
 }
 
-:SpriteCreate	name="loadingStage" type=text anchor=[0,0.7,1,0.7] layout=center
+:SpriteCreate	name="loadingStage" type=text anchor=[0,0.7,1,0.7] layout=center fontSize=24
+:SpriteSet		name="loadingStage" color=[0,0,1] shadowColor=[0,0,0.8,0.5]
 :SpriteSet		name="loadingStage" rect=[-50,150,-50,150]
 :BehaviourAdd	name="loadingStage" behaviour="textPrinter" type="AnimTextPrinter" text="能不能正常加载文字，文字布局测试，支持在运行脚本的同时更改文本布局" speed=10
 :wait time=0.5
@@ -21,6 +22,23 @@
 :wait time=0.5
 :SpriteSet		name="loadingStage" anchor=[0,0.7,1,0.7] layout=center
 :wait time=0.5
+
+{
+	if Input.getButtonDown(0) or Input.getButton(1) then
+		print(scene.loadingStage.layout)
+		if scene.loadingStage.layout == "center" then
+			print("center")
+			scene.loadingStage.layout = "left"
+		elseif scene.loadingStage.layout == "left" then
+			print("left")
+			scene.loadingStage.layout = "right"
+		elseif scene.loadingStage.layout == "right" then
+			print("right")
+			scene.loadingStage.layout = "center"
+		end
+	end
+	Script.jump(Script.getNextPos() - 1)
+}
 
 :BehaviourRemove	name="background" behaviour="fader"
 :Wait time=3

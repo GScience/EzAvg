@@ -12,16 +12,24 @@ struct eaStringSize
 class eaFont
 {
 	TTF_Font* font;
+
+	std::string fontName;
 	int fontSize;
 
 public:
-	eaFont(const std::string& fontName);
-	~eaFont();
+
+	const std::string& GetFontName()
+	{
+		return fontName;
+	}
 
 	int GetFontSize()
 	{
 		return fontSize;
 	}
+
+	eaFont(const std::string& fontType);
+	~eaFont();
 
 	int GetLineHeight();
 	eaStringSize GetStringSize(const std::string str);

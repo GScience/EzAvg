@@ -3,12 +3,11 @@
 
 using namespace std;
 
-eaFont::eaFont(const string& fontName)
+eaFont::eaFont(const string& fontType)
 {
-	string fileName;
 	string fontSizeStr;
 	bool hasReadToArg = false;
-	for (auto c : fontName)
+	for (auto c : fontType)
 	{
 		if (c == ':' && !hasReadToArg)
 		{
@@ -18,10 +17,10 @@ eaFont::eaFont(const string& fontName)
 		if (hasReadToArg)
 			fontSizeStr += c;
 		else
-			fileName += c;
+			fontName += c;
 	}
 	fontSize = stoi(fontSizeStr);
-	font = TTF_OpenFont(("font/" + fileName).c_str(), fontSize);
+	font = TTF_OpenFont(("font/" + fontName).c_str(), fontSize);
 }
 
 eaFont::~eaFont()

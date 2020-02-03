@@ -147,6 +147,8 @@ eaScriptObject eaScriptReader::ReadTaskBlock()
 	
 	eaScriptTaskBlock::argList args;
 
+	bool hasGetFullArgName = false;
+
 	while (Peek() != '\n' && !Eof())
 	{
 		c = Get();
@@ -155,7 +157,7 @@ eaScriptObject eaScriptReader::ReadTaskBlock()
 		if (c == ' ' || c == '\t')
 		{
 			if (argName != "")
-				AddError(line, pos, "参数\"" + argName + "\"必须指定一个值");
+				hasGetFullArgName = true;
 			continue;
 		}
 
@@ -171,6 +173,7 @@ eaScriptObject eaScriptReader::ReadTaskBlock()
 			}
 			args.emplace_back(eaScriptTaskBlock::arg{ argName , obj });
 			argName = "";
+			hasGetFullArgName = false;
 
 			continue;
 		}
@@ -182,11 +185,22 @@ eaScriptObject eaScriptReader::ReadTaskBlock()
 			AddError(line, pos, "检测到非法字符，参数\"" + argName + "\"的名称中包含非法字符");
 			SkipToNext();
 			argName = "";
+			hasGetFullArgName = false;
 			continue;
+		}
+
+		if (hasGetFullArgName)
+		{
+			AddError(line, pos, "参数\"" + argName + "\"必须指定一个值");
+			argName = "";
+			hasGetFullArgName = false;
 		}
 
 		argName += c;
 	}
+
+	if (argName != "")
+		AddError(line, pos, "意外的访问到了行结尾，参数\"" + argName + "\"必须指定一个值");
 
 	return eaScriptObject::Create<eaScriptTaskBlock>(task, args);
 }

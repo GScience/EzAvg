@@ -2,7 +2,7 @@ local p = {}
 
 p.enabled = true
 p.speed = 1
-p.deltaTime = 0
+p._deltaTime = 0
 p.currentPos = 1;
 p.text = ""
 
@@ -12,10 +12,10 @@ function p.update()
 		return
 	end
 
-	p.deltaTime = p.deltaTime + Time.deltaTime()
+	p._deltaTime = p._deltaTime + Time.deltaTime()
 
-	if p.deltaTime * p.speed > 1 then
-		p.deltaTime = 0
+	if p._deltaTime * p.speed > 1 then
+		p._deltaTime = p._deltaTime - 1 / p.speed
 		local n = string.byte(p.text, p.currentPos)
 		if n <= 0x7F then -- 1 byte
 			sprite.text = sprite.text .. string.sub(p.text, p.currentPos, p.currentPos)

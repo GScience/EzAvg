@@ -10,15 +10,27 @@ enum eaTextLayout
 	TextLayoutLeft, TextLayoutCenter, TextLayoutRight
 };
 
+struct eaTextColor
+{
+	double r = 0.2;
+	double g = 0.2;
+	double b = 0.2;
+	double a = 1;
+};
+
 class eaSpriteText : public eaSprite
 {
 	std::string text;
 	std::shared_ptr<eaFont> font;
-
+	
 	int cursorX = 0;
 	int cursorY = 0;
 
+	int shadowOffset = 1;
+
 	eaTextLayout textLayout = TextLayoutLeft;
+	eaTextColor fontColor = eaTextColor{ 1,0.1,0.1,1 };
+	eaTextColor shadowColor = eaTextColor{ 0.8,0.1,0.1,0.5 };
 
 	SDL_Surface* textSurface = nullptr;
 	SDL_Texture* textTexture = nullptr;
