@@ -5,13 +5,13 @@
 #include "eaLuaDomain.h"
 #include "eaLua.h"
 
-#define L reinterpret_cast<lua_State*>(state)
-
 using namespace std;
+
+std::string currentDebugInfo = "未启动调试器";
 
 eaLua::eaLua()
 {
-	state = luaL_newstate();
+	L = luaL_newstate();
 	luaL_openlibs(L);
 
 	LoadFunction();
@@ -47,4 +47,24 @@ void eaLua::LoadFunction()
 		lua_pushcfunction(L, *func.ptr);
 		lua_settable(L, -3);
 	}
+}
+
+static void DebugHook(lua_State* L, lua_Debug* ar)
+{
+	lua_getinfo(L, "Sln", ar);
+	if (ar->name != nullptr)
+		currentDebugInfo = ar->short_src + ":"s + to_string(ar->currentline) + " " + ar->name;
+	else
+		currentDebugInfo = ar->short_src + ":"s + to_string(ar->currentline);
+}
+
+
+void eaLua::StartDebuger()
+{
+	lua_sethook(L, DebugHook, LUA_MASKLINE, 0);
+}
+
+std::string& eaLua::GetCurrentInfo() const
+{
+	return currentDebugInfo;
 }

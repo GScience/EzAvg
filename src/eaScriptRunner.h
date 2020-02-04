@@ -19,7 +19,7 @@ public:
 
 	eaScriptTask(const eaScriptTask&) = delete;
 
-	bool IsEnabled();
+	bool IsFinished();
 	void Update();
 	void Start(eaScriptTaskBlock::argList args);
 

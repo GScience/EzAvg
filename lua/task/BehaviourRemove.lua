@@ -24,7 +24,7 @@ function p.start(args)
 		return
 	end
 
-	result.enabled = false
+	result.destroyed = true
 end
 
 return p

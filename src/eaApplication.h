@@ -31,7 +31,6 @@ public:
 private:
 	void InitWindow();
 	void InitApplication();
-	void InitDebuger();
 	void Start();
 	void Update();
 

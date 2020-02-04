@@ -13,7 +13,7 @@ function p.start(args)
 		return
 	end
 
-	sprite.enabled = false
+	sprite.destroyed = true
 end
 
 return p

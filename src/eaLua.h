@@ -11,11 +11,14 @@ struct lua_State;
 
 class eaLua
 {
-	lua_State* state;
+	lua_State* L;
 	
 public:
 	eaLua();
 	eaLua(const eaLua&) = delete;
+
+	void StartDebuger();
+	std::string& GetCurrentInfo() const;
 
 private:
 	void LoadFunction();
@@ -23,7 +26,7 @@ private:
 public:
 	operator lua_State* () const
 	{
-		return state;
+		return L;
 	}
 	
 	void Update();

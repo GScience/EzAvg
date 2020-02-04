@@ -74,7 +74,10 @@ void eaScene::Draw(SDL_Renderer* renderer)
 	});
 
 	for (auto& sprite : sprites)
-		sprite->Draw(renderer);
+	{
+		if (sprite->enabled && !sprite->destroyed)
+			sprite->Draw(renderer);
+	}
 }
 
 void eaScene::Update()
@@ -84,13 +87,14 @@ void eaScene::Update()
 
 	for (auto sprite = sprites.begin(); sprite != sprites.end();)
 	{
-		if (!(*sprite)->enabled)
-			sprite = sprites.erase(sprite);
-		else
+		if ((*sprite)->destroyed)
 		{
-			(*sprite)->Update();
-			++sprite;
+			sprite = sprites.erase(sprite);
+			continue;
 		}
+		else if ((*sprite)->enabled)
+			(*sprite)->Update();
+		++sprite;
 	}
 }
 

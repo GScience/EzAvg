@@ -1,5 +1,4 @@
 #include <lua.hpp>
-#include <iostream>
 #include <SDL.h>
 #include "eaSprite.h"
 #include "eaApplication.h"
@@ -10,13 +9,14 @@ void eaSprite::Update()
 {
 	for (auto behaviour = behaviours.begin(); behaviour != behaviours.end();)
 	{
-		if (!(*behaviour)->IsEnabled())
-			behaviour = behaviours.erase(behaviour);
-		else
+		if ((*behaviour)->IsDestroyed())
 		{
-			(*behaviour)->Update();
-			++behaviour;
+			behaviour = behaviours.erase(behaviour);
+			continue;
 		}
+		else if ((*behaviour)->IsEnabled())
+			(*behaviour)->Update();
+		++behaviour;
 	}
 }
 
@@ -48,6 +48,17 @@ eaSprite::eaSprite()
 		[&](eaPropertyValue value)
 		{
 			enabled = value.ToBoolean();
+		}
+	);
+	propertyBinder["destroyed"] = eaPropertyBinder
+	(
+		[&]()->eaPropertyValue
+		{
+			return eaPropertyValue(std::make_shared<bool>(destroyed));
+		},
+		[&](eaPropertyValue value)
+		{
+			destroyed = value.ToBoolean();
 		}
 	);
 	propertyBinder["zOrder"] = eaPropertyBinder
@@ -380,7 +391,7 @@ void eaSpriteBehaviour::Update()
 
 	if (lua_pcall(L, 0, 0, 0) != LUA_OK)
 	{
-		cout << "运行脚本" << type << "时出现异常" << endl;
+		eaApplication::GetLogger().Log("LuaError", "启动行为"s + type + "时出现异常。位置：" + L.GetCurrentInfo());
 		throw eaLuaError();
 	}
 }
@@ -395,7 +406,7 @@ void eaSpriteBehaviour::Start()
 
 	if (lua_pcall(L, 0, 0, 0) != LUA_OK)
 	{
-		cout << "启动脚本" << type << "时出现异常" << endl;
+		eaApplication::GetLogger().Log("LuaError", "刷新行为"s + type + "时出现异常。位置：" + L.GetCurrentInfo());
 		throw eaLuaError();
 	}
 }
@@ -414,8 +425,23 @@ bool eaSpriteBehaviour::IsEnabled()
 	bool isEnable = lua_toboolean(L, -1);
 	lua_pop(L, 1);
 
-	if (!isEnable)
-		Dispose();
+	return isEnable;
+}
+
+
+bool eaSpriteBehaviour::IsDestroyed()
+{
+	if (objRef == LUA_REFNIL)
+		return false;
+
+	auto & L = eaApplication::GetLua();
+
+	// behaviour.enabled
+	lua_rawgeti(L, LUA_REGISTRYINDEX, objRef);
+	lua_pushstring(L, "destroyed");
+	lua_gettable(L, -2);
+	bool isEnable = lua_toboolean(L, -1);
+	lua_pop(L, 1);
 
 	return isEnable;
 }

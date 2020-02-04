@@ -62,7 +62,7 @@ void eaApplication::Run(std::vector<std::string> args)
 	InitWindow();
 	InitApplication();
 	if (debugMode)
-		InitDebuger();
+		lua.StartDebuger();
 	Start();
 
 	bool shouldWindowClose = false;
@@ -85,18 +85,4 @@ void eaApplication::Run(std::vector<std::string> args)
 	}
 
 	SDL_Quit();
-}
-
-static void DebugHook(lua_State* L, lua_Debug* ar)
-{
-	lua_getinfo(L, "Sln", ar);
-	/*if (ar->name != nullptr)
-		cout << ar->short_src << ":" << ar->currentline << " " << ar->name << endl;
-	else
-		cout << ar->short_src << ":" << ar->currentline << endl;*/
-}
-
-void eaApplication::InitDebuger()
-{
-	lua_sethook(lua, DebugHook, LUA_MASKLINE, 0);
 }

@@ -23,5 +23,5 @@ eaLogger::eaLogger()
 
 void eaLogger::Log(string category, string message)
 {
-	cout << "[" << category << "]" << message;
+	cout << "[" << category << "]" << message << endl;
 }

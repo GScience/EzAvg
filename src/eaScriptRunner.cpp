@@ -11,7 +11,7 @@ void eaScriptRunner::Update()
 	if (script == nullptr)
 		return;
 
-	if (currentTask != nullptr && currentTask->IsEnabled())
+	if (currentTask != nullptr && !currentTask->IsFinished())
 	{
 		currentTask->Update();
 		return;
@@ -59,8 +59,7 @@ void eaScriptRunner::Run(std::shared_ptr<eaScript> script)
 
 void eaScriptRunner::Save()
 {
-	if (currentTask->IsEnabled())
-		currentTask->Save();
+
 }
 
 void eaScriptRunner::Load()
@@ -73,7 +72,7 @@ eaScriptTask::eaScriptTask(eaScriptRunner* runner, string name)
 {
 }
 
-bool eaScriptTask::IsEnabled()
+bool eaScriptTask::IsFinished()
 {
 	if (objRef == LUA_REFNIL)
 		return false;
@@ -82,15 +81,17 @@ bool eaScriptTask::IsEnabled()
 
 	// task.enabled
 	lua_rawgeti(L, LUA_REGISTRYINDEX, objRef);
-	lua_pushstring(L, "enabled");
+	lua_pushstring(L, "finished");
 	lua_gettable(L, -2);
-	bool isEnable = lua_toboolean(L, -1);
+
+	bool isFinished;
+	if (lua_isboolean(L, -1))
+		isFinished = lua_toboolean(L, -1);
+	else
+		isFinished = true;
 	lua_pop(L, 1);
 
-	if (!isEnable)
-		Dispose();
-
-	return isEnable;
+	return isFinished;
 }
 
 void eaScriptTask::Update()
@@ -106,7 +107,7 @@ void eaScriptTask::Update()
 
 	if (lua_pcall(L, 0, 0, 0) != LUA_OK)
 	{
-		eaApplication::GetLogger().Log("LuaError", "刷新任务"s + type + "时出现异常");
+		eaApplication::GetLogger().Log("LuaError", "刷新任务"s + type + "时出现异常。位置：" + L.GetCurrentInfo());
 		throw eaLuaError();
 	}
 }
@@ -175,7 +176,7 @@ void eaScriptTask::Start(eaScriptTaskBlock::argList args)
 
 	if (lua_pcall(L, 1, 0, 0) != LUA_OK)
 	{
-		eaApplication::GetLogger().Log("LuaError", "启动任务"s + type + "时出现异常");
+		eaApplication::GetLogger().Log("LuaError", "启动任务"s + type + "时出现异常。位置：" + L.GetCurrentInfo());
 		throw eaLuaError();
 	}
 }

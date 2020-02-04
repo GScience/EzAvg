@@ -159,6 +159,7 @@ public:
 	void Start();
 
 	bool IsEnabled();
+	bool IsDestroyed();
 };
 
 struct eaPropertyBinder
@@ -232,6 +233,8 @@ protected:
 public:
 
 	bool enabled = true;
+	bool destroyed = false;
+
 	std::string name;
 
 protected:
