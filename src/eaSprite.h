@@ -13,7 +13,7 @@ class eaSprite;
 class eaScene;
 
 /*
-ÊôĞÔ
+å±æ€§
 */
 struct eaPropertyValue
 {
@@ -146,7 +146,7 @@ struct eaPropertyValue
 };
 
 /*
-¾«ÁéµÄĞĞÎª£¬ÓÉLua¿ØÖÆ
+ç²¾çµçš„è¡Œä¸ºï¼Œç”±Luaæ§åˆ¶
 */
 class eaSpriteBehaviour : public eaLuaBridge
 {
@@ -204,7 +204,7 @@ struct eaSpriteRect
 };
 
 /*
-³¡¾°ÖĞËùÓĞÔªËØ¾ùÎª¾«Áé
+åœºæ™¯ä¸­æ‰€æœ‰å…ƒç´ å‡ä¸ºç²¾çµ
 */
 class eaSprite : public eaSaveable, public std::enable_shared_from_this<eaSprite>
 {
@@ -245,7 +245,7 @@ public:
 	}
 
 	/*
-	ÉèÖÃÊôĞÔ
+	è®¾ç½®å±æ€§
 	*/
 	virtual void SetProperty(std::string name, eaPropertyValue obj)
 	{
@@ -260,7 +260,7 @@ public:
 	}
 
 	/*
-	»ñÈ¡ÊôĞÔ
+	è·å–å±æ€§
 	*/
 	virtual eaPropertyValue GetProperty(std::string name) 
 	{
@@ -275,12 +275,12 @@ public:
 	}
 
 	/*
-	»æÖÆ
+	ç»˜åˆ¶
 	*/
 	virtual void Draw(SDL_Renderer* renderer) = 0;
 
 	/*
-	Ë¢ĞÂ
+	åˆ·æ–°
 	*/
 	virtual void Update();
 
@@ -288,17 +288,17 @@ public:
 	virtual void OnResize() {}
 
 	/*
-	Ìí¼ÓĞĞÎª
+	æ·»åŠ è¡Œä¸º
 	*/
 	std::shared_ptr<eaSpriteBehaviour> AddBehaviour(std::string name, std::string type);
 
 	/*
-	»ñÈ¡ĞĞÎª
+	è·å–è¡Œä¸º
 	*/
 	std::shared_ptr<eaSpriteBehaviour> GetBehaviour(std::string name);
 
 	/*
-	»ñÈ¡Óò
+	è·å–åŸŸ
 	*/
 	std::shared_ptr<eaLuaDomain> GetDomain()
 	{
@@ -317,7 +317,7 @@ public:
 	}
 private:
 	/*
-	³õÊ¼»¯Óò
+	åˆå§‹åŒ–åŸŸ
 	*/
 	void CreateDomain();
 };

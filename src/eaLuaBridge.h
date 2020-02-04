@@ -6,7 +6,7 @@
 class eaLuaDomain;
 
 /*
-与Lua对象绑定的cpp类型
+涓嶭ua瀵硅薄缁戝畾鐨刢pp绫诲瀷
 */
 class eaLuaBridge : public eaSaveable
 {

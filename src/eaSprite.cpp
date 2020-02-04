@@ -251,7 +251,7 @@ static eaPropertyValue ToPropertyValue(lua_State* L, int index)
 }
 
 /*
-»ñÈ¡ÊôĞÔ
+è·å–å±æ€§
 */
 static int SpritePropertySet(lua_State* L)
 {
@@ -291,14 +291,14 @@ static void PushPropertyValue(lua_State* L, eaPropertyValue value)
 }
 
 /*
-ÉèÖÃÊôĞÔ
+è®¾ç½®å±æ€§
 */
 static int SpritePropertyGet(lua_State* L)
 {
 	auto sprite = (eaSprite*)lua_tointeger(L, lua_upvalueindex(1));
 	string name = lua_tostring(L, 2);
 
-	// ³¢ÊÔ»ñÈ¡¾«ÁéÊôĞÔ
+	// å°è¯•è·å–ç²¾çµå±æ€§
 	auto value = sprite->GetProperty(name);
 
 	if (value != nullptr)
@@ -308,7 +308,7 @@ static int SpritePropertyGet(lua_State* L)
 		return 1;
 	}
 
-	//³¢ÊÔ»ñÈ¡ĞĞÎª½Å±¾
+	//å°è¯•è·å–è¡Œä¸ºè„šæœ¬
 	auto behaviour = sprite->GetBehaviour(name);
 	
 	if (behaviour != nullptr && behaviour->IsEnabled())
@@ -327,12 +327,12 @@ void eaSprite::CreateDomain()
 
 	domain = eaLuaDomain::Create("Sprite", scene->GetDomain());
 
-	// ´´½¨sprite¶ÔÏó£¬¿ØÖÆ¾«ÁéÊôĞÔµÈ
+	// åˆ›å»ºspriteå¯¹è±¡ï¼Œæ§åˆ¶ç²¾çµå±æ€§ç­‰
 	lua_rawgeti(L, LUA_REGISTRYINDEX, domain->GetEnvTableRef());
 	lua_pushstring(L, "sprite");
 	lua_createtable(L, 0, 0);
 
-	// ´´½¨Ôª±í
+	// åˆ›å»ºå…ƒè¡¨
 	lua_createtable(L, 0, 0);
 	lua_pushstring(L, "__index");
 	lua_pushinteger(L, (long long)this);
@@ -343,7 +343,7 @@ void eaSprite::CreateDomain()
 	lua_pushcclosure(L, SpritePropertySet, 1);
 	lua_settable(L, -3);
 	
-	// ÉèÖÃÔª±í
+	// è®¾ç½®å…ƒè¡¨
 	lua_setmetatable(L, -2);
 
 	// sprite.name = name
@@ -351,7 +351,7 @@ void eaSprite::CreateDomain()
 	lua_pushstring(L, name.c_str());
 	lua_settable(L, -3);
 
-	// °Ñsprite¶ÔÏó·ÅÈëÓò
+	// æŠŠspriteå¯¹è±¡æ”¾å…¥åŸŸ
 	lua_settable(L, -3);
 }
 
@@ -380,7 +380,7 @@ void eaSpriteBehaviour::Update()
 
 	if (lua_pcall(L, 0, 0, 0) != LUA_OK)
 	{
-		cout << "ÔËĞĞ½Å±¾" << type << "Ê±³öÏÖÒì³£" << endl;
+		cout << "è¿è¡Œè„šæœ¬" << type << "æ—¶å‡ºç°å¼‚å¸¸" << endl;
 		throw eaLuaError();
 	}
 }
@@ -395,7 +395,7 @@ void eaSpriteBehaviour::Start()
 
 	if (lua_pcall(L, 0, 0, 0) != LUA_OK)
 	{
-		cout << "Æô¶¯½Å±¾" << type << "Ê±³öÏÖÒì³£" << endl;
+		cout << "å¯åŠ¨è„šæœ¬" << type << "æ—¶å‡ºç°å¼‚å¸¸" << endl;
 		throw eaLuaError();
 	}
 }

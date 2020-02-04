@@ -1,5 +1,4 @@
 #include <lua.hpp>
-#include <iostream>
 #include "eaScriptRunner.h"
 #include "eaApplication.h"
 
@@ -35,7 +34,7 @@ void eaScriptRunner::Update()
 	else if (currentBlock.IsType<eaScriptTextBlock>())
 	{
 		auto block = currentBlock.Get<eaScriptTextBlock>();
-		cout << GetStr(block->text.GetRawStr()) << endl;
+		eaApplication::GetLogger().Log("Message", GetStr(block->text.GetRawStr()));
 		
 	}
 	else if (currentBlock.IsType<eaScriptLuaBlock>())
@@ -107,7 +106,7 @@ void eaScriptTask::Update()
 
 	if (lua_pcall(L, 0, 0, 0) != LUA_OK)
 	{
-		cout << "Ë¢ÐÂÈÎÎñ" << type << "Ê±³öÏÖÒì³£" << endl;
+		eaApplication::GetLogger().Log("LuaError", "åˆ·æ–°ä»»åŠ¡"s + type + "æ—¶å‡ºçŽ°å¼‚å¸¸");
 		throw eaLuaError();
 	}
 }
@@ -140,7 +139,7 @@ void easPushObject(eaLua& L, const eaScriptRunner* runner, eaScriptObject obj)
 	{
 		auto block = obj.Get<eaScriptLuaObject>();
 
-		// µ¥ÐÐÔÊÐíÊ¡ÂÔreturn
+		// å•è¡Œå…è®¸çœç•¥return
 		if (block->find('\r') == string::npos &&
 			block->find("return") == string::npos)
 			runner->GetDomain()->DoString("return " + *block);
@@ -176,7 +175,7 @@ void eaScriptTask::Start(eaScriptTaskBlock::argList args)
 
 	if (lua_pcall(L, 1, 0, 0) != LUA_OK)
 	{
-		cout << "Æô¶¯ÈÎÎñ" << type << "Ê±³öÏÖÒì³£" << endl;
+		eaApplication::GetLogger().Log("LuaError", "å¯åŠ¨ä»»åŠ¡"s + type + "æ—¶å‡ºçŽ°å¼‚å¸¸");
 		throw eaLuaError();
 	}
 }

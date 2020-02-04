@@ -1,8 +1,17 @@
+message("EzAvg building has started")
+
+if (MSVC)
+	message("MSVC detected. Force using UTF-8")
+	add_compile_options("/utf-8")
+endif()
+
+message("Find dependent packages")
+
 find_package(lua REQUIRED)
 find_package(SDL2 CONFIG REQUIRED)
 find_package(SDL2-image CONFIG REQUIRED)
 find_package(sdl2-ttf CONFIG REQUIRED)
-   
+
 include_directories(${LUA_INCLUDE_DIR})
 aux_source_directory(. DIR_EA_ENGINE_SRCS)
 add_executable(eaEngine ${DIR_EA_ENGINE_SRCS})
@@ -12,6 +21,15 @@ target_link_libraries(eaEngine PRIVATE ${LUA_LIBRARIES})
 
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/../bin)
 set_target_properties(eaEngine PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${EXECUTABLE_OUTPUT_PATH}")
+
+IF (CMAKE_BUILD_TYPE MATCHES "Release")
+	message("In Release mode. Hiding console window")
+	if (MSVC)
+		set_target_properties(eaEngine PROPERTIES LINK_FLAGS_RELEASE "/SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")
+	else()
+		message("Unknown compiler. Failed to hide console window")
+	endif()
+endif()
 
 add_custom_command(TARGET eaEngine POST_BUILD
 	COMMAND echo Copy lua file from ${PROJECT_SOURCE_DIR}/lua to ${EXECUTABLE_OUTPUT_PATH}

@@ -1,6 +1,5 @@
 #include <functional>
 #include <lua.hpp>
-#include <iostream>
 #include <SDL.h>
 #include "eaResources.h"
 #include "eaSpriteImage.h"
@@ -23,7 +22,7 @@ class eaGlobalFunction
 	{
 		string str = GetString(1);
 
- 		cout << str << endl;
+		eaApplication::GetLogger().Log("Info", str);
 
 		return 0;
 	}
@@ -35,8 +34,6 @@ class eaGlobalFunction
 	{
 		string err = GetString(1);
 
-		cout << "·¢ÏÖ´íÎó£º" << err << endl;
-
 		lua_Debug debug;
 		uint32_t level = 0;
 
@@ -44,12 +41,14 @@ class eaGlobalFunction
 		{
 			lua_getinfo(L, "Sln", &debug);
 			if (debug.name != nullptr)
-				cout << debug.short_src << ":" << debug.currentline << " " << debug.name << endl;
+				err += debug.short_src + ":"s + to_string(debug.currentline) + " " + debug.name;
 			else
-				cout << debug.short_src << ":" << debug.currentline << endl;
+				err += debug.short_src + ":"s + to_string(debug.currentline) + " ";
 			level++;
 		}
-		
+
+		eaApplication::GetLogger().Log("Error", "å‘ç°é”™è¯¯ï¼š "s + err);
+
 		return 0;
 	}
 };
@@ -104,7 +103,7 @@ class eaScriptFunction
 	{
 		auto scene = eaApplication::instance->CurrentScene();
 
-		// ±êÇ©
+		// æ ‡ç­¾
 		if (lua_type(L, 1) == LUA_TSTRING)
 		{
 			string labelName = lua_tostring(L, 1);
@@ -137,7 +136,7 @@ class eaScriptFunction
 class eaSpriteFunction
 {
 	/*
-	Îª¾«ÁéÌí¼ÓĞĞÎª½Å±¾
+	ä¸ºç²¾çµæ·»åŠ è¡Œä¸ºè„šæœ¬
 	table addBehaviour(string spriteName, string behaviour, string type)
 	*/
 	LuaFunc(addBehaviour, Sprite)
@@ -162,7 +161,7 @@ class eaSpriteFunction
 	}
 
 	/*
-	´´½¨¾«Áé
+	åˆ›å»ºç²¾çµ
 	table create(string spriteName, string spriteType)
 	*/
 	LuaFunc(create, Sprite)

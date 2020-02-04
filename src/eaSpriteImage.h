@@ -11,7 +11,7 @@ public:
 	eaSpriteImage();
 
 	/*
-	»æÖÆ
+	ç»˜åˆ¶
 	*/
 	void Draw(SDL_Renderer* renderer) override;
 

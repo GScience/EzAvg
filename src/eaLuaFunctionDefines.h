@@ -32,6 +32,6 @@ static int name(lua_State* L)\
 #define GetInteger(index) luaL_checkinteger(L, index)
 
 /*
-º¯Êý±í
+å‡½æ•°è¡¨
 */
 extern std::vector<eaLuaFunction> eaLuaFuncTable;

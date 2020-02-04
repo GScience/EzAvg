@@ -5,14 +5,14 @@
 #include <vector>
 
 /*
-¿é»ùÀà
+å—åŸºç±»
 */
 class eaScriptBlock
 {
 };
 
 /*
-¶ÔÏó
+å¯¹è±¡
 */
 class eaScriptObject
 {
@@ -60,12 +60,12 @@ public:
 };
 
 /*
-Êı×é¶ÔÏó
+æ•°ç»„å¯¹è±¡
 */
 using eaScriptArray = std::vector<eaScriptObject>;
 
 /*
-Lua¶ÔÏó
+Luaå¯¹è±¡
 */
 class eaScriptLuaObject : public std::string
 {
@@ -74,12 +74,12 @@ public:
 };
 
 /*
-Êı×Ö¶ÔÏó
+æ•°å­—å¯¹è±¡
 */
 using eaScriptNumber = double;
 
 /*
-Ã¶¾Ù¶ÔÏó
+æšä¸¾å¯¹è±¡
 */
 class eaScriptEnum : public std::string
 {
@@ -88,7 +88,7 @@ public:
 };
 
 /*
-×Ö·û´®¶ÔÏó
+å­—ç¬¦ä¸²å¯¹è±¡
 */
 struct eaScriptString
 {
@@ -107,7 +107,7 @@ public:
 };
 
 /*
-ÈÎÎñ¿é
+ä»»åŠ¡å—
 */
 class eaScriptTaskBlock : public eaScriptBlock
 {
@@ -128,7 +128,7 @@ public:
 };
 
 /*
-×¢ÊÍ¿é
+æ³¨é‡Šå—
 */
 class eaScriptNoteBlock : public eaScriptBlock
 {
@@ -141,7 +141,7 @@ public:
 };
 
 /*
-±êÇ©¿é
+æ ‡ç­¾å—
 */
 class eaScriptLabelBlock : public eaScriptBlock
 {
@@ -155,7 +155,7 @@ public:
 };
 
 /*
-Lua¿é
+Luaå—
 */
 class eaScriptLuaBlock : public eaScriptBlock
 {
@@ -168,7 +168,7 @@ public:
 };
 
 /*
-ÎÄ±¾¿é
+æ–‡æœ¬å—
 */
 class eaScriptTextBlock : public eaScriptBlock
 {
@@ -255,7 +255,7 @@ public:
 };
 
 /*
-½Å±¾
+è„šæœ¬
 */
 class eaScript : public eaScriptBlock
 {

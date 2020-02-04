@@ -1,7 +1,6 @@
 #include <lua.hpp>
 #include <string>
 #include <tuple>
-#include <iostream>
 #include "eaLuaFunctionDefines.h"
 #include "eaLuaDomain.h"
 #include "eaLua.h"

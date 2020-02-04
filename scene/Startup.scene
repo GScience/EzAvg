@@ -7,7 +7,6 @@
 
 # 版本号信息
 :SpriteCreate	sprite="version" type=text anchor=[0,1,1,1] rect=[-25,0,0,0] layout=center fontSize=15 alpha=0
-:SpriteSet		sprite="version"
 :SpriteSet		sprite="version" color=[0,0,0] text="Version beta 1.0.0"
 :BehaviourAdd	sprite="version" behaviour="fader" type="AnimFadeIn" speed=1
 

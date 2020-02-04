@@ -1,10 +1,9 @@
-#include <SDL.h>
-#include <iostream>
 #include "eaFont.h"
 #include "eaTexture.h"
 #include <algorithm>
 #include <string>
 #include <map>
+#include "eaApplication.h"
 #include "eaResources.h"
 #include "eaScript.h"
 
@@ -20,7 +19,7 @@ std::shared_ptr<void> eaResources::Load(string rawName, size_t type)
 
 	for (auto c : rawName)
 	{
-		// ²ÎÊıÀï½ûÖ¹¿Õ¸ñ
+		// å‚æ•°é‡Œç¦æ­¢ç©ºæ ¼
 		if (hasReadToArg)
 		{
 			if (c != ' ')
@@ -60,7 +59,7 @@ std::shared_ptr<void> eaResources::Load(string rawName, size_t type)
 		auto result = eaScript::FromFile(name);
 		auto error = eaScript::GetError();
 		if (error != "")
-			cout << error << endl;
+			eaApplication::GetLogger().Log("Resources", error);
 		resDict[name] = result;
 		return result;
 	}

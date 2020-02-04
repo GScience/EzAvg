@@ -8,7 +8,7 @@
 class eaScriptRunner;
 
 /*
-ÈÎÎñ£¬ÓÉLua¿ØÖÆ
+ä»»åŠ¡ï¼Œç”±Luaæ§åˆ¶
 */
 class eaScriptTask : public eaLuaBridge
 {
@@ -35,7 +35,7 @@ public:
 class eaScene;
 
 /*
-½Å±¾Ö´ĞĞÆ÷
+è„šæœ¬æ‰§è¡Œå™¨
 */
 class eaScriptRunner : public eaSaveable
 {
@@ -58,7 +58,7 @@ public:
 	const std::shared_ptr<eaLuaDomain> GetDomain() const;
 
 	/*
-	½Å±¾ÊÇ·ñ¼¤»î
+	è„šæœ¬æ˜¯å¦æ¿€æ´»
 	*/
 	bool enable = false;
 
@@ -89,7 +89,7 @@ public:
 	}
 
 	/*
-	Ë¢ĞÂ
+	åˆ·æ–°
 	*/
 	void Update();
 

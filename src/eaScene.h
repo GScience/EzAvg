@@ -7,7 +7,7 @@
 #include "eaScriptRunner.h"
 
 /*
-³¡¾°£¬¸ºÔğ¹ÜÀí¾«Áé
+åœºæ™¯ï¼Œè´Ÿè´£ç®¡ç†ç²¾çµ
 */
 class eaScene : public eaSaveable, public std::enable_shared_from_this<eaScene>
 {

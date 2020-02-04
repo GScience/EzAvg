@@ -111,12 +111,12 @@ int eaScriptReader::Peek()
 
 eaScriptObject eaScriptReader::ReadNoteBlock()
 {
-	// ÅĞ¶ÏÊÇ·ñÎª×¢ÊÍ¿é
+	// åˆ¤æ–­æ˜¯å¦ä¸ºæ³¨é‡Šå—
 	int c = Get();
 
 	if (c != '#')
 	{
-		AddError(line, pos, "ÄÚ²¿´íÎó£¬ÎŞ·¨¶ÁÈ¡×¢ÊÍ¿é");
+		AddError(line, pos, "å†…éƒ¨é”™è¯¯ï¼Œæ— æ³•è¯»å–æ³¨é‡Šå—");
 		SkipLine();
 		return nullptr;
 	}
@@ -126,23 +126,23 @@ eaScriptObject eaScriptReader::ReadNoteBlock()
 
 eaScriptObject eaScriptReader::ReadTaskBlock()
 {
-	// ÅĞ¶ÏÊÇ·ñÎªÈÎÎñ¿é
+	// åˆ¤æ–­æ˜¯å¦ä¸ºä»»åŠ¡å—
 	int c = Get();
 
 	if (c != ':')
 	{
-		AddError(line, pos, "ÄÚ²¿´íÎó£¬ÎŞ·¨¶ÁÈ¡ÃüÁî¿é");
+		AddError(line, pos, "å†…éƒ¨é”™è¯¯ï¼Œæ— æ³•è¯»å–å‘½ä»¤å—");
 		SkipLine();
 		return nullptr;
 	}
 
-	// »ñÈ¡ÈÎÎñÃû³Æ
+	// è·å–ä»»åŠ¡åç§°
 	string task;
 	
 	while (!IsObjectEnd())
 		task += Get();
 
-	// »ñÈ¡ÃüÁî²ÎÊı
+	// è·å–å‘½ä»¤å‚æ•°
 	string argName;
 	
 	eaScriptTaskBlock::argList args;
@@ -153,7 +153,7 @@ eaScriptObject eaScriptReader::ReadTaskBlock()
 	{
 		c = Get();
 
-		// Ìø¹ı¿Õ¸ñ
+		// è·³è¿‡ç©ºæ ¼
 		if (c == ' ' || c == '\t')
 		{
 			if (argName != "")
@@ -161,14 +161,14 @@ eaScriptObject eaScriptReader::ReadTaskBlock()
 			continue;
 		}
 
-		// Óöµ½µÈºÅºó¿ªÊ¼¶Á¶ÔÏó
+		// é‡åˆ°ç­‰å·åå¼€å§‹è¯»å¯¹è±¡
 		if (c == '=')
 		{
 			auto obj = ReadObject();
 
 			if (obj == nullptr)
 			{
-				AddError(line, pos, "¶ÁÈ¡ÈÎÎñ¿éÊ§°Ü£¬ÒòÎª²ÎÊı\"" + argName + "\"µÄÖµ·Ç·¨");
+				AddError(line, pos, "è¯»å–ä»»åŠ¡å—å¤±è´¥ï¼Œå› ä¸ºå‚æ•°\"" + argName + "\"çš„å€¼éæ³•");
 				break;
 			}
 			args.emplace_back(eaScriptTaskBlock::arg{ argName , obj });
@@ -178,11 +178,11 @@ eaScriptObject eaScriptReader::ReadTaskBlock()
 			continue;
 		}
 
-		// ×Ö·ûÊÇ·ñºÏ·¨
+		// å­—ç¬¦æ˜¯å¦åˆæ³•
 		if ((IsDigit(c) && argName == "") ||
 			(!IsDigit(c) && !IsLetter(c)))
 		{
-			AddError(line, pos, "¼ì²âµ½·Ç·¨×Ö·û£¬²ÎÊı\"" + argName + "\"µÄÃû³ÆÖĞ°üº¬·Ç·¨×Ö·û");
+			AddError(line, pos, "æ£€æµ‹åˆ°éæ³•å­—ç¬¦ï¼Œå‚æ•°\"" + argName + "\"çš„åç§°ä¸­åŒ…å«éæ³•å­—ç¬¦");
 			SkipToNext();
 			argName = "";
 			hasGetFullArgName = false;
@@ -191,7 +191,7 @@ eaScriptObject eaScriptReader::ReadTaskBlock()
 
 		if (hasGetFullArgName)
 		{
-			AddError(line, pos, "²ÎÊı\"" + argName + "\"±ØĞëÖ¸¶¨Ò»¸öÖµ");
+			AddError(line, pos, "å‚æ•°\"" + argName + "\"å¿…é¡»æŒ‡å®šä¸€ä¸ªå€¼");
 			argName = "";
 			hasGetFullArgName = false;
 		}
@@ -200,14 +200,14 @@ eaScriptObject eaScriptReader::ReadTaskBlock()
 	}
 
 	if (argName != "")
-		AddError(line, pos, "ÒâÍâµÄ·ÃÎÊµ½ÁËĞĞ½áÎ²£¬²ÎÊı\"" + argName + "\"±ØĞëÖ¸¶¨Ò»¸öÖµ");
+		AddError(line, pos, "æ„å¤–çš„è®¿é—®åˆ°äº†è¡Œç»“å°¾ï¼Œå‚æ•°\"" + argName + "\"å¿…é¡»æŒ‡å®šä¸€ä¸ªå€¼");
 
 	return eaScriptObject::Create<eaScriptTaskBlock>(task, args);
 }
 
 eaScriptObject eaScriptReader::ReadLabelBlock()
 {
-	// ÅĞ¶ÏÊÇ·ñÎª±êÇ©¿é
+	// åˆ¤æ–­æ˜¯å¦ä¸ºæ ‡ç­¾å—
 	int c = Get();
 	int labelStartDepth = 0;
 	
@@ -222,7 +222,7 @@ eaScriptObject eaScriptReader::ReadLabelBlock()
 	{
 		if (Eof() || c == '\n')
 		{
-			AddError(line, pos, "Î´ÕÒµ½±êÇ©Ä©¶ËµÄµÈºÅ");
+			AddError(line, pos, "æœªæ‰¾åˆ°æ ‡ç­¾æœ«ç«¯çš„ç­‰å·");
 			SkipLine();
 			return nullptr;
 		}
@@ -231,7 +231,7 @@ eaScriptObject eaScriptReader::ReadLabelBlock()
 		c = Get();
 	}
 
-	// ÅĞ¶ÏÄ©¶ËµÈºÅÊıÁ¿
+	// åˆ¤æ–­æœ«ç«¯ç­‰å·æ•°é‡
 	int labelEndDepth = 0;
 
 	while (c == '=')
@@ -242,24 +242,24 @@ eaScriptObject eaScriptReader::ReadLabelBlock()
 
 	if (labelEndDepth != labelStartDepth)
 		AddError(line, pos,
-			"±êÇ©Ä©¶ËµÄµÈºÅÊıÁ¿²»Æ¥Åä£¬ÆÚÍû "s + to_string(labelStartDepth) + "£¬Êµ¼Ê " + to_string(labelEndDepth));
+			"æ ‡ç­¾æœ«ç«¯çš„ç­‰å·æ•°é‡ä¸åŒ¹é…ï¼ŒæœŸæœ› "s + to_string(labelStartDepth) + "ï¼Œå®é™… " + to_string(labelEndDepth));
 
 	return eaScriptObject::Create<eaScriptLabelBlock>(labelName,0);
 }
 
 eaScriptObject eaScriptReader::ReadLuaBlock()
 {
-	// ÅĞ¶ÏÊÇ·ñÎªLua¿é
+	// åˆ¤æ–­æ˜¯å¦ä¸ºLuaå—
 	int c = Get();
 
 	if (c != '{')
 	{
-		AddError(line, pos, "ÄÚ²¿´íÎó£¬ÎŞ·¨¶ÁÈ¡ÃüÁî¿é");
+		AddError(line, pos, "å†…éƒ¨é”™è¯¯ï¼Œæ— æ³•è¯»å–å‘½ä»¤å—");
 		SkipLine();
 		return nullptr;
 	}
 
-	// ¶ÁÈ¡Lua´úÂë
+	// è¯»å–Luaä»£ç 
 	c = Get();
 	string code;
 
@@ -267,7 +267,7 @@ eaScriptObject eaScriptReader::ReadLuaBlock()
 	{
 		if (Eof())
 		{
-			AddError(line, pos, "ÒâÍâµÄ·ÃÎÊµ½ÁËÎÄ¼ş½áÎ²£¬Î´ÕÒµ½Lua¿éÄ©¶Ë»¨À¨ºÅ");
+			AddError(line, pos, "æ„å¤–çš„è®¿é—®åˆ°äº†æ–‡ä»¶ç»“å°¾ï¼Œæœªæ‰¾åˆ°Luaå—æœ«ç«¯èŠ±æ‹¬å·");
 			SkipLine();
 			return nullptr;
 		}
@@ -275,12 +275,12 @@ eaScriptObject eaScriptReader::ReadLuaBlock()
 		c = Get();
 	}
 	
-	// ¶Áµ½ĞÂĞĞ
+	// è¯»åˆ°æ–°è¡Œ
 	c = Get();
 
 	if (c != '\n')
 	{
-		AddError(line, pos, "Lua¿éÄ©¶Ë»¨À¨ºÅºóÓ¦»»ĞĞ");
+		AddError(line, pos, "Luaå—æœ«ç«¯èŠ±æ‹¬å·ååº”æ¢è¡Œ");
 		SkipLine();
 	}
 
@@ -295,11 +295,11 @@ eaScriptObject eaScriptReader::ReadTextBlock()
 	{
 		auto rawLine = GetLine();
 
-		// »ñÈ¡ĞĞ
+		// è·å–è¡Œ
 		string textLine;
 		for (auto c : rawLine)
 		{
-			// ¿ÕĞĞÌø¹ı¿Õ¸ñ
+			// ç©ºè¡Œè·³è¿‡ç©ºæ ¼
 			if (textLine == "")
 			{
 				if (c == '\t')
@@ -311,7 +311,7 @@ eaScriptObject eaScriptReader::ReadTextBlock()
 			textLine += c;
 		}
 		
-		// ¿ÕĞĞÌø³ö
+		// ç©ºè¡Œè·³å‡º
 		if (textLine == "")
 			break;
 
@@ -328,27 +328,27 @@ eaScriptObject eaScriptReader::ReadObject()
 
 	int c = Peek();
 
-	// Êı×Ö
+	// æ•°å­—
 	if (IsDigit(c) || c == '-')
 		return ReadNumber();
 
-	// Ã¶¾Ù
+	// æšä¸¾
 	if (IsLetter(c))
 		return ReadEnum();
 
-	// ×Ö·û´®
+	// å­—ç¬¦ä¸²
 	if (c == '\"')
 		return ReadString();
 
-	// Êı×é
+	// æ•°ç»„
 	if (c == '[')
 		return ReadArray();
 
-	// Lua¶ÔÏó
+	// Luaå¯¹è±¡
 	if (c == '{')
 		return ReadLuaObject();
 
-	AddError(line, pos, "Î´Öª¶ÔÏó");
+	AddError(line, pos, "æœªçŸ¥å¯¹è±¡");
 	while (c != ' ' && c != '\n' && !Eof())
 		c = Get();
 
@@ -359,7 +359,7 @@ eaScriptObject eaScriptReader::ReadString()
 {
 	if (Get() != '"')
 	{
-		AddError(line, pos, "ÄÚ²¿´íÎó£¬ÎŞ·¨¶ÁÈ¡×Ö·û´®");
+		AddError(line, pos, "å†…éƒ¨é”™è¯¯ï¼Œæ— æ³•è¯»å–å­—ç¬¦ä¸²");
 		return nullptr;
 	}
 
@@ -369,7 +369,7 @@ eaScriptObject eaScriptReader::ReadString()
 	{
 		if (Eof())
 		{
-			AddError(line, pos, "ÒâÍâµÄ·ÃÎÊµ½ÁËÎÄ¼ş½áÎ²£¬Î´ÕÒµ½×Ö·û´®Ä©¶ËÒıºÅ");
+			AddError(line, pos, "æ„å¤–çš„è®¿é—®åˆ°äº†æ–‡ä»¶ç»“å°¾ï¼Œæœªæ‰¾åˆ°å­—ç¬¦ä¸²æœ«ç«¯å¼•å·");
 			return nullptr;
 		}
 
@@ -377,7 +377,7 @@ eaScriptObject eaScriptReader::ReadString()
 
 		if (c == '\n')
 		{
-			AddError(line, pos, "ÒâÍâµÄ·ÃÎÊµ½ÁËĞĞ½áÎ²£¬Î´ÕÒµ½×Ö·û´®Ä©¶ËÒıºÅ");
+			AddError(line, pos, "æ„å¤–çš„è®¿é—®åˆ°äº†è¡Œç»“å°¾ï¼Œæœªæ‰¾åˆ°å­—ç¬¦ä¸²æœ«ç«¯å¼•å·");
 			return nullptr;
 		}
 		str += c;
@@ -397,7 +397,7 @@ eaScriptObject eaScriptReader::ReadEnum()
 		int c = Get();
 		if (!IsDigit(c) && !IsLetter(c))
 		{
-			AddError(line, pos, "Ã¶¾ÙÀàĞÍÖ»ÔÊĞíÓÉÊı×ÖºÍ×ÖÄ¸×é³É");
+			AddError(line, pos, "æšä¸¾ç±»å‹åªå…è®¸ç”±æ•°å­—å’Œå­—æ¯ç»„æˆ");
 			return nullptr;
 		}
 		str += c;
@@ -410,7 +410,7 @@ eaScriptObject eaScriptReader::ReadLuaObject()
 {
 	if (Get() != '{')
 	{
-		AddError(line, pos, "ÄÚ²¿´íÎó£¬ÎŞ·¨¶ÁÈ¡ÃüÁî¿é");
+		AddError(line, pos, "å†…éƒ¨é”™è¯¯ï¼Œæ— æ³•è¯»å–å‘½ä»¤å—");
 		return nullptr;
 	}
 
@@ -421,7 +421,7 @@ eaScriptObject eaScriptReader::ReadLuaObject()
 		int c = Get();
 		if (Eof())
 		{
-			AddError(line, pos, "ÒâÍâµÄ·ÃÎÊµ½ÁËÎÄ¼ş½áÎ²£¬Î´ÕÒµ½Lua¶ÔÏóÄ©¶ËµÄ´óÀ¨ºÅ"); 
+			AddError(line, pos, "æ„å¤–çš„è®¿é—®åˆ°äº†æ–‡ä»¶ç»“å°¾ï¼Œæœªæ‰¾åˆ°Luaå¯¹è±¡æœ«ç«¯çš„å¤§æ‹¬å·"); 
 			return nullptr;
 		}
 		str += c;
@@ -441,12 +441,12 @@ eaScriptObject eaScriptReader::ReadNumber()
 		int c = Get();
 		if (!IsDigit(c) && c != '.' && c != '-')
 		{
-			AddError(line, pos, "Êı×ÖÀàĞÍÖ»ÔÊĞíÓÉÊı×ÖºÍĞ¡Êıµã×é³É£¬·¢ÏÖ" + c);
+			AddError(line, pos, "æ•°å­—ç±»å‹åªå…è®¸ç”±æ•°å­—å’Œå°æ•°ç‚¹ç»„æˆï¼Œå‘ç°" + c);
 			return nullptr;
 		}
 		if (c == '-' && numStr != "")
 		{
-			AddError(line, pos, "¸ººÅÖ»ÔÊĞí³öÏÖÔÚÊ×Î»" + c);
+			AddError(line, pos, "è´Ÿå·åªå…è®¸å‡ºç°åœ¨é¦–ä½" + c);
 			return nullptr;
 		}
 		numStr += c;
@@ -459,7 +459,7 @@ eaScriptObject eaScriptReader::ReadArray()
 {
 	if (Get() != '[')
 	{
-		AddError(line, pos, "ÄÚ²¿´íÎó£¬ÎŞ·¨¶ÁÈ¡Êı×é");
+		AddError(line, pos, "å†…éƒ¨é”™è¯¯ï¼Œæ— æ³•è¯»å–æ•°ç»„");
 		return nullptr;
 	}
 
@@ -470,21 +470,21 @@ eaScriptObject eaScriptReader::ReadArray()
 		auto obj = ReadObject();
 		if (obj == nullptr)
 		{
-			AddError(line, pos, "ÎŞ·¨¶ÁÈ¡Êı×éµÚ " + to_string(objs.size()) + " ¸öÔªËØ");
+			AddError(line, pos, "æ— æ³•è¯»å–æ•°ç»„ç¬¬ " + to_string(objs.size()) + " ä¸ªå…ƒç´ ");
 			return nullptr;
 		}
 		objs.push_back(obj);
 
-		// ¶Áµ½ÏÂÒ»¸ö¶ÔÏó
+		// è¯»åˆ°ä¸‹ä¸€ä¸ªå¯¹è±¡
 		while (Peek() != ',' && Peek() != ']')
 		{
 			if (Eof())
 			{
-				AddError(line, pos, "ÒâÍâµÄ·ÃÎÊµ½ÁËÎÄ¼ş½áÎ²£¬Î´ÕÒµ½Êı×é¶ÔÏóÄ©¶ËµÄ·½À¨ºÅ");
+				AddError(line, pos, "æ„å¤–çš„è®¿é—®åˆ°äº†æ–‡ä»¶ç»“å°¾ï¼Œæœªæ‰¾åˆ°æ•°ç»„å¯¹è±¡æœ«ç«¯çš„æ–¹æ‹¬å·");
 				return nullptr;
 			}
 
-			// »ñÈ¡ÏÂÒ»¸ö
+			// è·å–ä¸‹ä¸€ä¸ª
 			Get();
 		}
 

@@ -3,24 +3,24 @@ local p = {}
 function p.start(args)
 
 	if args.sprite == nil then
-		logError("Î´Ö¸¶¨sprite")
+		logError("æœªæŒ‡å®šsprite")
 		return
 	end
 
 	if args.behaviour == nil then
-		logError("Î´Ö¸¶¨behaviour")
+		logError("æœªæŒ‡å®šbehaviour")
 		return
 	end
 
 	local sprite = scene[args.sprite]
 	if sprite == nil then
-		logError("Î´ÕÒµ½¾«Áé¶ÔÏó")
+		logError("æœªæ‰¾åˆ°ç²¾çµå¯¹è±¡")
 		return
 	end
 
 	local result = sprite[args.behaviour]
 	if result == nil then
-		logError("Î´ÕÒµ½ĞĞÎª¶ÔÏó")
+		logError("æœªæ‰¾åˆ°è¡Œä¸ºå¯¹è±¡")
 		return
 	end
 

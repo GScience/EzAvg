@@ -185,7 +185,7 @@ void eaSpriteText::SetText(std::string str)
 
 	auto renderRect = GetRenderRect();
 
-	// ÅĞ¶ÏÊÇ·ñÖ»ÊÇÔö¼Ó×Ö·û
+	// åˆ¤æ–­æ˜¯å¦åªæ˜¯å¢åŠ å­—ç¬¦
 	for (size_t i = 0; i < text.size(); ++i)
 	{
 		if (str[i] == text[i])
@@ -194,22 +194,22 @@ void eaSpriteText::SetText(std::string str)
 		break;
 	}
 
-	// Ò»¸öÒ»¸öµÄ»­
+	// ä¸€ä¸ªä¸€ä¸ªçš„ç”»
 	for (size_t i = text.size(); i < str.size(); ++i)
 	{
 		unsigned char cSignBit = ~str[i];
 		string c;
 
-		// Ò»Î»
+		// ä¸€ä½
 		if (cSignBit >> 7 == 1)
 			c += str[i];
 		else
 		{
-			// ÖĞ¼äÖµ
+			// ä¸­é—´å€¼
 			if (cSignBit >> 6 == 1)
 				continue;
 
-			// ¶àÎ»
+			// å¤šä½
 			size_t count = 1;
 			while (cSignBit >> (7 - count) == 0)
 				++count;
@@ -217,7 +217,7 @@ void eaSpriteText::SetText(std::string str)
 			for (auto j = 0; j < count; ++j)
 				c += str[i + j];
 
-			// ÒÆ¶¯µ½ÏÂÒ»Î»
+			// ç§»åŠ¨åˆ°ä¸‹ä¸€ä½
 			i += count - 1;
 		}
 
@@ -226,7 +226,7 @@ void eaSpriteText::SetText(std::string str)
 		wordSize.width += shadowOffset;
 		wordSize.height += shadowOffset;
 
-		// ÏÂÒ»ĞĞ
+		// ä¸‹ä¸€è¡Œ
 		if (cursorX + wordSize.width + shadowOffset > renderRect.width)
 		{
 			cursorX = 0;
@@ -264,13 +264,13 @@ void eaSpriteText::SetText(std::string str)
 			}
 			case TextLayoutCenter:
 			{
-				// µ±Ç°Ò»ĞĞ×óÒÆ
+				// å½“å‰ä¸€è¡Œå·¦ç§»
 				SDL_Rect currentLineRect = SDL_Rect{ 0 , cursorY, renderRect.width , font->GetLineHeight() };
 				SDL_Rect updatedLineRect = SDL_Rect{ -wordSize.width / 2, cursorY, renderRect.width , font->GetLineHeight() };
 
 				SDL_BlitSurface(textSurface, &currentLineRect, textSurface, &updatedLineRect);
 
-				// äÖÈ¾ÎÄ×Ö
+				// æ¸²æŸ“æ–‡å­—
 				SDL_Rect rect = SDL_Rect
 				{
 					renderRect.width / 2 + cursorX / 2 - wordSize.width / 2,
@@ -288,13 +288,13 @@ void eaSpriteText::SetText(std::string str)
 			}
 			case TextLayoutRight:
 			{
-				// µ±Ç°Ò»ĞĞ×óÒÆ
+				// å½“å‰ä¸€è¡Œå·¦ç§»
 				SDL_Rect currentLineRect = SDL_Rect{ 0 , cursorY, renderRect.width , font->GetLineHeight() };
 				SDL_Rect updatedLineRect = SDL_Rect{ -wordSize.width, cursorY, renderRect.width , font->GetLineHeight() };
 
 				SDL_BlitSurface(textSurface, &currentLineRect, textSurface, &updatedLineRect);
 
-				// äÖÈ¾ÎÄ×Ö
+				// æ¸²æŸ“æ–‡å­—
 				SDL_Rect rect = SDL_Rect
 				{
 					renderRect.width - wordSize.width,

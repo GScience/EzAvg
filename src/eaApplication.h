@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <vector>
+#include "eaLogger.h"
 #include "eaLua.h"
 #include "eaScene.h"
 
@@ -14,6 +15,8 @@ class eaApplication : public eaSaveable
 	std::shared_ptr<eaLuaDomain> globalDomain;
 
 	eaLua lua;
+	eaLogger logger;
+
 public:
 	static eaApplication* instance;
 
@@ -34,7 +37,7 @@ private:
 
 public:
 	/*
-	¼ÓÔØ³¡¾°²¢Ð¶ÔØµ±Ç°³¡¾°
+	åŠ è½½åœºæ™¯å¹¶å¸è½½å½“å‰åœºæ™¯
 	*/
 	void LoadScene(std::string scriptName)
 	{
@@ -48,6 +51,11 @@ public:
 
 	void Save() override;
 	void Load() override;
+
+	static eaLogger& GetLogger()
+	{
+		return instance->logger;
+	}
 
 	static SDL_Window* GetWindow()
 	{

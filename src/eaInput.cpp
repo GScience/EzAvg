@@ -66,7 +66,7 @@ void eaInput::Update()
 {
 	auto mouseState = SDL_GetMouseState(nullptr, nullptr);
 
-	// ¼ÇÂ¼ÉÏÒ»¸ö×´Ì¬
+	// è®°å½•ä¸Šä¸€ä¸ªçŠ¶æ€
 	previousLeftButtonState = currentLeftButtonState;
 	previousRightButtonState = currentRightButtonState;
 	previousMiddleButtonState = currentMiddleButtonState;

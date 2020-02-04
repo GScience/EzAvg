@@ -7,7 +7,7 @@
 
 using namespace std;
 
-// »ñÈ¡¾«Áé
+// è·å–ç²¾çµ
 static int SceneSpriteGet(lua_State* L)
 {
 	auto scene = (eaScene*)lua_tointeger(L, lua_upvalueindex(1));
@@ -17,7 +17,7 @@ static int SceneSpriteGet(lua_State* L)
 
 	if (sprite != nullptr && sprite->enabled)
 	{
-		// »ñÈ¡¶ÔÓ¦¾«ÁéÓòµÄsprite¶ÔÏó
+		// è·å–å¯¹åº”ç²¾çµåŸŸçš„spriteå¯¹è±¡
 		lua_rawgeti(L, LUA_REGISTRYINDEX, sprite->GetDomain()->GetEnvTableRef());
 		lua_pushstring(L, "sprite");
 		lua_gettable(L, -2);
@@ -36,7 +36,7 @@ eaScene::eaScene(string name)
 
 	lua_rawgeti(L, LUA_REGISTRYINDEX, domain->GetEnvTableRef());
 
-	// ´´½¨scene
+	// åˆ›å»ºscene
 	lua_pushstring(L, "scene");
 	lua_createtable(L, 0, 0);
 
@@ -45,17 +45,17 @@ eaScene::eaScene(string name)
 	lua_pushstring(L, name.c_str());
 	lua_settable(L, -3);
 
-	// Ê¹ÓÃ__indexÀ´Ö§³ÖÍ¨¹ıÃû³Æ²éÕÒ¾«Áé
+	// ä½¿ç”¨__indexæ¥æ”¯æŒé€šè¿‡åç§°æŸ¥æ‰¾ç²¾çµ
 	lua_createtable(L, 0, 0);
 	lua_pushstring(L, "__index");
 	lua_pushinteger(L, (long long)this);
 	lua_pushcclosure(L, SceneSpriteGet, 1);
 	lua_settable(L, -3);
 
-	// ÉèÖÃÔª±í
+	// è®¾ç½®å…ƒè¡¨
 	lua_setmetatable(L, -2);
 
-	// °Ñscene¶ÔÏó·ÅÈëÓò
+	// æŠŠsceneå¯¹è±¡æ”¾å…¥åŸŸ
 	lua_settable(L, -3);
 }
 

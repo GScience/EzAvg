@@ -1,6 +1,5 @@
 #include <SDL.h>
 #include <lua.hpp>
-#include <iostream>
 #include <SDL2\SDL_ttf.h>
 #include "eaApplication.h"
 #include "eaTime.h"
