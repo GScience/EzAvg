@@ -16,7 +16,28 @@ vector<eaLuaFunction> eaLuaFuncTable;
 class eaGlobalFunction
 {
 	/*
-	void print(string message)
+	void require(string name, string space)
+	*/
+	LuaFunc(require, )
+	{
+		string name = GetString(1);
+		for (auto& c : name)
+			if (c == '.' || c == '\\')
+				c = '/';
+		string space;
+		if (lua_isstring(L, 2))
+			space = GetString(2);
+
+		if (space == "scene")
+			eaApplication::instance->CurrentScene()->GetDomain()->DoFile(name + ".lua");
+		else
+			eaApplication::GetDomain()->DoFile(name + ".lua");
+
+		return 0;
+	}
+
+	/*
+	void require(string message)
 	*/
 	LuaFunc(print, )
 	{
@@ -121,7 +142,7 @@ class eaScriptFunction
 	}
 
 	/*
-	int getCurrentPos(string name)
+	int getNextPos()
 	*/
 	LuaFunc(getNextPos, Script)
 	{
@@ -177,13 +198,17 @@ class eaSpriteFunction
 			sprite = scene->AddSprite<eaSpriteImage>(spriteName);
 		else if (spriteType == "text")
 			sprite = scene->AddSprite<eaSpriteText>(spriteName);
+		else if (spriteType == "button")
+			sprite = scene->AddSprite<eaSpriteText>(spriteName);
 
 		if (sprite == nullptr)
 			lua_pushnil(L);
-		lua_rawgeti(L, LUA_REGISTRYINDEX, sprite->GetDomain()->GetEnvTableRef());
-		lua_pushstring(L, "sprite");
-		lua_gettable(L, -2);
-
+		else
+		{
+			lua_rawgeti(L, LUA_REGISTRYINDEX, sprite->GetDomain()->GetEnvTableRef());
+			lua_pushstring(L, "sprite");
+			lua_gettable(L, -2);
+		}
 		return 1;
 	}
 };

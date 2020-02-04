@@ -74,7 +74,7 @@ eaScriptTask::eaScriptTask(eaScriptRunner* runner, string name)
 bool eaScriptTask::IsFinished()
 {
 	if (objRef == LUA_REFNIL)
-		return false;
+		return true;
 
 	auto& L = eaApplication::GetLua();
 

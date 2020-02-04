@@ -41,7 +41,7 @@ public:
 			return nullptr;
 
 		auto sprite = eaSprite::Create<T>(this->shared_from_this(), name);
-		sprites.emplace_back(sprite);
+		sprites.push_back(sprite);
 		return sprite;
 	}
 

@@ -12,7 +12,8 @@ void eaSpriteImage::Draw(SDL_Renderer* renderer)
 	{
 		auto renderRect = GetRenderRect();
 		auto rect = SDL_Rect{ renderRect.x,renderRect.y,renderRect.width,renderRect.height };
-		SDL_SetTextureAlphaMod(*image, (uint8_t)(alpha * 255));
+		SDL_SetTextureAlphaMod(*image, (uint8_t)(alpha * 255 * color.a));
+		SDL_SetTextureColorMod(*image, (uint8_t)(255 * color.r), (uint8_t)(255 * color.g), (uint8_t)(255 * color.b));
 		SDL_RenderCopy(renderer, *image, nullptr, &rect);
 	}
 }
@@ -27,8 +28,31 @@ void eaSpriteImage::Load()
 
 eaSpriteImage::eaSpriteImage()
 {
+	propertyBinder["color"] = eaPropertyBinder(
+		[&]()->eaPropertyValue
+		{
+			return { color.r,color.g,color.b,color.a };
+		},
+		[&](eaPropertyValue value)
+		{
+			auto table = value.ToTable();
+
+			color.r = table[1];
+			color.g = table[2];
+			color.b = table[3];
+			auto alpha = table.find(4);
+			if (alpha != table.end())
+				color.a = alpha->second;
+			else
+				color.a = 1;
+		}
+	);
+
 	propertyBinder["image"] = eaPropertyBinder(
-		nullptr,
+		[&]()->eaPropertyValue
+		{
+			return image->name;
+		},
 		[&](eaPropertyValue obj)
 		{
 			auto name = obj.ToString();

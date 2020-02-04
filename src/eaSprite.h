@@ -212,7 +212,6 @@ class eaSprite : public eaSaveable, public std::enable_shared_from_this<eaSprite
 	std::vector<std::shared_ptr<eaSpriteBehaviour>> behaviours;
 	std::shared_ptr<eaLuaDomain> domain;
 	std::shared_ptr<eaScene> scene;
-
 protected:
 	std::map<std::string, eaPropertyBinder> propertyBinder;
 	
@@ -290,6 +289,8 @@ public:
 	virtual void OnMove() {}
 	virtual void OnResize() {}
 
+	virtual void Awake() {}
+
 	/*
 	添加行为
 	*/
@@ -312,9 +313,10 @@ public:
 	{
 		auto obj = std::shared_ptr<T>(new T());
 		obj->name = name;
+		obj->scene = scene;
+		obj->Awake();
 		obj->OnMove();
 		obj->OnResize();
-		obj->scene = scene;
 		obj->CreateDomain();
 		return obj;
 	}

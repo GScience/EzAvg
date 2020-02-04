@@ -309,7 +309,7 @@ void eaSpriteText::SetText(std::string str)
 				};
 
 				SDL_Rect shadowRect = SDL_Rect{ rect.x + shadowOffset , rect.y + shadowOffset,rect.w - shadowOffset, rect.h - shadowOffset };
-				SDL_Rect clearRect = SDL_Rect{ rect.x,rect.y,rect.w + shadowOffset,rect.h + shadowOffset };
+				SDL_Rect clearRect = SDL_Rect{ rect.x,rect.y,rect.w,rect.h };
 				SDL_Rect textRect = SDL_Rect{ rect.x,rect.y,rect.w - shadowOffset,rect.h - shadowOffset };
 				SDL_FillRect(textSurface, &clearRect, SDL_MapRGBA(textSurface->format, 0, 0, 0, 0));
 				SDL_BlitSurface(shadowSurface, nullptr, textSurface, &shadowRect);
@@ -335,7 +335,7 @@ void eaSpriteText::SetText(std::string str)
 					wordSize.height
 				};
 				SDL_Rect shadowRect = SDL_Rect{ rect.x + shadowOffset , rect.y + shadowOffset,rect.w , rect.h };
-				SDL_Rect clearRect = SDL_Rect{ rect.x,rect.y,rect.w + shadowOffset,rect.h + shadowOffset };
+				SDL_Rect clearRect = SDL_Rect{ rect.x,rect.y,rect.w,rect.h };
 				SDL_Rect textRect = SDL_Rect{ rect.x,rect.y,rect.w - shadowOffset,rect.h - shadowOffset };
 				SDL_FillRect(textSurface, &clearRect, SDL_MapRGBA(textSurface->format, 0, 0, 0, 0));
 				SDL_BlitSurface(shadowSurface, nullptr, textSurface, &shadowRect);

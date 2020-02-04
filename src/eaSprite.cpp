@@ -72,56 +72,6 @@ eaSprite::eaSprite()
 			zOrder = value;
 		}
 	);
-	propertyBinder["size"] = eaPropertyBinder
-	(
-		[&]()->eaPropertyValue
-		{
-			int windowWidth, windowHeight;
-			SDL_GetWindowSize(eaApplication::GetWindow(), &windowWidth, &windowHeight);
-
-			int minX = (int)(anchor.minX * windowWidth);
-			int minY = (int)(anchor.minY * windowHeight);
-			int maxX = (int)(anchor.maxX * windowWidth);
-			int maxY = (int)(anchor.maxY * windowHeight);
-
-			return 
-			{ 
-				maxX - minX - rect.right - rect.left,
-				maxY - minY - rect.bottom - rect.up
-			};
-		},
-		[&](eaPropertyValue value)
-		{
-			int windowWidth, windowHeight;
-			SDL_GetWindowSize(eaApplication::GetWindow(), &windowWidth, &windowHeight);
-
-			int minX = (int)(anchor.minX * windowWidth);
-			int minY = (int)(anchor.minY * windowHeight);
-			int maxX = (int)(anchor.maxX * windowWidth);
-			int maxY = (int)(anchor.maxY * windowHeight);
-
-			rect.right = maxX - minX - (int)value[1] - rect.left;
-			rect.bottom = maxY - minY - (int)value[2] - rect.up;
-			shared_from_this()->OnResize();
-		}
-	);
-	propertyBinder["position"] = eaPropertyBinder
-	(
-		[&]()->eaPropertyValue
-		{
-			return { rect.left,rect.up };
-		},
-		[&](eaPropertyValue value)
-		{
-			int deltaX = (int)value[1] - rect.left;
-			int deltaY = (int)value[2] - rect.up;
-			rect.left += deltaX;
-			rect.up += deltaY;
-			rect.right -= deltaX;
-			rect.bottom -= deltaY;
-			shared_from_this()->OnMove();
-		}
-	);
 	propertyBinder["rect"] = eaPropertyBinder
 	(
 		[&]()->eaPropertyValue

@@ -3,9 +3,19 @@
 
 class eaTexture;
 
+struct eaSpriteColor
+{
+	double r = 1;
+	double g = 1;
+	double b = 1;
+	double a = 1;
+};
+
 class eaSpriteImage : public eaSprite
 {
 	std::shared_ptr<eaTexture> image;
+
+	eaSpriteColor color;
 
 public:
 	eaSpriteImage();

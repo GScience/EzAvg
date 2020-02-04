@@ -6,12 +6,26 @@
 
 :SpriteCreate	sprite="gameName" type=text anchor=[0.05,0.2,0.6,0.2] rect=[-50, 0, -100, 0] layout=center fontSize=50
 :SpriteSet		sprite="gameName" color=[0,0,1] shadowColor=[0,0,0.8,0.5]
-:BehaviourAdd	sprite="gameName" behaviour="printer" type="AnimTextPrinter" speed=10 text="EzAvg Engine Test"
+:BehaviourAdd	sprite="gameName" behaviour="printer" type="AnimTextPrinter" speed=100 text="EzAvg Engine Test"
 
 :Wait sprite="gameName" behaviour="printer"
 
-:Branch name=["继续游戏", "加载游戏", "选项","退出"] pos=[Start, Load, Option, Exit] image="UI/Button.png" offset=[0,0] size=[300,100]
+:SpriteCreate	sprite="button_image" type=image image="UI/Button300x50.png" zOrder=1 anchor=[1,1,1,1] rect=[-300, 0, 250, -300]
+:SpriteSet		sprite="button_image"
 
+:SpriteCreate	sprite="button_text" type=text layout=center fontSize=25 anchor=[1,1,1,1] rect=[-300, 0, 250, -300]
+:SpriteSet		sprite="button_text" color=[0.9,0.9,0.9] shadowColor=[0.8,0.8,0.8,0.5]
+:SpriteSet		sprite="button_text" text="退出游戏" zOrder=2
+
+{
+	if Input.getButton(0) then
+		scene.button_image.alpha = 0.5
+	else
+		scene.button_image.alpha = 1.0
+	end
+	Script.jump(Script.getNextPos() - 1)
+}
+{print("err")}
 ==Start==
 
 ==Load==
