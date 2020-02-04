@@ -225,12 +225,15 @@ void eaSpriteText::SetText(std::string str)
 
 		wordSize.width += shadowOffset;
 		wordSize.height += shadowOffset;
+		
+		bool isNewLine = false;
 
 		// 下一行
 		if (cursorX + wordSize.width + shadowOffset > renderRect.width)
 		{
 			cursorX = 0;
-			cursorY += font->GetLineHeight();
+			cursorY += font->GetLineHeight() + shadowOffset;
+			isNewLine = true;
 		}
 
 		SDL_Color color =
@@ -264,36 +267,65 @@ void eaSpriteText::SetText(std::string str)
 			}
 			case TextLayoutCenter:
 			{
-				// 当前一行左移
-				SDL_Rect currentLineRect = SDL_Rect{ 0 , cursorY, renderRect.width , font->GetLineHeight() };
-				SDL_Rect updatedLineRect = SDL_Rect{ -wordSize.width / 2, cursorY, renderRect.width , font->GetLineHeight() };
+				// 没有换行的话左移
+				if (!isNewLine)
+				{
+					SDL_Rect currentLineRect = SDL_Rect
+					{
+						0 ,
+						renderRect.height / 2 + cursorY / 2 - font->GetLineHeight() / 2,
+						renderRect.width ,
+						font->GetLineHeight()
+					};
+					SDL_Rect updatedLineRect = SDL_Rect
+					{
+						-wordSize.width / 2,
+						renderRect.height / 2 + cursorY / 2 - font->GetLineHeight() / 2,
+						renderRect.width ,
+						font->GetLineHeight()
+					};
 
-				SDL_BlitSurface(textSurface, &currentLineRect, textSurface, &updatedLineRect);
-
+					SDL_BlitSurface(textSurface, &currentLineRect, textSurface, &updatedLineRect);
+				}
+				// 新行的话，整体上移
+				else
+				{
+					SDL_Rect newRect = SDL_Rect
+					{
+						0,
+						-font->GetLineHeight() / 2,
+						renderRect.width ,
+						renderRect.height
+					};
+					SDL_BlitSurface(textSurface, nullptr, textSurface, &newRect);
+				}
 				// 渲染文字
 				SDL_Rect rect = SDL_Rect
 				{
 					renderRect.width / 2 + cursorX / 2 - wordSize.width / 2,
-					cursorY,
+					renderRect.height / 2 + cursorY/ 2 - font->GetLineHeight() / 2,
 					wordSize.width ,
 					wordSize.height
 				};
 
-				SDL_Rect shadowRect = SDL_Rect{ rect.x + shadowOffset , rect.y + shadowOffset,rect.w , rect.h };
+				SDL_Rect shadowRect = SDL_Rect{ rect.x + shadowOffset , rect.y + shadowOffset,rect.w - shadowOffset, rect.h - shadowOffset };
 				SDL_Rect clearRect = SDL_Rect{ rect.x,rect.y,rect.w + shadowOffset,rect.h + shadowOffset };
+				SDL_Rect textRect = SDL_Rect{ rect.x,rect.y,rect.w - shadowOffset,rect.h - shadowOffset };
 				SDL_FillRect(textSurface, &clearRect, SDL_MapRGBA(textSurface->format, 0, 0, 0, 0));
 				SDL_BlitSurface(shadowSurface, nullptr, textSurface, &shadowRect);
-				SDL_BlitSurface(charSurface, nullptr, textSurface, &rect);
+				SDL_BlitSurface(charSurface, nullptr, textSurface, &textRect);
 				break;
 			}
 			case TextLayoutRight:
 			{
-				// 当前一行左移
-				SDL_Rect currentLineRect = SDL_Rect{ 0 , cursorY, renderRect.width , font->GetLineHeight() };
-				SDL_Rect updatedLineRect = SDL_Rect{ -wordSize.width, cursorY, renderRect.width , font->GetLineHeight() };
+				// 没有换行的话当前一行左移
+				if (!isNewLine)
+				{
+					SDL_Rect currentLineRect = SDL_Rect{ 0 , cursorY, renderRect.width , font->GetLineHeight() };
+					SDL_Rect updatedLineRect = SDL_Rect{ -wordSize.width, cursorY, renderRect.width , font->GetLineHeight() };
 
-				SDL_BlitSurface(textSurface, &currentLineRect, textSurface, &updatedLineRect);
-
+					SDL_BlitSurface(textSurface, &currentLineRect, textSurface, &updatedLineRect);
+				}
 				// 渲染文字
 				SDL_Rect rect = SDL_Rect
 				{
@@ -304,9 +336,10 @@ void eaSpriteText::SetText(std::string str)
 				};
 				SDL_Rect shadowRect = SDL_Rect{ rect.x + shadowOffset , rect.y + shadowOffset,rect.w , rect.h };
 				SDL_Rect clearRect = SDL_Rect{ rect.x,rect.y,rect.w + shadowOffset,rect.h + shadowOffset };
+				SDL_Rect textRect = SDL_Rect{ rect.x,rect.y,rect.w - shadowOffset,rect.h - shadowOffset };
 				SDL_FillRect(textSurface, &clearRect, SDL_MapRGBA(textSurface->format, 0, 0, 0, 0));
 				SDL_BlitSurface(shadowSurface, nullptr, textSurface, &shadowRect);
-				SDL_BlitSurface(charSurface, nullptr, textSurface, &rect);
+				SDL_BlitSurface(charSurface, nullptr, textSurface, &textRect);
 				break;
 			}
 		}

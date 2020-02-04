@@ -50,13 +50,20 @@ void eaLuaDomain::DoString(string str)
 	result = lua_pcall(L, 0, LUA_MULTRET, 0);
 	if (result != LUA_OK)
 	{
-		eaApplication::GetLogger().Log("LuaError", "Failed to call a funciton. \r\tcurrent position at " + L.GetCurrentInfo());
+		eaApplication::GetLogger().Log("LuaError", "Failed to call a funciton. \n\tcurrent position at " + L.GetCurrentInfo());
 		throw eaLuaError();
 	}
 }
 
 void eaLuaDomain::DoFile(string str)
 {
+	struct stat buffer;
+	if (stat(str.c_str(), &buffer) != 0)
+	{
+		eaApplication::GetLogger().Log("LuaError", "File " + str + " not exists");
+		throw eaLuaError();
+	}
+
 	auto result = luaL_loadfile(L, str.c_str()) == LUA_ERRSYNTAX;
 	if (result != LUA_OK)
 	{
@@ -71,7 +78,7 @@ void eaLuaDomain::DoFile(string str)
 	result = lua_pcall(L, 0, LUA_MULTRET, 0);
 	if (result != LUA_OK)
 	{
-		eaApplication::GetLogger().Log("LuaError", "Failed to call a funciton. \r\tcurrent position at " + L.GetCurrentInfo());
+		eaApplication::GetLogger().Log("LuaError", "Failed to call a funciton. \n\tcurrent position at " + L.GetCurrentInfo());
 		throw eaLuaError();
 	}
 }

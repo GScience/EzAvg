@@ -22,7 +22,7 @@ target_link_libraries(eaEngine PRIVATE ${LUA_LIBRARIES})
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/../bin)
 set_target_properties(eaEngine PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${EXECUTABLE_OUTPUT_PATH}")
 
-IF (CMAKE_BUILD_TYPE MATCHES "Release")
+if (CMAKE_BUILD_TYPE MATCHES "Release")
 	message("In Release mode. Hiding console window")
 	if (MSVC)
 		set_target_properties(eaEngine PROPERTIES LINK_FLAGS_RELEASE "/SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")

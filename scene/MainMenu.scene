@@ -1,0 +1,21 @@
+# 背景
+:SpriteCreate	sprite="background" type=image image="MainMenu/Background.jpg" alpha=0 rect=[0,0,0,0] zOrder=-1
+:BehaviourAdd	sprite="background" behaviour="fader" type="AnimFadeIn" speed=1
+
+:Wait sprite="background" behaviour="fader"
+
+:SpriteCreate	sprite="gameName" type=text anchor=[0.05,0.2,0.6,0.2] rect=[-50, 0, -100, 0] layout=center fontSize=50
+:SpriteSet		sprite="gameName" color=[0,0,1] shadowColor=[0,0,0.8,0.5]
+:BehaviourAdd	sprite="gameName" behaviour="printer" type="AnimTextPrinter" speed=10 text="EzAvg Engine Test"
+
+:Wait sprite="gameName" behaviour="printer"
+
+:Branch name=["继续游戏", "加载游戏", "选项","退出"] pos=[Start, Load, Option, Exit] image="UI/Button.png" offset=[0,0] size=[300,100]
+
+==Start==
+
+==Load==
+
+==Option==
+
+==Exit==

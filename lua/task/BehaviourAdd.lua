@@ -28,7 +28,7 @@ function p.start(args)
 		return
 	end
 
-	local result = Sprite.addBehaviour(args.sprite, args.behaviour, args.type, args)
+	local result = Sprite.addBehaviour(args.sprite, args.behaviour, args.type)
 	for k,v in pairs(args) do
 		if k ~= "sprite" and k ~= "behaviour" and k ~= "type" then
 			result[k] = v

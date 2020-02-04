@@ -35,7 +35,6 @@ void eaScriptRunner::Update()
 	{
 		auto block = currentBlock.Get<eaScriptTextBlock>();
 		eaApplication::GetLogger().Log("Message", GetStr(block->text.GetRawStr()));
-		
 	}
 	else if (currentBlock.IsType<eaScriptLuaBlock>())
 	{

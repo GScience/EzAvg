@@ -8,7 +8,7 @@ p.text = ""
 
 function p.update()
 
-	if p.currentPos >= string.len(p.text) then
+	if p.currentPos > string.len(p.text) then
 		return
 	end
 
@@ -41,7 +41,7 @@ end
 
 function p.isFinished()
 
-	return p.currentPos >= string.len(p.text)
+	return p.currentPos > string.len(p.text)
 end
 
 function p.start()

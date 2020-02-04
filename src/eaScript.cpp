@@ -31,7 +31,14 @@ std::shared_ptr<eaScript> eaScript::FromString(std::string str)
 std::shared_ptr<eaScript> eaScript::FromFile(std::string fileName)
 {
 	ifstream file("scene/" + fileName);
-	return FromStream(file);
+
+	if (!file)
+	{
+		AddError(0, 0, "文件 "s + fileName + "未找到");
+		return nullptr;
+	}
+	else
+		return FromStream(file);
 }
 
 std::shared_ptr<eaScript> eaScript::FromStream(std::istream& stream)

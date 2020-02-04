@@ -7,16 +7,15 @@
 
 # 版本号信息
 :SpriteCreate	sprite="version" type=text anchor=[0,1,1,1] rect=[-25,0,0,0] layout=center fontSize=15 alpha=0
-:SpriteSet		sprite="version" color=[0,0,0] text="Version beta 1.0.0"
+:SpriteSet		sprite="version" color=[0,0,0] text="Version beta 1.0.0" bgColor=[0,0,0]
 :BehaviourAdd	sprite="version" behaviour="fader" type="AnimFadeIn" speed=1
 
 # 加载资源缓存
-:SpriteCreate	sprite="loadingStage" type=text anchor=[0,0.8,1,0.8] layout=center fontSize=24
-:SpriteSet		sprite="loadingStage" color=[0,0,1] shadowColor=[0,0,0.8,0.5]
-:SpriteSet		sprite="loadingStage" rect=[-50,150,-50,150]
-:SpriteSet		sprite="loadingStage" text="加载资源中"
+:SpriteCreate	sprite="loadingStage" type=text rect=[-50,150,-50,150] anchor=[0,0.7,1,0.7] layout=center fontSize=24
+:BehaviourAdd	sprite="loadingStage" behaviour="printer" type="AnimTextPrinter" speed=10 text="加载资源中，请稍后，可能需要一段时间"
 
-:Wait time=5
+:Wait			sprite="loadingStage" behaviour="printer"
+:Wait time=3
 :SpriteSet		sprite="loadingStage" text="加载完毕"
 :Wait time=1
 
@@ -27,3 +26,5 @@
 :Wait sprite="background" behaviour="fader"
 
 :SpriteRemove sprite="background"
+
+:Goto scene="MainMenu.scene" pos=0

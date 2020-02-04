@@ -105,7 +105,7 @@ eaSprite::eaSprite()
 			shared_from_this()->OnResize();
 		}
 	);
-	propertyBinder["pos"] = eaPropertyBinder
+	propertyBinder["position"] = eaPropertyBinder
 	(
 		[&]()->eaPropertyValue
 		{
