@@ -154,65 +154,6 @@ class eaScriptFunction
 	}
 };
 
-class eaSpriteFunction
-{
-	/*
-	为精灵添加行为脚本
-	table addBehaviour(string spriteName, string behaviour, string type)
-	*/
-	LuaFunc(addBehaviour, Sprite)
-	{
-		std::shared_ptr<eaSprite> sprite;
-
-		string spriteName = GetString(1);
-
-		auto scene = eaApplication::instance->CurrentScene();
-		sprite = scene->GetSprite(spriteName);
-
-		if (sprite == nullptr)
-			return 0;
-
-		string behaviour = GetString(2);
-		string type = GetString(3);
-
-		auto obj = sprite->AddBehaviour(behaviour, type);
-		lua_rawgeti(L, LUA_REGISTRYINDEX, obj->GetObjRef());
-
-		return 1;
-	}
-
-	/*
-	创建精灵
-	table create(string spriteName, string spriteType)
-	*/
-	LuaFunc(create, Sprite)
-	{
-		string spriteName = GetString(1);
-		string spriteType = GetString(2);
-
-		auto scene = eaApplication::instance->CurrentScene();
-
-		std::shared_ptr<eaSprite> sprite;
-
-		if (spriteType == "image")
-			sprite = scene->AddSprite<eaSpriteImage>(spriteName);
-		else if (spriteType == "text")
-			sprite = scene->AddSprite<eaSpriteText>(spriteName);
-		else if (spriteType == "button")
-			sprite = scene->AddSprite<eaSpriteText>(spriteName);
-
-		if (sprite == nullptr)
-			lua_pushnil(L);
-		else
-		{
-			lua_rawgeti(L, LUA_REGISTRYINDEX, sprite->GetDomain()->GetEnvTableRef());
-			lua_pushstring(L, "sprite");
-			lua_gettable(L, -2);
-		}
-		return 1;
-	}
-};
-
 class eaResourcesFunction
 {
 	/*
@@ -279,5 +220,4 @@ eaTimeFunction timeFunc;
 eaInputFunc inputFunc;
 
 eaScriptFunction scriptFunc;
-eaSpriteFunction spriteFunc;
 eaResourcesFunction resourceFunc;

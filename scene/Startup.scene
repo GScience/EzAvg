@@ -11,7 +11,7 @@
 :BehaviourAdd	sprite="version" behaviour="fader" type="AnimFadeIn" speed=1
 
 # 加载资源缓存
-:SpriteCreate	sprite="loadingStage" type=text rect=[-50,150,-50,150] anchor=[0,0.7,1,0.7] layout=center fontSize=24
+:SpriteCreate	sprite="loadingStage" type=text rect=[-50,200,-50,200] anchor=[0,0.7,1,0.7] layout=center fontSize=24
 :BehaviourAdd	sprite="loadingStage" behaviour="printer" type="AnimTextPrinter" speed=10 text="加载资源中，请稍后，可能需要一段时间"
 
 :Wait			sprite="loadingStage" behaviour="printer"

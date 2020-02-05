@@ -267,10 +267,16 @@ eaScriptObject eaScriptReader::ReadLuaBlock()
 	}
 
 	// 读取Lua代码
-	c = Get();
 	string code;
+	int depth = 1;
 
-	while (c != '}')
+	c = Get();
+	if (c == '{')
+		++depth;
+	else if (c == '}')
+		--depth;
+
+	while (depth > 0)
 	{
 		if (Eof())
 		{
@@ -279,7 +285,12 @@ eaScriptObject eaScriptReader::ReadLuaBlock()
 			return nullptr;
 		}
 		code += c;
+
 		c = Get();
+		if (c == '{')
+			++depth;
+		else if (c == '}')
+			--depth;
 	}
 	
 	// 读到新行

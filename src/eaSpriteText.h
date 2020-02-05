@@ -4,6 +4,7 @@
 #include "eaSprite.h"
 
 struct SDL_Surface;
+struct SDL_Texture;
 
 enum eaTextLayout
 {

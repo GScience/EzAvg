@@ -1,5 +1,6 @@
 #pragma once
 
+#include <functional>
 #include <vector>
 #include <string>
 #include <memory>
@@ -211,10 +212,10 @@ class eaSprite : public eaSaveable, public std::enable_shared_from_this<eaSprite
 {
 	std::vector<std::shared_ptr<eaSpriteBehaviour>> behaviours;
 	std::shared_ptr<eaLuaDomain> domain;
-	std::shared_ptr<eaScene> scene;
+
 protected:
 	std::map<std::string, eaPropertyBinder> propertyBinder;
-	
+
 	eaSprite();
 
 public:
@@ -230,6 +231,8 @@ protected:
 	int zOrder = 0;
 
 public:
+	std::function<int(std::string)> customLuaGetFunction;
+	std::function<int(std::string)> customLuaSetFunction;
 
 	bool enabled = true;
 	bool destroyed = false;
@@ -289,8 +292,6 @@ public:
 	virtual void OnMove() {}
 	virtual void OnResize() {}
 
-	virtual void Awake() {}
-
 	/*
 	添加行为
 	*/
@@ -309,20 +310,9 @@ public:
 		return domain;
 	}
 
-	template<class T> static std::shared_ptr<T> Create(std::shared_ptr<eaScene> scene, std::string name)
-	{
-		auto obj = std::shared_ptr<T>(new T());
-		obj->name = name;
-		obj->scene = scene;
-		obj->Awake();
-		obj->OnMove();
-		obj->OnResize();
-		obj->CreateDomain();
-		return obj;
-	}
-private:
+	
 	/*
-	初始化域
+	绑定域
 	*/
-	void CreateDomain();
+	void BindDomain(std::shared_ptr<eaLuaDomain> ownerDomain);
 };

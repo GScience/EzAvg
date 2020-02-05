@@ -7,32 +7,13 @@
 
 using namespace std;
 
-// 获取精灵
-static int SceneSpriteGet(lua_State* L)
-{
-	auto scene = (eaScene*)lua_tointeger(L, lua_upvalueindex(1));
-	string name = lua_tostring(L, 2);
-
-	auto sprite = scene->GetSprite(name);
-
-	if (sprite != nullptr && sprite->enabled)
-	{
-		// 获取对应精灵域的sprite对象
-		lua_rawgeti(L, LUA_REGISTRYINDEX, sprite->GetDomain()->GetEnvTableRef());
-		lua_pushstring(L, "sprite");
-		lua_gettable(L, -2);
-	}
-	else
-		lua_pushnil(L);
-
-	return 1;
-}
-
 eaScene::eaScene(string name)
 {
 	auto& L = eaApplication::GetLua();
 
 	domain = eaLuaDomain::Create(name, eaApplication::GetDomain());
+
+	spriteGroup = eaSpriteGroup::Create(domain, "scene");
 
 	lua_rawgeti(L, LUA_REGISTRYINDEX, domain->GetEnvTableRef());
 
@@ -47,10 +28,15 @@ eaScene::eaScene(string name)
 
 	// 使用__index来支持通过名称查找精灵
 	lua_createtable(L, 0, 0);
+
+	lua_rawgeti(L, LUA_REGISTRYINDEX, spriteGroup->GetDomain()->GetEnvTableRef());
 	lua_pushstring(L, "__index");
-	lua_pushinteger(L, (long long)this);
-	lua_pushcclosure(L, SceneSpriteGet, 1);
-	lua_settable(L, -3);
+	lua_pushstring(L, "sprite");
+	lua_gettable(L, -3);
+	
+	lua_settable(L, -4);
+
+	lua_pop(L, 1);
 
 	// 设置元表
 	lua_setmetatable(L, -2);
@@ -68,16 +54,7 @@ void eaScene::InitScript(std::string name)
 
 void eaScene::Draw(SDL_Renderer* renderer)
 {
-	sort(sprites.begin(), sprites.end(), [](std::shared_ptr<eaSprite> a, std::shared_ptr<eaSprite> b)
-	{
-		return (a->GetZOrder() < b->GetZOrder());
-	});
-
-	for (auto& sprite : sprites)
-	{
-		if (sprite->enabled && !sprite->destroyed)
-			sprite->Draw(renderer);
-	}
+	spriteGroup->Draw(renderer);
 }
 
 void eaScene::Update()
@@ -85,29 +62,17 @@ void eaScene::Update()
 	if (runner->enable)
 		runner->Update();
 
-	for (auto sprite = sprites.begin(); sprite != sprites.end();)
-	{
-		if ((*sprite)->destroyed)
-		{
-			sprite = sprites.erase(sprite);
-			continue;
-		}
-		else if ((*sprite)->enabled)
-			(*sprite)->Update();
-		++sprite;
-	}
+	spriteGroup->Update();
 }
 
 void eaScene::Save()
 {
-	for (auto& sprite : sprites)
-		sprite->Save();
+	spriteGroup->Save();
 }
 
 void eaScene::Load()
 {
-	for (auto& sprite : sprites)
-		sprite->Load();
+	spriteGroup->Load();
 }
 
 shared_ptr<eaScene> eaScene::Load(std::string name)
@@ -119,8 +84,5 @@ shared_ptr<eaScene> eaScene::Load(std::string name)
 
 shared_ptr<eaSprite> eaScene::GetSprite(std::string name)
 {
-	for (auto sprite : sprites)
-		if (sprite->name == name)
-			return sprite;
-	return nullptr;
+	return spriteGroup->GetSprite(name);
 }

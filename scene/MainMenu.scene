@@ -10,18 +10,31 @@
 
 :Wait sprite="gameName" behaviour="printer"
 
-:SpriteCreate	sprite="button_image" type=image image="UI/Button300x50.png" zOrder=1 anchor=[1,1,1,1] rect=[-300, 0, 250, -300]
-:SpriteSet		sprite="button_image"
+:SpriteCreate	sprite="button" type=group anchor=[1,1,1,1] rect=[-300, 0, 250, -300]
 
-:SpriteCreate	sprite="button_text" type=text layout=center fontSize=25 anchor=[1,1,1,1] rect=[-300, 0, 250, -300]
-:SpriteSet		sprite="button_text" color=[0.9,0.9,0.9] shadowColor=[0.8,0.8,0.8,0.5]
-:SpriteSet		sprite="button_text" text="退出游戏" zOrder=2
+{
+	buttonImage = scene.button.addSprite("button_image", "image")
+	buttonImage.image = "UI/Button300x50.png"
+	buttonImage.zOrder=-1
+	scene.button.button_image.anchor={1,1,1,1}
+	scene.button.button_image.rect={-300, 0, 250, -300}
+	
+	buttonText= scene.button.addSprite("button_text", "text")
+	scene.button.button_text.color={0.9,0.9,0.9}
+	scene.button.button_text.shadowColor={0.8,0.8,0.8,0.5}
+	scene.button.button_text.anchor={1,1,1,1}
+	scene.button.button_text.rect={-300, 0, 250, -300}
+	scene.button.button_text.text = "退出游戏"
+	scene.button.button_text.zOrder=0
+	scene.button.button_text.layout="center"
+	scene.button.button_text.fontSize=25
+}
 
 {
 	if Input.getButton(0) then
-		scene.button_image.alpha = 0.5
+		scene.button.alpha = 0.5
 	else
-		scene.button_image.alpha = 1.0
+		scene.button.alpha = 1.0
 	end
 	Script.jump(Script.getNextPos() - 1)
 }

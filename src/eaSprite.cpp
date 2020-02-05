@@ -219,6 +219,14 @@ static int SpritePropertySet(lua_State* L)
 	auto sprite = (eaSprite*)lua_tointeger(L, lua_upvalueindex(1));
 	string name = lua_tostring(L, 2);
 
+	// 设置自定义对象
+	if (sprite->customLuaSetFunction != nullptr)
+	{
+		int result = sprite->customLuaSetFunction(name);
+		if (result != 0)
+			return result;
+	}
+
 	sprite->SetProperty(name, ToPropertyValue(L, 3));
 
 	return 0;
@@ -252,12 +260,48 @@ static void PushPropertyValue(lua_State* L, eaPropertyValue value)
 }
 
 /*
+创建行为
+*/
+static int SpriteAddBehaviour(lua_State* L)
+{
+	auto sprite = (eaSprite*)lua_tointeger(L, lua_upvalueindex(1));
+
+	string behaviourName = lua_tostring(L, 1);
+	string behaviourType = lua_tostring(L, 2);
+
+	auto behaviour =  sprite->AddBehaviour(behaviourName, behaviourType);
+
+	if (behaviour == nullptr)
+		lua_pushnil(L);
+	else
+		lua_rawgeti(L, LUA_REGISTRYINDEX, behaviour->GetObjRef());
+	
+	return 1;
+}
+
+/*
 设置属性
 */
 static int SpritePropertyGet(lua_State* L)
 {
 	auto sprite = (eaSprite*)lua_tointeger(L, lua_upvalueindex(1));
 	string name = lua_tostring(L, 2);
+
+	// 方法
+	if (name == "addBehaviour")
+	{
+		lua_pushinteger(L, (long long)sprite);
+		lua_pushcclosure(L, SpriteAddBehaviour, 1);
+		return 1;
+	}
+
+	// 获取自定义对象
+	if (sprite->customLuaGetFunction != nullptr)
+	{
+		int result = sprite->customLuaGetFunction(name);
+		if (result != 0)
+			return result;
+	}
 
 	// 尝试获取精灵属性
 	auto value = sprite->GetProperty(name);
@@ -282,11 +326,11 @@ static int SpritePropertyGet(lua_State* L)
 	return 1;
 }
 
-void eaSprite::CreateDomain()
+void eaSprite::BindDomain(std::shared_ptr<eaLuaDomain> ownerDomain)
 {
 	auto& L = eaApplication::GetLua();
 
-	domain = eaLuaDomain::Create("Sprite", scene->GetDomain());
+	domain = eaLuaDomain::Create("Sprite", ownerDomain);
 
 	// 创建sprite对象，控制精灵属性等
 	lua_rawgeti(L, LUA_REGISTRYINDEX, domain->GetEnvTableRef());

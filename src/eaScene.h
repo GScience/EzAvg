@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <memory>
+#include "eaSpriteGroup.h"
 #include "eaSprite.h"
 #include "eaSaveable.h"
 #include "eaScriptRunner.h"
@@ -11,7 +12,7 @@
 */
 class eaScene : public eaSaveable, public std::enable_shared_from_this<eaScene>
 {
-	std::vector<std::shared_ptr<eaSprite>> sprites;
+	std::shared_ptr<eaSpriteGroup> spriteGroup;
 	std::shared_ptr<eaLuaDomain> domain;
 	
 	eaScene(std::string name);
@@ -40,8 +41,7 @@ public:
 		if (GetSprite(name) != nullptr)
 			return nullptr;
 
-		auto sprite = eaSprite::Create<T>(this->shared_from_this(), name);
-		sprites.push_back(sprite);
+		auto sprite = spriteGroup->Create<T>(name);
 		return sprite;
 	}
 
