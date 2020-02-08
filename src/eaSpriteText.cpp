@@ -259,10 +259,10 @@ void eaSpriteText::SetText(std::string str)
 		{
 			case TextLayoutLeft:
 			{
-				SDL_Rect rect = SDL_Rect{ cursorX , cursorY, wordSize.width , wordSize.height };
-				SDL_Rect shadowRect = SDL_Rect{ rect.x + shadowOffset , rect.y + shadowOffset,rect.w , rect.h };
+				SDL_Rect margin = SDL_Rect{ cursorX , cursorY, wordSize.width , wordSize.height };
+				SDL_Rect shadowRect = SDL_Rect{ margin.x + shadowOffset , margin.y + shadowOffset,margin.w , margin.h };
 				SDL_BlitSurface(shadowSurface, nullptr, textSurface, &shadowRect);
-				SDL_BlitSurface(charSurface, nullptr, textSurface, &rect);
+				SDL_BlitSurface(charSurface, nullptr, textSurface, &margin);
 				break;
 			}
 			case TextLayoutCenter:
@@ -300,7 +300,7 @@ void eaSpriteText::SetText(std::string str)
 					SDL_BlitSurface(textSurface, nullptr, textSurface, &newRect);
 				}
 				// 渲染文字
-				SDL_Rect rect = SDL_Rect
+				SDL_Rect margin = SDL_Rect
 				{
 					renderRect.width / 2 + cursorX / 2 - wordSize.width / 2,
 					renderRect.height / 2 + cursorY/ 2 - font->GetLineHeight() / 2,
@@ -308,9 +308,9 @@ void eaSpriteText::SetText(std::string str)
 					wordSize.height
 				};
 
-				SDL_Rect shadowRect = SDL_Rect{ rect.x + shadowOffset , rect.y + shadowOffset,rect.w - shadowOffset, rect.h - shadowOffset };
-				SDL_Rect clearRect = SDL_Rect{ rect.x,rect.y,rect.w,rect.h };
-				SDL_Rect textRect = SDL_Rect{ rect.x,rect.y,rect.w - shadowOffset,rect.h - shadowOffset };
+				SDL_Rect shadowRect = SDL_Rect{ margin.x + shadowOffset , margin.y + shadowOffset,margin.w - shadowOffset, margin.h - shadowOffset };
+				SDL_Rect clearRect = SDL_Rect{ margin.x,margin.y,margin.w,margin.h };
+				SDL_Rect textRect = SDL_Rect{ margin.x,margin.y,margin.w - shadowOffset,margin.h - shadowOffset };
 				SDL_FillRect(textSurface, &clearRect, SDL_MapRGBA(textSurface->format, 0, 0, 0, 0));
 				SDL_BlitSurface(shadowSurface, nullptr, textSurface, &shadowRect);
 				SDL_BlitSurface(charSurface, nullptr, textSurface, &textRect);
@@ -327,16 +327,16 @@ void eaSpriteText::SetText(std::string str)
 					SDL_BlitSurface(textSurface, &currentLineRect, textSurface, &updatedLineRect);
 				}
 				// 渲染文字
-				SDL_Rect rect = SDL_Rect
+				SDL_Rect margin = SDL_Rect
 				{
 					renderRect.width - wordSize.width,
 					cursorY,
 					wordSize.width ,
 					wordSize.height
 				};
-				SDL_Rect shadowRect = SDL_Rect{ rect.x + shadowOffset , rect.y + shadowOffset,rect.w , rect.h };
-				SDL_Rect clearRect = SDL_Rect{ rect.x,rect.y,rect.w,rect.h };
-				SDL_Rect textRect = SDL_Rect{ rect.x,rect.y,rect.w - shadowOffset,rect.h - shadowOffset };
+				SDL_Rect shadowRect = SDL_Rect{ margin.x + shadowOffset , margin.y + shadowOffset,margin.w , margin.h };
+				SDL_Rect clearRect = SDL_Rect{ margin.x,margin.y,margin.w,margin.h };
+				SDL_Rect textRect = SDL_Rect{ margin.x,margin.y,margin.w - shadowOffset,margin.h - shadowOffset };
 				SDL_FillRect(textSurface, &clearRect, SDL_MapRGBA(textSurface->format, 0, 0, 0, 0));
 				SDL_BlitSurface(shadowSurface, nullptr, textSurface, &shadowRect);
 				SDL_BlitSurface(charSurface, nullptr, textSurface, &textRect);
@@ -361,9 +361,9 @@ void eaSpriteText::Draw(SDL_Renderer* renderer)
 	if (textTexture != nullptr)
 	{
 		auto renderRect = GetRenderRect();
-		auto rect = SDL_Rect{ renderRect.x,renderRect.y,renderRect.width,renderRect.height };
+		auto margin = SDL_Rect{ renderRect.x,renderRect.y,renderRect.width,renderRect.height };
 		SDL_SetTextureAlphaMod(textTexture, (uint8_t)(alpha * 255));
-		SDL_RenderCopy(renderer, textTexture, nullptr, &rect);
+		SDL_RenderCopy(renderer, textTexture, nullptr, &margin);
 	}
 }
 

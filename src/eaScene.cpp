@@ -15,6 +15,12 @@ eaScene::eaScene(string name)
 
 	spriteGroup = eaSpriteGroup::Create(domain, "scene");
 
+	auto windowSize = eaApplication::instance->applicationSize;
+	spriteGroup->box = eaSpriteBox
+	{
+		0,0,windowSize.width,windowSize.height
+	};
+
 	lua_rawgeti(L, LUA_REGISTRYINDEX, domain->GetEnvTableRef());
 
 	// 创建scene

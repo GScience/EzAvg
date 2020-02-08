@@ -79,13 +79,12 @@ class eaApplicationFunction
 	/*
 	void setWindowSize(int width, int height)
 	*/
-	LuaFunc(setWindowSize, Application)
+	LuaFunc(setApplicationSize, Application)
 	{
-		lua_Integer width = GetInteger(1);
-		lua_Integer height = GetInteger(2);
+		int width = (int)GetInteger(1);
+		int height = (int)GetInteger(2);
 
-		SDL_SetWindowSize(eaApplication::GetWindow(), (int) width, (int) height);
-		SDL_SetWindowPosition(eaApplication::GetWindow(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+		eaApplication::instance->SetApplicationSize(width, height);
 
 		return 0;
 	}

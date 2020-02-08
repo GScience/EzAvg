@@ -35,14 +35,14 @@ eaLuaDomain::~eaLuaDomain()
 	luaL_unref(L, LUA_REGISTRYINDEX, envTableRef);
 }
 
-void eaLuaDomain::DoString(string str)
+bool eaLuaDomain::DoString(string str)
 {
 	auto result = luaL_loadstring(L, str.c_str());
 	if (result != LUA_OK)
 	{
 		string err = lua_tostring(L, -1);
 		eaApplication::GetLogger().Log("LuaError", "Failed to load a code string because: " + err);
-		throw eaLuaError();
+		return false;
 	}
 	lua_rawgeti(L, LUA_REGISTRYINDEX, envTableRef);
 	lua_setupvalue(L, -2, 1);
@@ -51,17 +51,18 @@ void eaLuaDomain::DoString(string str)
 	if (result != LUA_OK)
 	{
 		eaApplication::GetLogger().Log("LuaError", "Failed to call a funciton. \n\tcurrent position at " + L.GetCurrentInfo());
-		throw eaLuaError();
+		return false;
 	}
+	return true;
 }
 
-void eaLuaDomain::DoFile(string str)
+bool eaLuaDomain::DoFile(string str)
 {
 	struct stat buffer;
 	if (stat(str.c_str(), &buffer) != 0)
 	{
 		eaApplication::GetLogger().Log("LuaError", "File " + str + " not exists");
-		throw eaLuaError();
+		return false;
 	}
 
 	auto result = luaL_loadfile(L, str.c_str()) == LUA_ERRSYNTAX;
@@ -69,7 +70,7 @@ void eaLuaDomain::DoFile(string str)
 	{
 		string err = lua_tostring(L, -1);
 		eaApplication::GetLogger().Log("LuaError", "Failed to load a file because: " + err);
-		throw eaLuaError();
+		return false;
 	}
 
 	lua_rawgeti(L, LUA_REGISTRYINDEX, envTableRef);
@@ -79,8 +80,9 @@ void eaLuaDomain::DoFile(string str)
 	if (result != LUA_OK)
 	{
 		eaApplication::GetLogger().Log("LuaError", "Failed to call a funciton. \n\tcurrent position at " + L.GetCurrentInfo());
-		throw eaLuaError();
+		return false;
 	}
+	return true;
 }
 
 std::shared_ptr<eaLuaDomain> eaLuaDomain::Create(const std::string& domain, std::shared_ptr<eaLuaDomain> owner)

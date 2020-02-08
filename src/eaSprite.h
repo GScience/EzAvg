@@ -175,6 +175,9 @@ public:
 	eaPropertyBinder() = default;
 };
 
+/*
+渲染区域
+*/
 struct eaRenderRect
 {
 	int x;
@@ -183,26 +186,26 @@ struct eaRenderRect
 	int height;
 };
 
-struct eaSpriteAnchor
-{
-	double minX = 0;
-	double minY = 0;
-	double maxX = 1;
-	double maxY = 1;
-};
-
-struct eaSpritePivot
-{
-	double x = 0.5;
-	double y = 0.5;
-};
-
-struct eaSpriteRect
+/*
+边界
+*/
+struct eaSpriteMargin
 {
 	int up = 0;
 	int right = 0;
 	int bottom = 0;
 	int left = 0;
+};
+
+/*
+精灵盒
+*/
+struct eaSpriteBox
+{
+	int x = 0;
+	int y = 0;
+	int width = 0;
+	int height = 0;
 };
 
 /*
@@ -216,21 +219,16 @@ class eaSprite : public eaSaveable, public std::enable_shared_from_this<eaSprite
 protected:
 	std::map<std::string, eaPropertyBinder> propertyBinder;
 
-	eaSprite();
-
 public:
-	virtual ~eaSprite() = default;
-
-private:
-	eaSpriteRect rect;
-	eaSpriteAnchor anchor;
-	eaSpritePivot pivot;
-
-protected:
+	eaSpriteMargin margin;
+	eaSpriteBox box;
+	
 	double alpha = 1;
 	int zOrder = 0;
 
-public:
+	eaSprite();
+	virtual ~eaSprite() = default;
+
 	std::function<int(std::string)> customLuaGetFunction;
 	std::function<int(std::string)> customLuaSetFunction;
 
@@ -309,10 +307,11 @@ public:
 	{
 		return domain;
 	}
-
 	
 	/*
 	绑定域
 	*/
 	void BindDomain(std::shared_ptr<eaLuaDomain> ownerDomain);
+
+	virtual std::string GetType() = 0;
 };

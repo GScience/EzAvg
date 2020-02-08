@@ -5,7 +5,7 @@ Game = {}
 function Game.start()
 	print('已启动')
 	Application.setTitle(Config.title)
-	Application.setWindowSize(Config.windowSize[1], Config.windowSize[2])
+	Application.setApplicationSize(Config.applicationSize[1], Config.applicationSize[2])
 
 	Game.loadScene('Startup.scene')
 end

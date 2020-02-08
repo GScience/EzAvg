@@ -61,4 +61,9 @@ public:
 
 	void Save() override;
 	void Load() override;
+
+	std::string GetType() override
+	{
+		return "text";
+	}
 };

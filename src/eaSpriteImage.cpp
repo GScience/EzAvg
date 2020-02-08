@@ -11,10 +11,10 @@ void eaSpriteImage::Draw(SDL_Renderer* renderer)
 	if (image != nullptr)
 	{
 		auto renderRect = GetRenderRect();
-		auto rect = SDL_Rect{ renderRect.x,renderRect.y,renderRect.width,renderRect.height };
+		auto margin = SDL_Rect{ renderRect.x,renderRect.y,renderRect.width,renderRect.height };
 		SDL_SetTextureAlphaMod(*image, (uint8_t)(alpha * 255 * color.a));
 		SDL_SetTextureColorMod(*image, (uint8_t)(255 * color.r), (uint8_t)(255 * color.g), (uint8_t)(255 * color.b));
-		SDL_RenderCopy(renderer, *image, nullptr, &rect);
+		SDL_RenderCopy(renderer, *image, nullptr, &margin);
 	}
 }
 

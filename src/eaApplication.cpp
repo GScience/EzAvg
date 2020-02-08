@@ -18,9 +18,10 @@ void eaApplication::InitWindow()
 	sdlWindow = SDL_CreateWindow(
 		"Window",
 		SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-		500, 500,
-		SDL_WINDOW_ALLOW_HIGHDPI);
+		applicationSize.width, applicationSize.height,
+		SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_RESIZABLE);
 	sdlRenderer = SDL_CreateRenderer(sdlWindow, -1, 0);
+	SDL_RenderSetLogicalSize(sdlRenderer, applicationSize.width, applicationSize.height);
 }
 
 void eaApplication::InitApplication()
@@ -52,6 +53,22 @@ void eaApplication::Load()
 	scene->Load();
 }
 
+void eaApplication::SetApplicationSize(int width, int height)
+{
+	SDL_SetWindowSize(eaApplication::GetWindow(), (int)width, (int)height);
+	SDL_SetWindowPosition(eaApplication::GetWindow(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+
+	applicationSize = eaApplicationSize
+	{
+		width, height
+	};
+}
+
+void WindowResize(SDL_Window* window)
+{
+
+}
+
 void eaApplication::Run(std::vector<std::string> args)
 {
 	bool debugMode = false;
@@ -74,8 +91,26 @@ void eaApplication::Run(std::vector<std::string> args)
 	{
 		if (SDL_PollEvent(&e))
 		{
-			if (e.type == SDL_QUIT)
-				shouldWindowClose = true;
+			switch (e.type)
+			{
+				case SDL_QUIT:
+				{
+					shouldWindowClose = true;
+					break;
+				}
+				case SDL_WINDOWEVENT:
+				{
+					switch (e.window.event)
+					{
+						case SDL_WINDOWEVENT_SIZE_CHANGED:
+						{
+							SDL_RenderSetLogicalSize(sdlRenderer, applicationSize.width, applicationSize.height);
+							break;
+						}
+					}
+				}
+			}
+
 		}
 
 		SDL_PumpEvents();

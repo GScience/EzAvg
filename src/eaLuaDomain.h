@@ -24,8 +24,8 @@ public:
 	eaLuaDomain(const eaLuaDomain&) = delete;
 	~eaLuaDomain();
 
-	void DoString(std::string str);
-	void DoFile(std::string str);
+	bool DoString(std::string str);
+	bool DoFile(std::string str);
 
 	int GetEnvTableRef()
 	{

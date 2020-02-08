@@ -19,6 +19,10 @@ public:
 	void Load() override;
 
 	std::shared_ptr<eaSprite> GetSprite(std::string name);
+	const std::vector<std::shared_ptr<eaSprite>>& GetSprites() const
+	{
+		return sprites;
+	}
 
 	static std::shared_ptr<eaSpriteGroup> Create(std::shared_ptr<eaLuaDomain> owner, std::string name)
 	{
@@ -35,9 +39,15 @@ public:
 		auto obj = std::shared_ptr<T>(new T());
 		obj->name = name;
 		obj->BindDomain(GetDomain());
+		obj->box = box;
 		obj->OnMove();
 		obj->OnResize();
 		sprites.push_back(obj);
 		return obj;
+	}
+
+	std::string GetType() override
+	{
+		return "group";
 	}
 };

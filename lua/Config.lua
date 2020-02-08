@@ -1,4 +1,4 @@
 Config = {}
 
 Config.title = 'EzAvg Engine'
-Config.windowSize = {800, 600}
+Config.applicationSize = {800, 600}

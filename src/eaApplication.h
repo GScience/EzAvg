@@ -9,6 +9,12 @@ struct SDL_Window;
 struct SDL_Renderer;
 struct SDL_Surface;
 
+struct eaApplicationSize
+{
+	int width = 500;
+	int height = 500;
+};
+
 class eaApplication : public eaSaveable
 {
 	std::shared_ptr<eaScene> scene;
@@ -22,6 +28,8 @@ public:
 
 	SDL_Window* sdlWindow = nullptr;
 	SDL_Renderer* sdlRenderer = nullptr;
+
+	eaApplicationSize applicationSize;
 
 	eaApplication()
 	{
@@ -43,6 +51,11 @@ public:
 		scene = eaScene::Load(scriptName);
 	}
 	
+	/*
+	设置窗体大小
+	*/
+	void SetApplicationSize(int width, int height);
+
 	std::shared_ptr<eaScene> CurrentScene()
 	{
 		return scene;

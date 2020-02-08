@@ -6,7 +6,8 @@ eaLuaBridge::eaLuaBridge(std::shared_ptr<eaLuaDomain> owner, std::string type) :
 {
 	auto& L = eaApplication::GetLua();
 	domain = eaLuaDomain::Create(type, owner);
-	domain->DoFile(type + ".lua");
+	if (!domain->DoFile(type + ".lua"))
+		eaApplication::GetLogger().Log("LuaBridge", "Failed to create an lua object with type " + type);
 	objRef = luaL_ref(L, LUA_REGISTRYINDEX);
 }
 

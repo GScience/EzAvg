@@ -34,6 +34,33 @@ static int SpriteGroupAddSprite(lua_State* L)
 	return 1;
 }
 
+static int SpriteGroupSpriteIterator(lua_State* L)
+{
+	auto spriteGroup = (eaSpriteGroup*)lua_tointeger(L, lua_upvalueindex(1));
+
+	size_t currentNumber = 0;
+
+	if (lua_isinteger(L, 2))
+		currentNumber = (size_t)lua_tointeger(L, 2);
+
+	auto sprites = spriteGroup->GetSprites();
+
+	++currentNumber;
+
+	if (currentNumber > sprites.size())
+		return 0;
+
+	auto sprite = sprites[currentNumber - 1];
+
+	lua_pushinteger(L, currentNumber);
+	lua_rawgeti(L, LUA_REGISTRYINDEX, sprite->GetDomain()->GetEnvTableRef());
+	lua_pushstring(L, "sprite");
+	lua_gettable(L, -2);
+	lua_replace(L, -2);
+
+	return 2;
+}
+
 eaSpriteGroup::eaSpriteGroup()
 {
 	auto& L = eaApplication::GetLua();
@@ -45,6 +72,12 @@ eaSpriteGroup::eaSpriteGroup()
 		{
 			lua_pushinteger(L, (long long)this);
 			lua_pushcclosure(L, SpriteGroupAddSprite, 1);
+			return 1;
+		}
+		else if (name == "iter")
+		{
+			lua_pushinteger(L, (long long)this);
+			lua_pushcclosure(L, SpriteGroupSpriteIterator, 1);
 			return 1;
 		}
 
@@ -77,6 +110,8 @@ void eaSpriteGroup::Draw(SDL_Renderer* renderer)
 
 void eaSpriteGroup::Update()
 {
+	eaSprite::Update();
+
 	for (auto sprite = sprites.begin(); sprite != sprites.end();)
 	{
 		if ((*sprite)->destroyed)

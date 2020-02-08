@@ -39,6 +39,17 @@ std::shared_ptr<eaSpriteBehaviour> eaSprite::GetBehaviour(std::string name)
 
 eaSprite::eaSprite()
 {
+	propertyBinder["name"] = eaPropertyBinder
+	(
+		[&]()->eaPropertyValue
+		{
+			return name;
+		},
+		[&](eaPropertyValue value)
+		{
+			name = value.ToString();
+		}
+	);
 	propertyBinder["enabled"] = eaPropertyBinder
 	(
 		[&]()->eaPropertyValue
@@ -72,11 +83,11 @@ eaSprite::eaSprite()
 			zOrder = value;
 		}
 	);
-	propertyBinder["rect"] = eaPropertyBinder
+	propertyBinder["margin"] = eaPropertyBinder
 	(
 		[&]()->eaPropertyValue
 		{
-			return { rect.up,rect.right,rect.bottom,rect.left };
+			return { margin.up,margin.right,margin.bottom,margin.left };
 		},
 		[&](eaPropertyValue value)
 		{
@@ -85,46 +96,31 @@ eaSprite::eaSprite()
 
 			SDL_GetWindowSize(eaApplication::GetWindow(), &anchorX, &anchorY);
 
-			rect.up = value[1];
-			rect.right = value[2];
-			rect.bottom = value[3];
-			rect.left = value[4];
+			margin.up = value[1];
+			margin.right = value[2];
+			margin.bottom = value[3];
+			margin.left = value[4];
 			shared_from_this()->OnResize();
 			shared_from_this()->OnMove();
 		}
 	);
-	propertyBinder["anchor"] = eaPropertyBinder
+	propertyBinder["box"] = eaPropertyBinder
 	(
 		[&]()->eaPropertyValue
 		{
 			return
 			{
-				anchor.minX,anchor.minY,
-				anchor.maxX,anchor.maxY
+				box.x,box.y,
+				box.width,box.height
 			};
 		},
 		[&](eaPropertyValue value)
 		{
-			anchor.minX = value[1];
-			anchor.minY = value[2];
-			anchor.maxX = value[3];
-			anchor.maxY = value[4];
+			box.x = value[1];
+			box.y = value[2];
+			box.width = value[3];
+			box.height = value[4];
 			shared_from_this()->OnResize();
-		}
-	);
-	propertyBinder["pivot"] = eaPropertyBinder
-	(
-		[&]()->eaPropertyValue
-		{
-			return
-			{
-				pivot.x,pivot.y
-			};
-		},
-		[&](eaPropertyValue value)
-		{
-			pivot.x = value[1];
-			pivot.y = value[2];
 		}
 	);
 	propertyBinder["alpha"] = eaPropertyBinder(
@@ -141,25 +137,11 @@ eaSprite::eaSprite()
 
 eaRenderRect eaSprite::GetRenderRect()
 {
-	int windowWidth, windowHeight;
-	SDL_GetWindowSize(eaApplication::GetWindow(), &windowWidth, &windowHeight);
+	int x = (int)(box.x + margin.left);
+	int y = (int)(box.y + margin.up);
 
-	int minX = (int)(anchor.minX * windowWidth);
-	int minY = (int)(anchor.minY * windowHeight);
-	int maxX = (int)(anchor.maxX * windowWidth);
-	int maxY = (int)(anchor.maxY * windowHeight);
-
-	int width = (maxX - minX) - rect.right - rect.left;
-	int height = (maxY - minY) - rect.bottom - rect.up;
-
-	int pivotX = (int)((pivot.x - 0.5) * width);
-	int pivotY = (int)((pivot.y - 0.5) * height);
-
-	int posX = rect.left;
-	int posY = rect.up;
-
-	int x = posX + minX - pivotX;
-	int y = posY + minY - pivotY;
+	int width = box.width - margin.right - margin.left;
+	int height = box.height - margin.bottom - margin.up;
 
 	return eaRenderRect
 	{
@@ -350,11 +332,6 @@ void eaSprite::BindDomain(std::shared_ptr<eaLuaDomain> ownerDomain)
 	
 	// 设置元表
 	lua_setmetatable(L, -2);
-
-	// sprite.name = name
-	lua_pushstring(L, "name");
-	lua_pushstring(L, name.c_str());
-	lua_settable(L, -3);
 
 	// 把sprite对象放入域
 	lua_settable(L, -3);
