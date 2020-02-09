@@ -203,6 +203,27 @@ std::string eaScriptRunner::GetStr(const eaScriptString& scriptStr) const
 	{
 		char c = str[i];
 
+		if (c == '\\')
+		{
+			bool isEscapeChar = false;
+
+			switch (str[i + 1])
+			{
+			case 'n':
+				buffer += '\n';
+				isEscapeChar = true;
+				++i;
+				break;
+			case 't':
+				buffer += '\t';
+				isEscapeChar = true;
+				++i;
+				break;
+			}
+			if (isEscapeChar)
+				continue;
+		}
+
 		if (c != '{')
 		{
 			buffer += c;
@@ -211,10 +232,16 @@ std::string eaScriptRunner::GetStr(const eaScriptString& scriptStr) const
 
 		string luaCode;
 		++i;
+		int depth = 1;
+
 		for (; i < str.size(); ++i)
 		{
 			c = str[i];
+			
 			if (c == '}')
+				depth--;
+			
+			if (depth == 0)
 				break;
 
 			luaCode += c;

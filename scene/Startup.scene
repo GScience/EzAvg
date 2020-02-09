@@ -11,12 +11,12 @@
 :BehaviourAdd	sprite="version" behaviour="fader" type="AnimFadeIn" speed=1
 
 # 加载资源缓存
-:SpriteCreate	sprite="loadingStage" type=text horizontalLayout=center verticalLayout=center fontSize=24 color=[1,0,0] shadowColor=[0.8,0,0,0.5]
-:BehaviourAdd	sprite="loadingStage" behaviour="printer" type="AnimTextPrinter" speed=10 text="加载资源中，请稍后，可能需要一段时间，换1行2换3行4快5给1我2换3行4换5行1换2行3换4行5"
+:SpriteCreate	sprite="loadingStage" type=text horizontalLayout=center verticalLayout=center fontSize=24
+:BehaviourAdd	sprite="loadingStage" behaviour="printer" type="AnimTextPrinter" speed=10 text="\n\n\n\n\n\n加载资源中，请稍后，可能需要一段时间"
 
 :Wait			sprite="loadingStage" behaviour="printer"
 :Wait time=3
-:SpriteSet		sprite="loadingStage" text="加载完毕"
+:SpriteSet		sprite="loadingStage" text="\n\n\n\n\n\n加载完毕"
 :Wait time=1
 
 :BehaviourAdd	sprite="background" behaviour="fader" type="AnimFadeIn" speed=-1

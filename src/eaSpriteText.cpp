@@ -258,6 +258,15 @@ void eaSpriteText::SetText(std::string str)
 
 		bool isNewLine = false;
 
+		// 换行符
+		if (c == "\n")
+		{
+			cursorX = 0;
+			cursorY += font->GetLineHeight() + shadowOffset;
+			isNewLine = true;
+			continue;
+		}
+
 		// 下一行
 		if (cursorX + wordSize.width + shadowOffset > renderRect.width)
 		{
