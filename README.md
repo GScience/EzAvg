@@ -48,10 +48,57 @@ lua/task
 	行为域，继承自拥有该脚本的 *eaSprite* 。实域，与 *行为脚本* 相对应
 
 #### 布局
-引擎中的布局使用到了*pivot* *anchor* 和 *rect*
-*pivot* 是精灵中心位置，范围 [0,0]->[1,1]，对应精灵左上角和右下角
-*anchor* 为精灵锚点，与定位相关
-*rect* 为精灵到锚点边框的距离，从第一项到最后一项分别是 上 右 下 左
+引擎中，所有精灵对象均存在于 *精灵盒* 中，精灵盒的大小由拥有该精灵的 *精灵组* 管理（虽然也提供了从其他地方修改精灵和的方法，但是不建议使用），精灵盒内的精灵对象的具体位置由margin来确定，margin为精灵距离精灵盒边界的距离，类似于css
+
+引擎中内置了几种布局脚本，所有布局均行为脚本均需创建在 *精灵组* 上
+
+#### 精灵
+精灵是场景中的基础元素，一切均为精灵。所有精灵均包含以下属性：
+
+|  属性 | 值类型 |  说明 |
+| ------------ | ------------ | ------------ |
+| name  |  string | 精灵名称 |
+| enabled | boolean  |  精灵是否启用，若未启用则不会刷新 |
+| destroyed | boolean  |  精灵是否销毁，若已销毁则会在下一帧中移除 |
+| zOrder | integer  |  精灵在Z轴上的顺序，不同精灵组之间的精灵的zOrder是相互独立的 |
+| margin | table(<br>number,<br>number,<br>number,<br>number)  |  精灵距离精灵盒边界的距离，从小到大依次是up,right,button,left |
+| box | table(<br>number,<br>number,<br>number,<br>number)  |  精灵盒的大小，从小到大依次是x,y,width,height |
+| alpha | number | 精灵透明度，最终影响精灵透明度的还有父精灵组的透明度 |
+
+|  方法 | 返回值 |  说明 |
+| ------------ | ------------ | ------------ |
+| addBehaviour(string name, string type) | sprite | 为精灵创建类型为type的名为name的行为脚本 |
+
+引擎中内置了几种简单精灵：
+- image 精灵
+	负责显示图像，场景背景、按钮背景等均由此实现
+
+|  属性 | 值类型 |  说明 |
+| ------------ | ------------ | ------------ |
+| image  | string | 精灵图像名，相对于image文件夹的路径 |
+| color  | table(<br>number,<br>number,<br>number,<br>number) | 精灵颜色，从小到大依次是R,G,B,A |
+
+- text 精灵
+	负责显示文本
+
+|  属性 | 值类型 |  说明 |
+| ------------ | ------------ | ------------ |
+| text  | string | 显示的文本 |
+| fontName  | string | 字体名，相对于font文件夹的路径 |
+| fontSize  | number | 字体大小 |
+| horizontalLayout  | string | 文本水平布局，可能的值：`left` `center` `right` |
+| verticalLayout  | string | 文本垂直布局，可能的值：`up` `center` `down` |
+| color  | table(<br>number,<br>number,<br>number,<br>number) | 文字颜色，从小到大依次是R,G,B,A |
+| shadowColor  | table(<br>number,<br>number,<br>number,<br>number) | 文字阴影颜色，从小到大依次是R,G,B,A |
+- group 精灵
+	是精灵的容器，一切精灵均由精灵组创建，一切精灵均由精灵组管理
+
+|  方法 | 返回值 |  说明 |
+| ------------ | ------------ | ------------ |
+| addSprite(string name, string type) | sprite | 创建类型为type的名为name的精灵 |
+| iter() | ---- | 迭代器，在for循环里遍历精灵组内包含的sprite对象 |
+
+引擎会对应每个精灵创建一个lua对象：sprite，其存在于该精灵所创建的域当中。对于精灵组，可以使用 sprite.childName 来访问其拥有的子精灵
 
 #### 扩展
 若希望通过加入自己的Lua脚本来扩展引擎，请必须详细查看本节
