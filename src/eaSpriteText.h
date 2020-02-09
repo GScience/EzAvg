@@ -6,9 +6,14 @@
 struct SDL_Surface;
 struct SDL_Texture;
 
-enum eaTextLayout
+enum eaTextVerticalLayout
 {
-	TextLayoutLeft, TextLayoutCenter, TextLayoutRight
+	TextLayoutVerticalUp, TextLayoutVerticalCenter, TextLayoutVerticalDown
+};
+
+enum eaTextHorizontalLayout
+{
+	TextLayoutHorizontalLeft, TextLayoutHorizontalCenter, TextLayoutHorizontalRight
 };
 
 struct eaTextColor
@@ -29,10 +34,12 @@ class eaSpriteText : public eaSprite
 
 	int shadowOffset = 1;
 
-	eaTextLayout textLayout = TextLayoutLeft;
+	eaTextHorizontalLayout textHorizontalLayout = TextLayoutHorizontalLeft;
+	eaTextVerticalLayout textVerticalLayout = TextLayoutVerticalUp;
 	eaTextColor fontColor = eaTextColor{ 0.2,0.2,0.2,1 };
 	eaTextColor shadowColor = eaTextColor{ 0.1,0.1,0.1,0.5 };
 
+	SDL_Surface* lineSurface = nullptr;
 	SDL_Surface* textSurface = nullptr;
 	SDL_Texture* textTexture = nullptr;
 

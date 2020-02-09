@@ -19,7 +19,7 @@ eaSpriteText::eaSpriteText()
 		{
 			SetText(value.ToString());
 		}
-	);
+		);
 	propertyBinder["color"] = eaPropertyBinder(
 		[&]()->eaPropertyValue
 		{
@@ -38,7 +38,7 @@ eaSpriteText::eaSpriteText()
 			else
 				fontColor.a = 1;
 		}
-	);
+		);
 	propertyBinder["fontName"] = eaPropertyBinder(
 		[&]()->eaPropertyValue
 		{
@@ -48,7 +48,7 @@ eaSpriteText::eaSpriteText()
 		{
 			SetFont(value, font->GetFontSize());
 		}
-	);
+		);
 	propertyBinder["fontSize"] = eaPropertyBinder(
 		[&]()->eaPropertyValue
 		{
@@ -58,7 +58,7 @@ eaSpriteText::eaSpriteText()
 		{
 			SetFont(font->GetFontName(), value);
 		}
-	);
+		);
 	propertyBinder["shadowColor"] = eaPropertyBinder(
 		[&]()->eaPropertyValue
 		{
@@ -77,17 +77,17 @@ eaSpriteText::eaSpriteText()
 			else
 				fontColor.a = 1;
 		}
-	);
-	propertyBinder["layout"] = eaPropertyBinder(
+		);
+	propertyBinder["horizontalLayout"] = eaPropertyBinder(
 		[&]()->eaPropertyValue
 		{
-			switch (textLayout)
+			switch (textHorizontalLayout)
 			{
-			case TextLayoutLeft:
+			case TextLayoutHorizontalLeft:
 				return "left";
-			case TextLayoutCenter:
+			case TextLayoutHorizontalCenter:
 				return "center";
-			case TextLayoutRight:
+			case TextLayoutHorizontalRight:
 				return "right";
 			default:
 				return nullptr;
@@ -96,15 +96,42 @@ eaSpriteText::eaSpriteText()
 		[&](eaPropertyValue value)
 		{
 			if (value.ToString() == "left")
-				textLayout = TextLayoutLeft;
+				textHorizontalLayout = TextLayoutHorizontalLeft;
 			else if (value.ToString() == "center")
-				textLayout = TextLayoutCenter;
+				textHorizontalLayout = TextLayoutHorizontalCenter;
 			else if (value.ToString() == "right")
-				textLayout = TextLayoutRight;
+				textHorizontalLayout = TextLayoutHorizontalRight;
 
 			Redraw();
 		}
-	);
+		);
+	propertyBinder["verticalLayout"] = eaPropertyBinder(
+		[&]()->eaPropertyValue
+		{
+			switch (textVerticalLayout)
+			{
+			case TextLayoutVerticalUp:
+				return "up";
+			case TextLayoutVerticalCenter:
+				return "center";
+			case TextLayoutVerticalDown:
+				return "down";
+			default:
+				return nullptr;
+			}
+		},
+		[&](eaPropertyValue value)
+		{
+			if (value.ToString() == "up")
+				textVerticalLayout = TextLayoutVerticalUp;
+			else if (value.ToString() == "center")
+				textVerticalLayout = TextLayoutVerticalCenter;
+			else if (value.ToString() == "down")
+				textVerticalLayout = TextLayoutVerticalDown;
+
+			Redraw();
+		}
+		);
 }
 
 void eaSpriteText::Clear()
@@ -126,7 +153,13 @@ void eaSpriteText::Clear()
 		return;
 	}
 
-	if (textSurface != nullptr && 
+	if (lineSurface != nullptr)
+		SDL_FreeSurface(lineSurface);
+
+	lineSurface = SDL_CreateRGBSurface(0, renderRect.width, font->GetLineHeight() + shadowOffset + 1, 32, 0xff, 0xff00, 0xff0000, 0xff000000);
+	SDL_SetSurfaceBlendMode(lineSurface, SDL_BLENDMODE_NONE);
+	
+	if (textSurface != nullptr &&
 		textSurface->w == renderRect.width &&
 		textSurface->h == renderRect.height)
 	{
@@ -223,9 +256,6 @@ void eaSpriteText::SetText(std::string str)
 
 		auto wordSize = font->GetStringSize(c);
 
-		wordSize.width += shadowOffset;
-		wordSize.height += shadowOffset;
-		
 		bool isNewLine = false;
 
 		// 下一行
@@ -250,101 +280,75 @@ void eaSpriteText::SetText(std::string str)
 			(uint8_t)(shadowColor.b * 255),
 			(uint8_t)(shadowColor.a * 255)
 		};
+
+		if (isNewLine)
+			SDL_FillRect(lineSurface, nullptr, SDL_MapRGBA(textSurface->format, 0, 0, 0, 0));
+
 		auto charSurface = TTF_RenderUTF8_Blended(*font, c.c_str(), color);
 		auto shadowSurface = TTF_RenderUTF8_Blended(*font, c.c_str(), shadow);
 		SDL_SetSurfaceBlendMode(charSurface, SDL_BLENDMODE_BLEND);
 		SDL_SetSurfaceBlendMode(shadowSurface, SDL_BLENDMODE_NONE);
 
-		switch (textLayout)
+		SDL_Rect textRect = SDL_Rect{ cursorX , 0, wordSize.width , wordSize.height };
+		SDL_Rect shadowRect = SDL_Rect{ cursorX + shadowOffset , shadowOffset, wordSize.width ,wordSize.height };
+
+		SDL_BlitSurface(shadowSurface, nullptr, lineSurface, &shadowRect);
+		SDL_BlitSurface(charSurface, nullptr, lineSurface, &textRect);
+
+		SDL_FreeSurface(charSurface);
+		SDL_FreeSurface(shadowSurface);
+
+		// 把当前行画到surface上
+		int lineX = 0;
+		switch (textHorizontalLayout)
 		{
-			case TextLayoutLeft:
+		case TextLayoutHorizontalLeft:
+			lineX = 0;
+			break;
+		case TextLayoutHorizontalCenter:
+			lineX = renderRect.width / 2 - cursorX / 2 - wordSize.width / 2;
+			break;
+		case TextLayoutHorizontalRight:
+			lineX = renderRect.width - cursorX - wordSize.width;
+			break;
+		}
+
+		int lineY = 0;
+		switch (textVerticalLayout)
+		{
+		case TextLayoutVerticalUp:
+			lineY = cursorY;
+			break;
+		case TextLayoutVerticalCenter:
+			lineY = renderRect.height / 2 + cursorY / 2 - wordSize.height / 2;
+			break;
+		case TextLayoutVerticalDown:
+			lineY = renderRect.height + cursorY - font->GetLineHeight();
+			break;
+		}
+
+		// 调整垂直布局
+		if (isNewLine)
+		{
+			SDL_Rect blockRect;
+			switch (textVerticalLayout)
 			{
-				SDL_Rect margin = SDL_Rect{ cursorX , cursorY, wordSize.width , wordSize.height };
-				SDL_Rect shadowRect = SDL_Rect{ margin.x + shadowOffset , margin.y + shadowOffset,margin.w , margin.h };
-				SDL_BlitSurface(shadowSurface, nullptr, textSurface, &shadowRect);
-				SDL_BlitSurface(charSurface, nullptr, textSurface, &margin);
+			case TextLayoutVerticalUp:
 				break;
-			}
-			case TextLayoutCenter:
-			{
-				// 没有换行的话左移
-				if (!isNewLine)
-				{
-					SDL_Rect currentLineRect = SDL_Rect
-					{
-						0 ,
-						renderRect.height / 2 + cursorY / 2 - font->GetLineHeight() / 2,
-						renderRect.width ,
-						font->GetLineHeight()
-					};
-					SDL_Rect updatedLineRect = SDL_Rect
-					{
-						-wordSize.width / 2,
-						renderRect.height / 2 + cursorY / 2 - font->GetLineHeight() / 2,
-						renderRect.width ,
-						font->GetLineHeight()
-					};
-
-					SDL_BlitSurface(textSurface, &currentLineRect, textSurface, &updatedLineRect);
-				}
-				// 新行的话，整体上移
-				else
-				{
-					SDL_Rect newRect = SDL_Rect
-					{
-						0,
-						-font->GetLineHeight() / 2,
-						renderRect.width ,
-						renderRect.height
-					};
-					SDL_BlitSurface(textSurface, nullptr, textSurface, &newRect);
-				}
-				// 渲染文字
-				SDL_Rect margin = SDL_Rect
-				{
-					renderRect.width / 2 + cursorX / 2 - wordSize.width / 2,
-					renderRect.height / 2 + cursorY/ 2 - font->GetLineHeight() / 2,
-					wordSize.width ,
-					wordSize.height
-				};
-
-				SDL_Rect shadowRect = SDL_Rect{ margin.x + shadowOffset , margin.y + shadowOffset,margin.w - shadowOffset, margin.h - shadowOffset };
-				SDL_Rect clearRect = SDL_Rect{ margin.x,margin.y,margin.w,margin.h };
-				SDL_Rect textRect = SDL_Rect{ margin.x,margin.y,margin.w - shadowOffset,margin.h - shadowOffset };
-				SDL_FillRect(textSurface, &clearRect, SDL_MapRGBA(textSurface->format, 0, 0, 0, 0));
-				SDL_BlitSurface(shadowSurface, nullptr, textSurface, &shadowRect);
-				SDL_BlitSurface(charSurface, nullptr, textSurface, &textRect);
+			case TextLayoutVerticalCenter:
+				blockRect = SDL_Rect{ 0,-wordSize.width / 2, renderRect.width, renderRect.height };
+				SDL_BlitSurface(textSurface, nullptr, textSurface, &blockRect);
 				break;
-			}
-			case TextLayoutRight:
-			{
-				// 没有换行的话当前一行左移
-				if (!isNewLine)
-				{
-					SDL_Rect currentLineRect = SDL_Rect{ 0 , cursorY, renderRect.width , font->GetLineHeight() };
-					SDL_Rect updatedLineRect = SDL_Rect{ -wordSize.width, cursorY, renderRect.width , font->GetLineHeight() };
-
-					SDL_BlitSurface(textSurface, &currentLineRect, textSurface, &updatedLineRect);
-				}
-				// 渲染文字
-				SDL_Rect margin = SDL_Rect
-				{
-					renderRect.width - wordSize.width,
-					cursorY,
-					wordSize.width ,
-					wordSize.height
-				};
-				SDL_Rect shadowRect = SDL_Rect{ margin.x + shadowOffset , margin.y + shadowOffset,margin.w , margin.h };
-				SDL_Rect clearRect = SDL_Rect{ margin.x,margin.y,margin.w,margin.h };
-				SDL_Rect textRect = SDL_Rect{ margin.x,margin.y,margin.w - shadowOffset,margin.h - shadowOffset };
-				SDL_FillRect(textSurface, &clearRect, SDL_MapRGBA(textSurface->format, 0, 0, 0, 0));
-				SDL_BlitSurface(shadowSurface, nullptr, textSurface, &shadowRect);
-				SDL_BlitSurface(charSurface, nullptr, textSurface, &textRect);
+			case TextLayoutVerticalDown:
+				blockRect = SDL_Rect{ 0,-wordSize.width, renderRect.width, renderRect.height };
+				SDL_BlitSurface(textSurface, nullptr, textSurface, &blockRect);
 				break;
 			}
 		}
-		SDL_FreeSurface(charSurface);
-		SDL_FreeSurface(shadowSurface);
+
+		SDL_Rect lineRect = SDL_Rect{ lineX,lineY, renderRect.width, font->GetLineHeight() + shadowOffset };
+		SDL_BlitSurface(lineSurface, nullptr, textSurface, &lineRect);
+
 		cursorX += wordSize.width;
 	}
 
@@ -356,7 +360,7 @@ void eaSpriteText::SetText(std::string str)
 	text = str;
 }
 
-void eaSpriteText::Draw(SDL_Renderer* renderer)
+void eaSpriteText::Draw(SDL_Renderer * renderer)
 {
 	if (textTexture != nullptr)
 	{

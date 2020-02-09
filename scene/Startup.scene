@@ -6,13 +6,13 @@
 :Wait sprite="background" behaviour="fader"
 
 # 版本号信息
-:SpriteCreate	sprite="version" type=text anchor=[0,1,1,1] margin=[-25,0,0,0] layout=center fontSize=15 alpha=0
+:SpriteCreate	sprite="version" type=text layout=center fontSize=15 alpha=0 horizontalLayout=center verticalLayout=down
 :SpriteSet		sprite="version" color=[0,0,0] text="Version beta 1.0.0" bgColor=[0,0,0]
 :BehaviourAdd	sprite="version" behaviour="fader" type="AnimFadeIn" speed=1
 
 # 加载资源缓存
-:SpriteCreate	sprite="loadingStage" type=text margin=[-50,200,-50,200] anchor=[0,0.7,1,0.7] layout=center fontSize=24
-:BehaviourAdd	sprite="loadingStage" behaviour="printer" type="AnimTextPrinter" speed=10 text="加载资源中，请稍后，可能需要一段时间"
+:SpriteCreate	sprite="loadingStage" type=text horizontalLayout=center verticalLayout=center fontSize=24 color=[1,0,0] shadowColor=[0.8,0,0,0.5]
+:BehaviourAdd	sprite="loadingStage" behaviour="printer" type="AnimTextPrinter" speed=10 text="加载资源中，请稍后，可能需要一段时间，换1行2换3行4快5给1我2换3行4换5行1换2行3换4行5"
 
 :Wait			sprite="loadingStage" behaviour="printer"
 :Wait time=3
