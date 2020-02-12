@@ -7,6 +7,11 @@
 #include "eaSaveable.h"
 #include "eaScriptRunner.h"
 
+struct eaSceneBackgroundColor
+{
+	double r, g, b = 0;
+};
+
 /*
 场景，负责管理精灵
 */
@@ -18,7 +23,9 @@ class eaScene : public eaSaveable, public std::enable_shared_from_this<eaScene>
 	eaScene(std::string name);
 
 	void InitScript(std::string name);
+
 public:
+	eaSceneBackgroundColor backgroundColor;
 	std::unique_ptr<eaScriptRunner> runner;
 
 	eaScene(const eaScene&) = delete;

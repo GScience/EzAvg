@@ -13,7 +13,7 @@ function p.start(args)
 	end
 	
 	if args.type == nil then
-		ogError("无法创建行为，未指定type")
+		logError("无法创建行为，未指定type")
 		return
 	end
 
@@ -32,6 +32,9 @@ function p.start(args)
 	for k,v in pairs(args) do
 		if k ~= "sprite" and k ~= "behaviour" and k ~= "type" then
 			result[k] = v
+			if k == "destMargin" then
+				print(result[k][1])
+			end
 		end
 	end
 end

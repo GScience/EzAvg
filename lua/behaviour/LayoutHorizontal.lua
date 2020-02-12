@@ -10,14 +10,6 @@ function p.update()
 	
 end
 
--- 行为开始
-function p.start()
-	print("start")
-	for k,v in sprite.iter do
-		print(v.name)
-	end
-end
-
 -- 行为是否结束
 function p.isFinished()
 	return false

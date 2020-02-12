@@ -9,10 +9,6 @@ p.destroyed = false
 function p.update()
 end
 
--- 行为开始
-function p.start()
-end
-
 -- 行为是否结束
 function p.isFinished()
 end

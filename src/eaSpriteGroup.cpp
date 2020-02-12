@@ -65,7 +65,7 @@ eaSpriteGroup::eaSpriteGroup()
 {
 	auto& L = eaApplication::GetLua();
 
-	customLuaGetFunction = [&](string name)
+	customLuaGetFunctions.push_back([&](string name)
 	{
 		// SpriteGroup方法
 		if (name == "addSprite")
@@ -91,7 +91,7 @@ eaSpriteGroup::eaSpriteGroup()
 		lua_gettable(L, -2);
 
 		return 1;
-	};
+	});
 }
 
 void eaSpriteGroup::Draw(SDL_Renderer* renderer)

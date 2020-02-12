@@ -10,8 +10,4 @@ function p.update()
 	end
 end
 
-function p.start()
-
-end
-
 return p

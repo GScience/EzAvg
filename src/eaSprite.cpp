@@ -24,7 +24,6 @@ std::shared_ptr<eaSpriteBehaviour> eaSprite::AddBehaviour(std::string name, std:
 {
 	auto newBehaviour = make_shared<eaSpriteBehaviour>(this, name, type);
 	behaviours.push_back(newBehaviour);
-	newBehaviour->Start();
 
 	return newBehaviour;
 }
@@ -32,8 +31,10 @@ std::shared_ptr<eaSpriteBehaviour> eaSprite::AddBehaviour(std::string name, std:
 std::shared_ptr<eaSpriteBehaviour> eaSprite::GetBehaviour(std::string name)
 {
 	for (auto behaviour : behaviours)
-		if (behaviour->name == name)
+	{
+		if (behaviour->name == name && !behaviour->IsDestroyed())
 			return behaviour;
+	}
 	return nullptr;
 }
 
@@ -91,11 +92,6 @@ eaSprite::eaSprite()
 		},
 		[&](eaPropertyValue value)
 		{
-			int anchorX;
-			int anchorY;
-
-			SDL_GetWindowSize(eaApplication::GetWindow(), &anchorX, &anchorY);
-
 			margin.up = value[1];
 			margin.right = value[2];
 			margin.bottom = value[3];
@@ -202,9 +198,9 @@ static int SpritePropertySet(lua_State* L)
 	string name = lua_tostring(L, 2);
 
 	// 设置自定义对象
-	if (sprite->customLuaSetFunction != nullptr)
+	for (auto func : sprite->customLuaSetFunctions)
 	{
-		int result = sprite->customLuaSetFunction(name);
+		int result = func(name, 3);
 		if (result != 0)
 			return result;
 	}
@@ -251,7 +247,7 @@ static int SpriteAddBehaviour(lua_State* L)
 	string behaviourName = lua_tostring(L, 1);
 	string behaviourType = lua_tostring(L, 2);
 
-	auto behaviour =  sprite->AddBehaviour(behaviourName, behaviourType);
+	auto behaviour = sprite->AddBehaviour(behaviourName, behaviourType);
 
 	if (behaviour == nullptr)
 		lua_pushnil(L);
@@ -278,9 +274,9 @@ static int SpritePropertyGet(lua_State* L)
 	}
 
 	// 获取自定义对象
-	if (sprite->customLuaGetFunction != nullptr)
+	for (auto func : sprite->customLuaGetFunctions)
 	{
-		int result = sprite->customLuaGetFunction(name);
+		int result = func(name);
 		if (result != 0)
 			return result;
 	}
@@ -298,7 +294,7 @@ static int SpritePropertyGet(lua_State* L)
 	//尝试获取行为脚本
 	auto behaviour = sprite->GetBehaviour(name);
 	
-	if (behaviour != nullptr && behaviour->IsEnabled())
+	if (behaviour != nullptr)
 	{
 		lua_rawgeti(L, LUA_REGISTRYINDEX, behaviour->GetObjRef());
 		return 1;
@@ -358,21 +354,6 @@ void eaSpriteBehaviour::Update()
 
 	lua_rawgeti(L, LUA_REGISTRYINDEX, objRef);
 	lua_pushstring(L, "update");
-	lua_gettable(L, -2);
-
-	if (lua_pcall(L, 0, 0, 0) != LUA_OK)
-	{
-		eaApplication::GetLogger().Log("LuaError", "启动行为"s + type + "时出现异常。位置：" + L.GetCurrentInfo());
-		throw eaLuaError();
-	}
-}
-
-void eaSpriteBehaviour::Start()
-{
-	auto& L = eaApplication::GetLua();
-
-	lua_rawgeti(L, LUA_REGISTRYINDEX, objRef);
-	lua_pushstring(L, "start");
 	lua_gettable(L, -2);
 
 	if (lua_pcall(L, 0, 0, 0) != LUA_OK)

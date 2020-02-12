@@ -157,7 +157,6 @@ public:
 	eaSpriteBehaviour(eaSprite* scene, const std::string& name, const std::string& type);
 
 	void Update();
-	void Start();
 
 	bool IsEnabled();
 	bool IsDestroyed();
@@ -216,10 +215,9 @@ class eaSprite : public eaSaveable, public std::enable_shared_from_this<eaSprite
 	std::vector<std::shared_ptr<eaSpriteBehaviour>> behaviours;
 	std::shared_ptr<eaLuaDomain> domain;
 
-protected:
+public:
 	std::map<std::string, eaPropertyBinder> propertyBinder;
 
-public:
 	eaSpriteMargin margin;
 	eaSpriteBox box;
 	
@@ -229,8 +227,8 @@ public:
 	eaSprite();
 	virtual ~eaSprite() = default;
 
-	std::function<int(std::string)> customLuaGetFunction;
-	std::function<int(std::string)> customLuaSetFunction;
+	std::vector<std::function<int(std::string)>> customLuaGetFunctions;
+	std::vector < std::function<int(std::string, int)>> customLuaSetFunctions;
 
 	bool enabled = true;
 	bool destroyed = false;
@@ -250,7 +248,7 @@ public:
 	/*
 	设置属性
 	*/
-	virtual void SetProperty(std::string name, eaPropertyValue obj)
+	void SetProperty(std::string name, eaPropertyValue obj)
 	{
 		auto binder = propertyBinder.find(name);
 		if (binder == propertyBinder.end())
@@ -265,7 +263,7 @@ public:
 	/*
 	获取属性
 	*/
-	virtual eaPropertyValue GetProperty(std::string name) 
+	eaPropertyValue GetProperty(std::string name) 
 	{
 		auto binder = propertyBinder.find(name);
 		if (binder == propertyBinder.end())

@@ -8,13 +8,12 @@ function p.update()
 	alpha = alpha + Time.deltaTime() * p.speed
 	if alpha < 0 then
 		alpha = 0
+		p.enabled = false
 	elseif alpha > 1 then
 		alpha = 1
+		p.enabled = false
 	end
 	sprite.alpha = alpha
-end
-
-function p.start()
 end
 
 function p.isFinished()

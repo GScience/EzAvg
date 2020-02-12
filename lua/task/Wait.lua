@@ -20,6 +20,7 @@ function p.update()
 		end
 		local behaviour=sprite[p.waitBehaviour]
 		if behaviour == nil then
+			LogError("Behaviour not found")
 			p.finished = true
 			return
 		end

@@ -1,9 +1,14 @@
 # 背景
+:SceneSet		backgroundColor=[1,1,1]
 :SpriteCreate	sprite="background" type=image image="Logo.png" alpha=0 margin=[0,0,0,0] zOrder=-1
 :BehaviourAdd	sprite="background" behaviour="fader" type="AnimFadeIn" speed=1
 
 # 等待背景加载完成
 :Wait sprite="background" behaviour="fader"
+
+:BehaviourAdd	sprite="background" behaviour="transformAnim" type="AnimTransform" destMargin=[-150,0,150,0]
+
+:Wait			sprite="background" behaviour="transformAnim"
 
 # 版本号信息
 :SpriteCreate	sprite="version" type=text layout=center fontSize=15 alpha=0 horizontalLayout=center verticalLayout=down
@@ -12,11 +17,11 @@
 
 # 加载资源缓存
 :SpriteCreate	sprite="loadingStage" type=text horizontalLayout=center verticalLayout=center fontSize=24
-:BehaviourAdd	sprite="loadingStage" behaviour="printer" type="AnimTextPrinter" speed=10 text="\n\n\n\n\n\n加载资源中，请稍后，可能需要一段时间"
+:BehaviourAdd	sprite="loadingStage" behaviour="printer" type="AnimTextPrinter" speed=10 text="加载资源中，请稍后，可能需要一段时间"
 
 :Wait			sprite="loadingStage" behaviour="printer"
 :Wait time=3
-:SpriteSet		sprite="loadingStage" text="\n\n\n\n\n\n加载完毕"
+:SpriteSet		sprite="loadingStage" text="加载完毕"
 :Wait time=1
 
 :BehaviourAdd	sprite="background" behaviour="fader" type="AnimFadeIn" speed=-1

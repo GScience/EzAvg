@@ -21,6 +21,20 @@ eaScene::eaScene(string name)
 		0,0,windowSize.width,windowSize.height
 	};
 
+	// 为属性绑定器添加属性
+	spriteGroup->propertyBinder["backgroundColor"] = eaPropertyBinder(
+		[&]()->eaPropertyValue
+		{
+			return { backgroundColor.r,backgroundColor.g,backgroundColor.b };
+		},
+		[&](eaPropertyValue value)
+		{
+			backgroundColor.r = value[1];
+			backgroundColor.g = value[2];
+			backgroundColor.b = value[3];
+		}
+	);
+
 	lua_rawgeti(L, LUA_REGISTRYINDEX, domain->GetEnvTableRef());
 
 	// 创建scene
@@ -39,7 +53,13 @@ eaScene::eaScene(string name)
 	lua_pushstring(L, "__index");
 	lua_pushstring(L, "sprite");
 	lua_gettable(L, -3);
-	
+
+	lua_settable(L, -4);
+
+	lua_pushstring(L, "__newindex");
+	lua_pushstring(L, "sprite");
+	lua_gettable(L, -3);
+
 	lua_settable(L, -4);
 
 	lua_pop(L, 1);
@@ -60,6 +80,14 @@ void eaScene::InitScript(std::string name)
 
 void eaScene::Draw(SDL_Renderer* renderer)
 {
+	SDL_SetRenderDrawColor(
+		renderer,
+		(Uint8)(255 * backgroundColor.r),
+		(Uint8)(255 * backgroundColor.g),
+		(Uint8)(255 * backgroundColor.b),
+		0);
+
+	SDL_RenderClear(renderer);
 	spriteGroup->Draw(renderer);
 }
 
