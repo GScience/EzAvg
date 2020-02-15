@@ -135,13 +135,30 @@ lua/task
 	1. 数组
 	由方括号包围，如 `[a,"b",{return "c"},4]`
 	1. Lua对象
-	通过在运行时调用Lua脚本动态获取结果，由花括号包围，并包含一个返回值，例如 `:Wait time={return 123}` 与 `:Wait time=123` 等价
+	通过在运行时调用Lua脚本动态获取结果，由花括号包围，并包含一个返回值，例如 `:Wait time={return 123}` 与 `:Wait time=123` 等价。对于单行Lua对象，可以去掉return，是一种简化的写法
+	
+	所有任务都会交给对应的Lua任务脚本执行
 1. Lua块
 	由花括号包围的一串Lua代码
 1. 文本块
 	对SetText任务的简化，由任意非其他块首字符开头，并由空行结尾。程序会执行任务 `:SetText text=str` 其中str为文本块的字符串。文本块字符串也支持内嵌Lua字符串对象。
 	
-所有任务都会交给对应的Lua任务脚本执行
+下边是一段场景脚本的示例
+    # 井号开始的一行为注释
+    # 任务块示例
+    :ExampleTask1
+    :ExampleTask2 val1 = 123.456
+    :ExampleTask3 val1=enum val2="str" val3=[a,r,r,a,y] val4=[{return "lua"},{return "array"}] val5={'c'}
+    # Lua块示例
+    {
+    	doLuaFunction()
+    }
+    # 文本块
+    文本块支持多行
+    最后一行需要为空行
+    否则文本块不会结束
+    
+    # 上一行为空行，文本块结束
 ### Lua任务脚本
 一个完整的Lua任务脚本如下：
 ```lua
