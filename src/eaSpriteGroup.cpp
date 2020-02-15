@@ -65,6 +65,7 @@ eaSpriteGroup::eaSpriteGroup()
 {
 	auto& L = eaApplication::GetLua();
 
+	// 获取精灵组内精灵和创建精灵
 	customLuaGetFunctions.push_back([&](string name)
 	{
 		// SpriteGroup方法
@@ -92,6 +93,85 @@ eaSpriteGroup::eaSpriteGroup()
 
 		return 1;
 	});
+
+	propertyBinder["autoLayout"] = eaPropertyBinder(
+		[&]()->eaPropertyValue
+		{
+			return autoLayout;
+		},
+		[&](eaPropertyValue value)
+		{
+			autoLayout = value.ToBoolean();
+		}
+		);
+	propertyBinder["propertyTable"] = eaPropertyBinder(
+		[&]()->eaPropertyValue
+		{
+			auto table = std::make_shared<eaPropertyValue::eaTable>();
+
+			for (auto& pair : propertyTable)
+				(*table)[pair.first] = pair.second;
+
+			return eaPropertyValue(table);
+		},
+		[&](eaPropertyValue value)
+		{
+			// 移除旧的绑定
+			for (auto& pair : propertyTable)
+				propertyBinder.erase(pair.first);
+			propertyTable.clear();
+
+			auto table = value.ToTable();
+
+			// 创建新的绑定
+			for (auto& pair : table)
+			{
+				if (propertyBinder.find(pair.first) != propertyBinder.end())
+					continue;
+
+				auto propertyLoc = pair.second.ToString();
+				auto spriteLoc = propertyLoc.substr(0, propertyLoc.find_last_of('.'));
+				auto propertyName = propertyLoc.substr(propertyLoc.find_last_of('.') + 1);
+
+				propertyBinder[pair.first] = eaPropertyBinder(
+					[this, spriteLoc, propertyName]()->eaPropertyValue
+					{
+						auto sprite = this;
+						auto subSpriteName = spriteLoc.substr(0, spriteLoc.find_last_of('.'));
+
+						while (subSpriteName != "")
+						{
+							sprite = (eaSpriteGroup*)(sprite->GetSprite(subSpriteName).operator->());
+							auto dotPos = spriteLoc.find_first_of('.', subSpriteName.size());
+							if (dotPos == string::npos)
+								subSpriteName = "";
+							else
+								subSpriteName = spriteLoc.substr(dotPos);
+						}
+
+						return sprite->propertyBinder[propertyName].get();
+					},
+					[this, spriteLoc, propertyName](eaPropertyValue value)
+					{
+						auto sprite = this;
+						auto subSpriteName = spriteLoc.substr(0, spriteLoc.find_first_of('.'));
+
+						while (subSpriteName != "")
+						{
+							sprite = (eaSpriteGroup*)(sprite->GetSprite(subSpriteName).operator->());
+							auto dotPos = spriteLoc.find_first_of('.', subSpriteName.size());
+							if (dotPos == string::npos)
+								subSpriteName = "";
+							else
+								subSpriteName = spriteLoc.substr(dotPos);
+						}
+						sprite->propertyBinder[propertyName].set(value);
+					}
+					);
+				propertyTable[pair.first] = pair.second;
+			}
+		}
+		);
 }
 
 void eaSpriteGroup::Draw(SDL_Renderer* renderer)
@@ -133,6 +213,24 @@ void eaSpriteGroup::Save()
 
 void eaSpriteGroup::Load()
 {
+}
+
+void eaSpriteGroup::OnLayoutChanged()
+{
+	if (!autoLayout)
+		return;
+
+	for (auto sprite : sprites)
+	{
+		auto renderRect = GetRenderRect();
+
+		sprite->box.width = renderRect.width;
+		sprite->box.height = renderRect.height;
+		sprite->box.x = renderRect.x;
+		sprite->box.y = renderRect.y;
+
+		sprite->OnLayoutChanged();
+	}
 }
 
 shared_ptr<eaSprite> eaSpriteGroup::GetSprite(string name)

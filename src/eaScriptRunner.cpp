@@ -39,9 +39,9 @@ void eaScriptRunner::Update()
 	else if (currentBlock.IsType<eaScriptLuaBlock>())
 	{
 		auto block = currentBlock.Get<eaScriptLuaBlock>();
-		if (!GetDomain()->DoString(block->code))
+		if (GetDomain()->DoString(block->code) == -1)
 		{
-			eaApplication::GetLogger().Log("ScriptError","Failed to run lua block with index " + currentPos);
+			eaApplication::GetLogger().Log("ScriptError","Failed to run lua block with index "s + to_string(currentPos));
 			throw eaLuaError();
 		}
 	}

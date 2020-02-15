@@ -185,7 +185,7 @@ void eaSpriteText::Clear()
 	}
 }
 
-void eaSpriteText::OnResize()
+void eaSpriteText::OnLayoutChanged()
 {
 	Redraw();
 }

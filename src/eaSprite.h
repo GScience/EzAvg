@@ -228,7 +228,7 @@ public:
 	virtual ~eaSprite() = default;
 
 	std::vector<std::function<int(std::string)>> customLuaGetFunctions;
-	std::vector < std::function<int(std::string, int)>> customLuaSetFunctions;
+	std::vector<std::function<int(std::string, int)>> customLuaSetFunctions;
 
 	bool enabled = true;
 	bool destroyed = false;
@@ -285,8 +285,7 @@ public:
 	*/
 	virtual void Update();
 
-	virtual void OnMove() {}
-	virtual void OnResize() {}
+	virtual void OnLayoutChanged() {}
 
 	/*
 	添加行为

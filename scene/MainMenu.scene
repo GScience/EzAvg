@@ -1,3 +1,17 @@
+{
+	local button = require("control/Button", "scene")
+	button.text = "123"
+	button.background = "UI/Button300x50.png"
+	local buttonSprite = button:Create("TestButton")
+	buttonSprite.text = "456"
+	buttonSprite.margin = {100, 100, 100, 100}
+}
+
+:SpriteSet		sprite="TestButton" text="测试"
+==start==
+
+:Goto pos=start
+
 # 背景
 :SpriteCreate	sprite="background" type=image image="MainMenu/Background.jpg" alpha=0 margin=[0,0,0,0] zOrder=-1
 :BehaviourAdd	sprite="background" behaviour="fader" type="AnimFadeIn" speed=1

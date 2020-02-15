@@ -1,5 +1,12 @@
 #pragma once
+#include <map>
 #include "eaSprite.h"
+
+/*
+精灵组属性表，把精灵组内部精灵的属性暴露到外边
+*/
+using eaSpriteGroupPropertyTable = std::map<std::string, std::string>;
+
 
 /*
 精灵组，用来创建组合精灵，比如按钮
@@ -8,8 +15,14 @@ class eaSpriteGroup : public eaSprite
 {
 private:
 	std::vector<std::shared_ptr<eaSprite>> sprites;
+	eaSpriteGroupPropertyTable propertyTable;
 
 public:
+	/*
+	是否启用精灵组默认自动布局
+	*/
+	bool autoLayout = true;
+
 	eaSpriteGroup();
 
 	void Draw(SDL_Renderer* renderer) override;
@@ -17,6 +30,8 @@ public:
 
 	void Save() override;
 	void Load() override;
+
+	void OnLayoutChanged() override;
 
 	std::shared_ptr<eaSprite> GetSprite(std::string name);
 	const std::vector<std::shared_ptr<eaSprite>>& GetSprites() const
@@ -29,8 +44,7 @@ public:
 		auto obj = std::shared_ptr<eaSpriteGroup>(new eaSpriteGroup());
 		obj->name = name;
 		obj->BindDomain(owner);
-		obj->OnMove();
-		obj->OnResize();
+		obj->OnLayoutChanged();
 		return obj;
 	}
 
@@ -40,8 +54,7 @@ public:
 		obj->name = name;
 		obj->BindDomain(GetDomain());
 		obj->box = box;
-		obj->OnMove();
-		obj->OnResize();
+		obj->OnLayoutChanged();
 		sprites.push_back(obj);
 		return obj;
 	}

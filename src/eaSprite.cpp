@@ -51,6 +51,14 @@ eaSprite::eaSprite()
 			name = value.ToString();
 		}
 	);
+	propertyBinder["type"] = eaPropertyBinder
+	(
+		[&]()->eaPropertyValue
+		{
+			return shared_from_this()->GetType();
+		},
+		nullptr
+	);
 	propertyBinder["enabled"] = eaPropertyBinder
 	(
 		[&]()->eaPropertyValue
@@ -96,8 +104,7 @@ eaSprite::eaSprite()
 			margin.right = value[2];
 			margin.bottom = value[3];
 			margin.left = value[4];
-			shared_from_this()->OnResize();
-			shared_from_this()->OnMove();
+			shared_from_this()->OnLayoutChanged();
 		}
 	);
 	propertyBinder["box"] = eaPropertyBinder
@@ -116,7 +123,7 @@ eaSprite::eaSprite()
 			box.y = value[2];
 			box.width = value[3];
 			box.height = value[4];
-			shared_from_this()->OnResize();
+			shared_from_this()->OnLayoutChanged();
 		}
 	);
 	propertyBinder["alpha"] = eaPropertyBinder(

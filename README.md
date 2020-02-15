@@ -58,6 +58,7 @@ lua/task
 |  属性 | 值类型 |  说明 |
 | ------------ | ------------ | ------------ |
 | name  |  string | 精灵名称 |
+| type  |  string | 精灵类型 |
 | enabled | boolean  |  精灵是否启用，若未启用则不会刷新 |
 | destroyed | boolean  |  精灵是否销毁，若已销毁则会在下一帧中移除 |
 | zOrder | integer  |  精灵在Z轴上的顺序，不同精灵组之间的精灵的zOrder是相互独立的 |
@@ -93,10 +94,17 @@ lua/task
 - group 精灵
 	是精灵的容器，一切精灵均由精灵组创建，一切精灵均由精灵组管理
 
+|  属性 | 值类型 |  说明 |
+| ------------ | ------------ | ------------ |
+| autoLayout  | boolean | 是否启用内置自动布局，即自动将子精灵填充，与布局行为脚本配合 |
+| propertyTable  | table(<br>string,<br>string) | 属性表，将内部精灵的属性暴露到外部 |
+
 |  方法 | 返回值 |  说明 |
 | ------------ | ------------ | ------------ |
 | addSprite(string name, string type) | sprite | 创建类型为type的名为name的精灵 |
 | iter() | ---- | 迭代器，在for循环里遍历精灵组内包含的sprite对象 |
+
+属性表可简化对精灵组内部精灵属性的修改，对于一个按钮来说，我们需要将text属性绑定到内部精灵Text的text属性上，此时我们只需要添加{text="Text.text"}到属性表里即可
 
 引擎会对应每个精灵创建一个lua对象：sprite，其存在于该精灵所创建的域当中。对于精灵组，可以使用 sprite.childName 来访问其拥有的子精灵
 

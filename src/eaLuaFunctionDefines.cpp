@@ -28,12 +28,22 @@ class eaGlobalFunction
 		if (lua_isstring(L, 2))
 			space = GetString(2);
 
-		if (space == "scene")
-			eaApplication::instance->CurrentScene()->GetDomain()->DoFile(name + ".lua");
-		else
-			eaApplication::GetDomain()->DoFile(name + ".lua");
+		int resultCount = 0;
 
-		return 0;
+		lua_settop(L, 0);
+
+		if (space == "scene")
+			resultCount = eaApplication::instance->CurrentScene()->GetDomain()->DoFile(name + ".lua");
+		else
+			resultCount = eaApplication::GetDomain()->DoFile(name + ".lua");
+
+		if (resultCount == -1)
+			return 0;
+
+		for (auto i = 1; i <= resultCount; i++)
+			lua_pushvalue(L, i);
+
+		return resultCount;
 	}
 
 	/*
