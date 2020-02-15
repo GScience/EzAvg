@@ -144,21 +144,23 @@ lua/task
 	对SetText任务的简化，由任意非其他块首字符开头，并由空行结尾。程序会执行任务 `:SetText text=str` 其中str为文本块的字符串。文本块字符串也支持内嵌Lua字符串对象。
 	
 下边是一段场景脚本的示例
-    # 井号开始的一行为注释
-    # 任务块示例
-    :ExampleTask1
-    :ExampleTask2 val1 = 123.456
-    :ExampleTask3 val1=enum val2="str" val3=[a,r,r,a,y] val4=[{return "lua"},{return "array"}] val5={'c'}
-    # Lua块示例
-    {
-    	doLuaFunction()
-    }
-    # 文本块
-    文本块支持多行
-    最后一行需要为空行
-    否则文本块不会结束
+```
+# 井号开始的一行为注释
+# 任务块示例
+:ExampleTask1
+:ExampleTask2 val1 = 123.456
+:ExampleTask3 val1=enum val2="str" val3=[a,r,r,a,y] val4=[{return "lua"},{return "array"}] val5={'c'}
+# Lua块示例
+{
+    doLuaFunction()
+}
+# 文本块
+文本块支持多行
+最后一行需要为空行
+否则文本块不会结束
     
-    # 上一行为空行，文本块结束
+# 上一行为空行，文本块结束
+```
 ### Lua任务脚本
 一个完整的Lua任务脚本如下：
 ```lua
