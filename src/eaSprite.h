@@ -156,10 +156,15 @@ public:
 
 	eaSpriteBehaviour(eaSprite* scene, const std::string& name, const std::string& type);
 
+	void SendMessage(const std::string& msg);
+
 	void Update();
 
 	bool IsEnabled();
 	bool IsDestroyed();
+
+	eaPropertyValue Get(const std::string& str);
+	void Set(const std::string& str, eaPropertyValue value);
 };
 
 struct eaPropertyBinder
@@ -227,8 +232,8 @@ public:
 	eaSprite();
 	virtual ~eaSprite() = default;
 
-	std::vector<std::function<int(std::string)>> customLuaGetFunctions;
-	std::vector<std::function<int(std::string, int)>> customLuaSetFunctions;
+	std::vector<std::function<int(const std::string&)>> customLuaGetFunctions;
+	std::vector<std::function<int(const std::string&, int)>> customLuaSetFunctions;
 
 	bool enabled = true;
 	bool destroyed = false;
@@ -239,6 +244,7 @@ protected:
 	eaRenderRect GetRenderRect();
 
 public:
+	void SendMessage(const std::string& msg);
 
 	int GetZOrder() const
 	{
@@ -248,7 +254,7 @@ public:
 	/*
 	设置属性
 	*/
-	void SetProperty(std::string name, eaPropertyValue obj)
+	void SetProperty(const std::string& name, eaPropertyValue obj)
 	{
 		auto binder = propertyBinder.find(name);
 		if (binder == propertyBinder.end())
@@ -263,7 +269,7 @@ public:
 	/*
 	获取属性
 	*/
-	eaPropertyValue GetProperty(std::string name) 
+	eaPropertyValue GetProperty(const std::string& name)
 	{
 		auto binder = propertyBinder.find(name);
 		if (binder == propertyBinder.end())
@@ -290,12 +296,12 @@ public:
 	/*
 	添加行为
 	*/
-	std::shared_ptr<eaSpriteBehaviour> AddBehaviour(std::string name, std::string type);
+	std::shared_ptr<eaSpriteBehaviour> AddBehaviour(const std::string& name, const std::string& type);
 
 	/*
 	获取行为
 	*/
-	std::shared_ptr<eaSpriteBehaviour> GetBehaviour(std::string name);
+	std::shared_ptr<eaSpriteBehaviour> GetBehaviour(const std::string& name);
 
 	/*
 	获取域

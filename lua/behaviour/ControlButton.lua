@@ -1,12 +1,13 @@
 local p = {}
 
 p.enabled = true
+p.onClickAlpha = 0.5
 
 function p.update()
 	if Input.getButton(0) then
-		sprite.alpha = 0.5
+		sprite.transparent = p.onClickAlpha
 	else
-		sprite.alpha = 1
+		sprite.transparent = 1
 	end
 end
 

@@ -135,37 +135,89 @@ eaSpriteGroup::eaSpriteGroup()
 
 				propertyBinder[pair.first] = eaPropertyBinder(
 					[this, spriteLoc, propertyName]()->eaPropertyValue
-					{
-						auto sprite = this;
-						auto subSpriteName = spriteLoc.substr(0, spriteLoc.find_last_of('.'));
+					{						
+						// 目标精灵
+						shared_ptr<eaSprite> sprite = shared_from_this();
+						// 精灵所在精灵组
+						auto spriteGroup = reinterpret_pointer_cast<eaSpriteGroup>(sprite);
 
-						while (subSpriteName != "")
+						auto subName = spriteLoc.substr(0, spriteLoc.find_last_of('.'));
+
+						// 一直寻找到非精灵组对象
+						while (true)
 						{
-							sprite = (eaSpriteGroup*)(sprite->GetSprite(subSpriteName).operator->());
-							auto dotPos = spriteLoc.find_first_of('.', subSpriteName.size());
+							auto subSprite = spriteGroup->GetSprite(subName);
+
+							// 找不到就跑
+							if (subSprite == nullptr)
+								break;
+
+							auto dotPos = spriteLoc.find_first_of('.', subName.size());
 							if (dotPos == string::npos)
-								subSpriteName = "";
+								subName = "";
 							else
-								subSpriteName = spriteLoc.substr(dotPos);
+								subName = spriteLoc.substr(dotPos);
+
+							// 精灵组，还是精灵
+							if (subSprite->GetType() != "group")
+							{
+								sprite = subSprite;
+								break;
+							}
+							spriteGroup = reinterpret_pointer_cast<eaSpriteGroup>(subSprite);
 						}
 
+						// 如果subName不为空，则绑定到了行为属性
+						if (subName != "")
+						{
+							auto behaviour = sprite->GetBehaviour(subName);
+							if (behaviour != nullptr)
+								return sprite->GetBehaviour(subName)->Get(propertyName);
+							return nullptr;
+						}
 						return sprite->propertyBinder[propertyName].get();
 					},
 					[this, spriteLoc, propertyName](eaPropertyValue value)
 					{
-						auto sprite = this;
-						auto subSpriteName = spriteLoc.substr(0, spriteLoc.find_first_of('.'));
+						// 目标精灵
+						shared_ptr<eaSprite> sprite = shared_from_this();
+						// 精灵所在精灵组
+						auto spriteGroup = reinterpret_pointer_cast<eaSpriteGroup>(sprite);
+						auto subName = spriteLoc.substr(0, spriteLoc.find_last_of('.'));
 
-						while (subSpriteName != "")
+						// 一直寻找到非精灵组对象
+						while (true)
 						{
-							sprite = (eaSpriteGroup*)(sprite->GetSprite(subSpriteName).operator->());
-							auto dotPos = spriteLoc.find_first_of('.', subSpriteName.size());
+							auto subSprite = spriteGroup->GetSprite(subName);
+
+							// 找不到就跑
+							if (subSprite == nullptr)
+								break;
+
+							auto dotPos = spriteLoc.find_first_of('.', subName.size());
 							if (dotPos == string::npos)
-								subSpriteName = "";
+								subName = "";
 							else
-								subSpriteName = spriteLoc.substr(dotPos);
+								subName = spriteLoc.substr(dotPos);
+
+							// 精灵组，还是精灵
+							if (subSprite->GetType() != "group")
+							{
+								sprite = subSprite;
+								break;
+							}
+							spriteGroup = reinterpret_pointer_cast<eaSpriteGroup>(subSprite);
 						}
-						sprite->propertyBinder[propertyName].set(value);
+
+						// 如果subName不为空，则绑定到了行为属性
+						if (subName != "")
+						{
+							auto behaviour = sprite->GetBehaviour(subName);
+							if (behaviour != nullptr)
+								return behaviour->Set(propertyName, value);
+							return;
+						}
+						return sprite->propertyBinder[propertyName].set(value);
 					}
 					);
 				propertyTable[pair.first] = pair.second;

@@ -59,7 +59,9 @@ std::shared_ptr<void> eaResources::Load(string rawName, size_t type)
 		auto result = eaScript::FromFile(name);
 		auto error = eaScript::GetError();
 		if (error != "")
-			eaApplication::GetLogger().Log("Resources", error);
+		{
+			eaApplication::GetLogger().Log("Resources.Sprite", name + ": " + error);
+		}
 		resDict[name] = result;
 		return result;
 	}

@@ -20,7 +20,7 @@ void eaSprite::Update()
 	}
 }
 
-std::shared_ptr<eaSpriteBehaviour> eaSprite::AddBehaviour(std::string name, std::string type)
+std::shared_ptr<eaSpriteBehaviour> eaSprite::AddBehaviour(const string& name, const string& type)
 {
 	auto newBehaviour = make_shared<eaSpriteBehaviour>(this, name, type);
 	behaviours.push_back(newBehaviour);
@@ -28,7 +28,7 @@ std::shared_ptr<eaSpriteBehaviour> eaSprite::AddBehaviour(std::string name, std:
 	return newBehaviour;
 }
 
-std::shared_ptr<eaSpriteBehaviour> eaSprite::GetBehaviour(std::string name)
+std::shared_ptr<eaSpriteBehaviour> eaSprite::GetBehaviour(const string& name)
 {
 	for (auto behaviour : behaviours)
 	{
@@ -197,7 +197,7 @@ static eaPropertyValue ToPropertyValue(lua_State* L, int index)
 }
 
 /*
-获取属性
+设置属性
 */
 static int SpritePropertySet(lua_State* L)
 {
@@ -265,7 +265,7 @@ static int SpriteAddBehaviour(lua_State* L)
 }
 
 /*
-设置属性
+获取属性
 */
 static int SpritePropertyGet(lua_State* L)
 {
@@ -309,6 +309,12 @@ static int SpritePropertyGet(lua_State* L)
 
 	lua_pushnil(L);
 	return 1;
+}
+
+void eaSprite::SendMessage(const string& msg)
+{
+	for (auto behaviour : behaviours)
+		behaviour->SendMessage(msg);
 }
 
 void eaSprite::BindDomain(std::shared_ptr<eaLuaDomain> ownerDomain)
@@ -403,4 +409,42 @@ bool eaSpriteBehaviour::IsDestroyed()
 	lua_pop(L, 1);
 
 	return isEnable;
+}
+
+void eaSpriteBehaviour::SendMessage(const string& msg)
+{
+	if (objRef == LUA_REFNIL)
+		return;
+
+	auto & L = eaApplication::GetLua();
+
+	lua_rawgeti(L, LUA_REGISTRYINDEX, objRef);
+	lua_pushstring(L, msg.c_str());
+	lua_gettable(L, -2);
+
+	if (!lua_isfunction(L, -1))
+		return;
+
+	lua_pcall(L, 0, 0, 0);
+}
+
+eaPropertyValue eaSpriteBehaviour::Get(const std::string& str)
+{
+	auto& L = eaApplication::GetLua();
+
+	lua_rawgeti(L, LUA_REGISTRYINDEX, objRef);
+	lua_pushstring(L, str.c_str());
+	lua_gettable(L, -2);
+
+	return ToPropertyValue(L, -1);
+}
+
+void eaSpriteBehaviour::Set(const std::string& str, eaPropertyValue value)
+{
+	auto& L = eaApplication::GetLua();
+
+	lua_rawgeti(L, LUA_REGISTRYINDEX, objRef);
+	lua_pushstring(L, str.c_str());
+	PushPropertyValue(L, value);
+	lua_settable(L, -3);
 }

@@ -1,13 +1,15 @@
+:SpriteCreate	sprite="testButton" type="group"
 {
-	local button = require("control/Button", "scene")
-	button.text = "123"
-	button.background = "UI/Button300x50.png"
-	local buttonSprite = button:Create("TestButton")
-	buttonSprite.text = "456"
-	buttonSprite.margin = {100, 100, 100, 100}
+	require("StyleSheets", "scene")
+	applyStyle(scene.testButton, Button)
+	scene.testButton.text = "123"
+	scene.testButton.onClickAlpha=0
+	scene.testButton.image = "UI/Button300x50.png"
+	scene.testButton.text = "456"
+	scene.testButton.margin = {100, 100, 100, 100}
 }
 
-:SpriteSet		sprite="TestButton" text="测试"
+:SpriteSet		sprite="testButton" text="测试"
 ==start==
 
 :Goto pos=start
