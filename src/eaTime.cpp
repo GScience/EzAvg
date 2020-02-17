@@ -5,20 +5,26 @@ eaTime eaTime::time;
 
 void eaTime::Update()
 {
-	if (eaTime::time.lastUpdateTime == -1)
-		eaTime::time.lastUpdateTime = SDL_GetTicks();
+	if (time.lastUpdateTime == -1)
+		time.lastUpdateTime = SDL_GetTicks();
 	else
-		eaTime::time.lastUpdateTime = eaTime::time.currentTime;
+		time.lastUpdateTime = time.currentTime;
 
-	eaTime::time.currentTime = SDL_GetTicks();
+	time.currentTime = SDL_GetTicks();
+}
+
+void eaTime::ResetDeltaTime()
+{
+	time.currentTime = SDL_GetTicks();
+	time.lastUpdateTime = time.currentTime;
 }
 
 double eaTime::DeltaTime()
 {
-	return (eaTime::time.currentTime - eaTime::time.lastUpdateTime) / 1000.0 * eaTime::time.timeScale;
+	return (time.currentTime - time.lastUpdateTime) / 1000.0 * time.timeScale;
 }
 
 double eaTime::NonScaledDeltaTime()
 {
-	return (eaTime::time.currentTime - eaTime::time.lastUpdateTime) / 1000.0;
+	return (time.currentTime - time.lastUpdateTime) / 1000.0;
 }

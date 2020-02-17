@@ -32,9 +32,6 @@ function p.start(args)
 	for k,v in pairs(args) do
 		if k ~= "sprite" and k ~= "behaviour" and k ~= "type" then
 			result[k] = v
-			if k == "destMargin" then
-				print(result[k][1])
-			end
 		end
 	end
 end

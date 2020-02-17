@@ -37,10 +37,28 @@ void eaApplication::Start()
 
 void eaApplication::Update()
 {
+	if (!isActive)
+	{
+		eaTime::ResetDeltaTime();
+		return;
+	}
+
 	eaTime::Update();
 	eaInput::Update();
-	scene->Update();
+	if (scene != nullptr)
+		scene->Update();
 	lua.Update();
+}
+
+void eaApplication::Draw()
+{
+	if (!isActive)
+		return;
+
+	SDL_RenderClear(sdlRenderer);
+	if (scene != nullptr)
+		scene->Draw(sdlRenderer);
+	SDL_RenderPresent(sdlRenderer);
 }
 
 void eaApplication::Save()
@@ -62,11 +80,6 @@ void eaApplication::SetApplicationSize(int width, int height)
 	{
 		width, height
 	};
-}
-
-void WindowResize(SDL_Window* window)
-{
-
 }
 
 void eaApplication::Run(std::vector<std::string> args)
@@ -107,6 +120,16 @@ void eaApplication::Run(std::vector<std::string> args)
 							SDL_RenderSetLogicalSize(sdlRenderer, applicationSize.width, applicationSize.height);
 							break;
 						}
+						case SDL_WINDOWEVENT_FOCUS_LOST:
+						{
+							isActive = false;
+							break;
+						}
+						case SDL_WINDOWEVENT_FOCUS_GAINED:
+						{
+							isActive = true;
+							break;
+						}
 					}
 				}
 			}
@@ -115,10 +138,7 @@ void eaApplication::Run(std::vector<std::string> args)
 
 		SDL_PumpEvents();
 		Update();
-
-		SDL_RenderClear(sdlRenderer);
-		scene->Draw(sdlRenderer);
-		SDL_RenderPresent(sdlRenderer);
+		Draw();
 	}
 
 	SDL_Quit();

@@ -24,6 +24,8 @@ class eaApplication : public eaSaveable
 	eaLogger logger;
 
 public:
+	bool isActive = true;
+
 	static eaApplication* instance;
 
 	SDL_Window* sdlWindow = nullptr;
@@ -41,6 +43,7 @@ private:
 	void InitApplication();
 	void Start();
 	void Update();
+	void Draw();
 
 public:
 	/*
