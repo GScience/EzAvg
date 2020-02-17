@@ -1,3 +1,5 @@
+require("Style")
+
 local p = {}
 
 function p.start(args)
@@ -23,6 +25,12 @@ function p.start(args)
 		logError("无法创建精灵，精灵" .. args.sprite .. "创建失败")
 		return
 	end
+
+	local style = args.style
+	if style ~= nil then
+		applyStyle(sprite, Styles[style])
+	end
+
 	for k,v in pairs(args) do
 		sprite[k] = v
 	end

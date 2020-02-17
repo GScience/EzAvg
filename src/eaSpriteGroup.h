@@ -53,7 +53,13 @@ public:
 		auto obj = std::shared_ptr<T>(new T());
 		obj->name = name;
 		obj->BindDomain(GetDomain());
-		obj->box = box;
+
+		auto renderRect = GetRenderRect();
+		obj->box.width = renderRect.width;
+		obj->box.height = renderRect.height;
+		obj->box.x = renderRect.x;
+		obj->box.y = renderRect.y;
+
 		obj->OnLayoutChanged();
 		sprites.push_back(obj);
 		return obj;

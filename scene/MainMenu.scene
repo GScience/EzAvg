@@ -1,67 +1,24 @@
-:SpriteCreate	sprite="testButton" type="group"
-{
-	require("StyleSheets", "scene")
-	applyStyle(scene.testButton, Button)
-	scene.testButton.text = "123"
-	scene.testButton.onClickAlpha=0
-	scene.testButton.image = "UI/Button300x50.png"
-	scene.testButton.text = "456"
-	scene.testButton.margin = {100, 100, 100, 100}
-}
-
-:SpriteSet		sprite="testButton" text="测试"
-==start==
-
-:Goto pos=start
-
 # 背景
 :SpriteCreate	sprite="background" type=image image="MainMenu/Background.jpg" alpha=0 margin=[0,0,0,0] zOrder=-1
 :BehaviourAdd	sprite="background" behaviour="fader" type="AnimFadeIn" speed=1
 
 :Wait sprite="background" behaviour="fader"
 
-:SpriteCreate	sprite="gameName" type=text anchor=[0.05,0.2,0.6,0.2] margin=[-50, 0, -100, 0] layout=center fontSize=50
+:SpriteCreate	sprite="gameName" type=text horizontalLayout=center fontSize=70 margin=[45, 300, 200, 45]
 :SpriteSet		sprite="gameName" color=[0,0,1] shadowColor=[0,0,0.8,0.5]
 :BehaviourAdd	sprite="gameName" behaviour="printer" type="AnimTextPrinter" speed=100 text="EzAvg Engine Test"
 
-:SpriteCreate	sprite="groupTest" type=group
-
-{
-	scene.groupTest.addSprite("test_image", "image")
-}
-:BehaviourAdd	sprite="groupTest" behaviour="printer" type="LayoutHorizontal"
-
 :Wait sprite="gameName" behaviour="printer"
 
-:SpriteCreate	sprite="button" type=group anchor=[1,1,1,1] margin=[-300, 0, 250, -300]
+:SpriteCreate	sprite="startButton" type="group" style="Button"
+:SpriteSet		sprite="startButton" text="开始游戏" onClickAlpha=0 image = "UI/Button300x50.png" margin = [240, 80, 300, 540]
 
-{
-	buttonImage = scene.button.addSprite("button_image", "image")
-	buttonImage.image = "UI/Button300x50.png"
-	buttonImage.zOrder=-1
-	scene.button.button_image.anchor={1,1,1,1}
-	scene.button.button_image.margin={-300, 0, 250, -300}
-	
-	buttonText= scene.button.addSprite("button_text", "text")
-	scene.button.button_text.color={0.9,0.9,0.9}
-	scene.button.button_text.shadowColor={0.8,0.8,0.8,0.5}
-	scene.button.button_text.anchor={1,1,1,1}
-	scene.button.button_text.margin={-300, 0, 250, -300}
-	scene.button.button_text.text = "退出游戏"
-	scene.button.button_text.zOrder=0
-	scene.button.button_text.layout="center"
-	scene.button.button_text.fontSize=25
-}
+:SpriteCreate	sprite="optionButton" type="group" style="Button"
+:SpriteSet		sprite="optionButton" text="选项" onClickAlpha=0 image = "UI/Button300x50.png" margin = [320, 80, 220, 540]
 
-{
-	if Input.getButton(0) then
-		scene.button.alpha = 0.5
-	else
-		scene.button.alpha = 1.0
-	end
-	Script.jump(Script.getNextPos() - 1)
-}
-{print("err")}
+:SpriteCreate	sprite="exitButton" type="group" style="Button"
+:SpriteSet		sprite="exitButton" text="退出" onClickAlpha=0 image = "UI/Button300x50.png" margin = [400, 80, 140, 540]
+
 ==Start==
 
 ==Load==

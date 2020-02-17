@@ -91,6 +91,8 @@ eaSpriteText::eaSpriteText()
 				return "right";
 			default:
 				return nullptr;
+
+			Redraw();
 			}
 		},
 		[&](eaPropertyValue value)
@@ -207,8 +209,7 @@ void eaSpriteText::SetFont(string fontName, int fontSize)
 	auto fullFontName = fontName + ":" + to_string(fontSize);
 
 	font = eaResources::Load<eaFont>(fullFontName);
-	if (text != "")
-		SetText(text);
+	Redraw();
 }
 
 void eaSpriteText::SetText(std::string str)
