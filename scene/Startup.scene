@@ -6,9 +6,8 @@
 # 等待背景加载完成
 :Wait sprite="background" behaviour="fader"
 
-:BehaviourAdd	sprite="background" behaviour="transformAnim" type="AnimTransform" destMargin=[-150,0,150,0]
-
-:Wait			sprite="background" behaviour="transformAnim"
+:BehaviourAdd	sprite="background" behaviour="transformAnim" type="AnimTransform" destMargin=[-100,0,100,0] time=1
+:Wait			time=0.5
 
 # 版本号信息
 :SpriteCreate	sprite="version" type=text layout=center fontSize=15 alpha=0 horizontalLayout=center verticalLayout=down
@@ -16,7 +15,7 @@
 :BehaviourAdd	sprite="version" behaviour="fader" type="AnimFadeIn" speed=1
 
 # 加载资源缓存
-:SpriteCreate	sprite="loadingStage" type=text horizontalLayout=center verticalLayout=center fontSize=24
+:SpriteCreate	sprite="loadingStage" type=text horizontalLayout=center verticalLayout=top fontSize=24 margin=[350,0,0,0]
 :BehaviourAdd	sprite="loadingStage" behaviour="printer" type="AnimTextPrinter" speed=10 text="加载资源中，请稍后，可能需要一段时间"
 
 :Wait			sprite="loadingStage" behaviour="printer"
@@ -24,12 +23,14 @@
 :SpriteSet		sprite="loadingStage" text="加载完毕"
 :Wait time=1
 
+:BehaviourAdd	sprite="background" behaviour="transformAnim2" type="AnimTransform" destMargin=[-500,0,500,0] time=5
 :BehaviourAdd	sprite="background" behaviour="fader" type="AnimFadeIn" speed=-1
 :SpriteRemove	sprite="loadingStage"
 
 # 等待最后淡出
 :Wait sprite="background" behaviour="fader"
-
 :SpriteRemove sprite="background"
+:SpriteRemove	sprite="version"
+:Wait time=0.5
 
 :Goto scene="MainMenu.scene" pos=0

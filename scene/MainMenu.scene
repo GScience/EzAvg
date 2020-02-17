@@ -6,7 +6,7 @@
 
 :SpriteCreate	sprite="gameName" type=text horizontalLayout=center fontSize=70 margin=[45, 300, 200, 45]
 :SpriteSet		sprite="gameName" color=[0,0,1] shadowColor=[0,0,0.8,0.5]
-:BehaviourAdd	sprite="gameName" behaviour="printer" type="AnimTextPrinter" speed=100 text="EzAvg Engine Test"
+:BehaviourAdd	sprite="gameName" behaviour="printer" type="AnimTextPrinter" speed=10 text="EzAvg Engine Test"
 
 :Wait sprite="gameName" behaviour="printer"
 
