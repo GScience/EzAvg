@@ -25,7 +25,7 @@ set_target_properties(eaEngine PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${EXECU
 if (CMAKE_BUILD_TYPE MATCHES "Release")
 	message("In Release mode. Hiding console window")
 	if (MSVC)
-		set_target_properties(eaEngine PROPERTIES LINK_FLAGS_RELEASE "/SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")
+		#set_target_properties(eaEngine PROPERTIES LINK_FLAGS_RELEASE "/SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")
 	else()
 		message("Unknown compiler. Failed to hide console window")
 	endif()

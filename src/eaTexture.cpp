@@ -6,6 +6,8 @@
 eaTexture::eaTexture(std::string name) :name(name)
 {
 	auto surface = IMG_Load(("image/" + name).c_str());
+	if (surface == nullptr)
+		eaApplication::GetLogger().Log("Resources.Image", "无法加载图像 " + name);
 	texture = SDL_CreateTextureFromSurface(eaApplication::GetRenderer(), surface);
 	SDL_FreeSurface(surface);
 	height = surface->h;
