@@ -11,16 +11,16 @@
 :Wait sprite="gameName" behaviour="printer"
 
 :SpriteCreate	sprite="startButton" type="group" style="Button"
-:SpriteSet		sprite="startButton" text="开始游戏" onClickAlpha=0 image = "UI/Button150x50.png" margin = [200, 500] size=[250,70]
+:SpriteSet		sprite="startButton" text="开始游戏" onClickAlpha=0 image = "UI/Button150x50.png" margin = [300, 530] size=[200,56]
 
 :SpriteCreate	sprite="loadButton" type="group" style="Button"
-:SpriteSet		sprite="loadButton" text="加载游戏" onClickAlpha=0 image = "UI/Button150x50.png" margin = [290, 500] size=[250,70]
+:SpriteSet		sprite="loadButton" text="加载游戏" onClickAlpha=0 image = "UI/Button150x50.png" margin = [370, 530] size=[200,56]
 
 :SpriteCreate	sprite="optionButton" type="group" style="Button"
-:SpriteSet		sprite="optionButton" text="选项" onClickAlpha=0 image = "UI/Button150x50.png" margin = [380, 500] size=[250,70]
+:SpriteSet		sprite="optionButton" text="选项" onClickAlpha=0 image = "UI/Button150x50.png" margin = [440, 530] size=[200,56]
 
 :SpriteCreate	sprite="exitButton" type="group" style="Button"
-:SpriteSet		sprite="exitButton" text="退出" onClickAlpha=0 image = "UI/Button150x50.png" margin = [470, 500] size=[250,70]
+:SpriteSet		sprite="exitButton" text="退出" onClickAlpha=0 image = "UI/Button150x50.png" margin = [510, 530] size=[200,56]
 
 ==WaitUntilButtonClick==
 {

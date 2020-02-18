@@ -13,8 +13,8 @@ Styles.Button =
 		type = "text",
 		verticalLayout = "center",
 		horizontalLayout = "center",
-		color = {0.8,0.8,0.8},
-		shadowColor = {0.7,0.7,0.7},
+		color = {0.9,0.9,0.9},
+		shadowColor = {0.6,0.6,0.6},
 		fontSize = 26,
 		zOrder = 1
 	},

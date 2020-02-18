@@ -137,6 +137,18 @@ void eaApplication::Run(std::vector<std::string> args)
 							isActive = true;
 							break;
 						}
+						case SDL_WINDOWEVENT_MOVED:
+						{
+							eaTime::Reset();
+							eaInput::Reset();
+							break;
+						}
+						case SDL_WINDOWEVENT_RESIZED:
+						{
+							eaTime::Reset();
+							eaInput::Reset();
+							break;
+						}
 					}
 				}
 			}
