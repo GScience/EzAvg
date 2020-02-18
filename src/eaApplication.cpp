@@ -106,8 +106,8 @@ void eaApplication::Run(std::vector<std::string> args)
 
 	bool shouldWindowClose = false;
 	SDL_Event e;
-
-	while (!shouldWindowClose)
+	
+	while (!shouldWindowClose && !closed)
 	{
 		if (SDL_PollEvent(&e))
 		{

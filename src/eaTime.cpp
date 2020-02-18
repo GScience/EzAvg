@@ -11,6 +11,7 @@ void eaTime::Update()
 		time.lastUpdateTime = time.currentTime;
 
 	time.currentTime = SDL_GetTicks();
+	time.frameCount++;
 }
 
 void eaTime::Reset()
@@ -27,4 +28,9 @@ double eaTime::DeltaTime()
 double eaTime::NonScaledDeltaTime()
 {
 	return (time.currentTime - time.lastUpdateTime) / 1000.0;
+}
+
+int eaTime::FrameCount()
+{
+	return time.frameCount;
 }

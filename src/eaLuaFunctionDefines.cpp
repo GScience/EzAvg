@@ -68,7 +68,7 @@ class eaGlobalFunction
 		lua_Debug debug;
 		uint32_t level = 0;
 
-		while (lua_getstack(L, level, &debug)) 
+		while (lua_getstack(L, level, &debug))
 		{
 			lua_getinfo(L, "Sln", &debug);
 			if (debug.name != nullptr)
@@ -80,6 +80,12 @@ class eaGlobalFunction
 
 		eaApplication::GetLogger().Log("Error", "发现错误： "s + err);
 
+		return 0;
+	}
+
+	LuaFunc(quit, )
+	{
+		eaApplication::instance->closed = true;
 		return 0;
 	}
 };
@@ -185,6 +191,15 @@ class eaTimeFunction
 	LuaFunc(deltaTime, Time)
 	{
 		lua_pushnumber(L, eaTime::DeltaTime());
+		return 1;
+	}
+
+	/*
+	number frameCount()
+	*/
+	LuaFunc(frameCount, Time)
+	{
+		lua_pushnumber(L, eaTime::FrameCount());
 		return 1;
 	}
 };

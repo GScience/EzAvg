@@ -180,6 +180,15 @@ public:
 };
 
 /*
+精灵大小
+*/
+struct eaSpriteSize
+{
+	int width = 0;
+	int height = 0;
+};
+
+/*
 渲染区域
 */
 struct eaRenderRect
@@ -225,7 +234,8 @@ public:
 
 	eaSpriteMargin margin;
 	eaSpriteBox box;
-	
+	eaSpriteSize size;
+
 	double alpha = 1;
 	int zOrder = 0;
 

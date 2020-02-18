@@ -100,13 +100,34 @@ eaSprite::eaSprite()
 		},
 		[&](eaPropertyValue value)
 		{
-			margin.up = value[1];
-			margin.right = value[2];
-			margin.bottom = value[3];
-			margin.left = value[4];
+			if (value.ToTable().size() == 2)
+			{
+				margin.up = value[1];
+				margin.left = value[2];
+			}
+			else
+			{
+				margin.up = value[1];
+				margin.right = value[2];
+				margin.bottom = value[3];
+				margin.left = value[4];
+			}
 			shared_from_this()->OnLayoutChanged();
 		}
 	);
+	propertyBinder["size"] = eaPropertyBinder
+	(
+		[&]()->eaPropertyValue
+		{
+			return { size.width, size.height };
+		},
+		[&](eaPropertyValue value)
+		{
+			size.width = value[1];
+			size.height = value[2];
+			shared_from_this()->OnLayoutChanged();
+		}
+		);
 	propertyBinder["box"] = eaPropertyBinder
 	(
 		[&]()->eaPropertyValue
@@ -140,11 +161,29 @@ eaSprite::eaSprite()
 
 eaRenderRect eaSprite::GetRenderRect()
 {
-	int x = (int)(box.x + margin.left);
-	int y = (int)(box.y + margin.up);
+	auto actualMargin = margin;
 
-	int width = box.width - margin.right - margin.left;
-	int height = box.height - margin.bottom - margin.up;
+	if (size.width != 0)
+	{
+		if (actualMargin.right == 0)
+			actualMargin.right = box.width - actualMargin.left - size.width;
+		else if (actualMargin.left == 0)
+			actualMargin.left = box.width - actualMargin.left - size.width;
+	}
+	
+	if (size.height != 0)
+	{
+		if (actualMargin.bottom == 0)
+			actualMargin.bottom = box.height - actualMargin.up - size.height;
+		else if (actualMargin.up == 0)
+			actualMargin.up = box.height - actualMargin.bottom - size.height;
+	}
+
+	int x = (int)(box.x + actualMargin.left);
+	int y = (int)(box.y + actualMargin.up);
+
+	int width = box.width - actualMargin.right - actualMargin.left;
+	int height = box.height - actualMargin.bottom - actualMargin.up;
 
 	return eaRenderRect
 	{

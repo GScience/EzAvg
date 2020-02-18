@@ -48,7 +48,7 @@ lua/task
 	行为域，继承自拥有该脚本的 *eaSprite* 。实域，与 *行为脚本* 相对应
 
 #### 布局
-引擎中，所有精灵对象均存在于 *精灵盒* 中，精灵盒的大小由拥有该精灵的 *精灵组* 管理（虽然也提供了从其他地方修改精灵和的方法，但是不建议使用），精灵盒内的精灵对象的具体位置由margin来确定，margin为精灵距离精灵盒边界的距离，类似于css
+引擎中，所有精灵对象均存在于 *精灵盒* 中，精灵盒的大小由拥有该精灵的 *精灵组* 管理（虽然也提供了从其他地方修改精灵和的方法，但是不建议使用），精灵盒内的精灵对象的具体位置由margin来确定，margin为精灵距离精灵盒边界的距离，当margin的属性中有为0项的时候，这项内容会由精灵的size自动计算，当up和bottom、left和right同时为0时，计算bottom、right
 
 引擎中内置了几种布局脚本，所有布局均行为脚本均需创建在 *精灵组* 上
 
@@ -62,7 +62,8 @@ lua/task
 | enabled | boolean  |  精灵是否启用，若未启用则不会刷新 |
 | destroyed | boolean  |  精灵是否销毁，若已销毁则会在下一帧中移除 |
 | zOrder | integer  |  精灵在Z轴上的顺序，不同精灵组之间的精灵的zOrder是相互独立的 |
-| margin | table(<br>number,<br>number,<br>number,<br>number)  |  精灵距离精灵盒边界的距离，从小到大依次是up,right,button,left |
+| margin | table(<br>number,<br>number,<br>number,<br>number)<br>table(<br>number,<br>number)  |  精灵距离精灵盒边界的距离，从小到大依次是up,right,button,left，或者直接给up和left |
+| size | table(<br>number,<br>number)  |  精灵的大小，从小到大依次是width, height |
 | box | table(<br>number,<br>number,<br>number,<br>number)  |  精灵盒的大小，从小到大依次是x,y,width,height |
 | alpha | number | 精灵透明度，最终影响精灵透明度的还有父精灵组的透明度 |
 

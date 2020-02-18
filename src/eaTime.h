@@ -8,6 +8,7 @@ class eaTime
 
 	unsigned int lastUpdateTime = -1;
 	unsigned int currentTime = -1;
+	unsigned int frameCount = 0;
 
 public:
 	double timeScale = 1.0;
@@ -16,4 +17,5 @@ public:
 	static double DeltaTime();
 	static double NonScaledDeltaTime();
 	static void Reset();
+	static int FrameCount();
 };

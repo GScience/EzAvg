@@ -14,7 +14,8 @@ Styles.Button =
 		verticalLayout = "center",
 		horizontalLayout = "center",
 		color = {0.8,0.8,0.8},
-		fontSize = 24,
+		shadowColor = {0.7,0.7,0.7},
+		fontSize = 26,
 		zOrder = 1
 	},
 	behaviours = 
@@ -29,6 +30,7 @@ Styles.Button =
 		text="Text.text",
 		image="Image.image",
 		color="Image.color",
-		colorOnClick="buttonBehaviour.colorOnClick"
+		colorOnClick="buttonBehaviour.colorOnClick",
+		isClicked="buttonBehaviour._isClicked"
 	}
 }

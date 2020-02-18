@@ -90,6 +90,9 @@ void eaInput::Update()
 
 bool eaInput::CheckSpriteInteraction(shared_ptr<eaSprite> sprite)
 {
+	if (!sprite->enabled || sprite->destroyed)
+		return false;
+
 	// 判断是否在区域
 	auto rect = sprite->GetRenderRect();
 	auto mousePos = GetMousePoint();

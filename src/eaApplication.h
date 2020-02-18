@@ -24,6 +24,7 @@ class eaApplication : public eaSaveable
 	eaLogger logger;
 
 public:
+	bool closed = false;
 	bool isActive = true;
 
 	static eaApplication* instance;

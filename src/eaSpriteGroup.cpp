@@ -235,7 +235,7 @@ void eaSpriteGroup::Draw(SDL_Renderer* renderer, double groupAlpha)
 
 	for (auto& sprite : sprites)
 	{
-		if (sprite->enabled && !sprite->destroyed)
+		if (!sprite->destroyed)
 			sprite->Draw(renderer, groupAlpha * alpha);
 	}
 }

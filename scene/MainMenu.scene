@@ -4,25 +4,66 @@
 
 :Wait sprite="background" behaviour="fader"
 
-:SpriteCreate	sprite="gameName" type=text horizontalLayout=center fontSize=70 margin=[45, 300, 200, 45]
+:SpriteCreate	sprite="gameName" type=text horizontalLayout=center fontSize=70 margin=[20, 20] size=[450,200]
 :SpriteSet		sprite="gameName" color=[0,0,1] shadowColor=[0,0,0.8,0.5]
 :BehaviourAdd	sprite="gameName" behaviour="printer" type="AnimTextPrinter" speed=10 text="EzAvg Engine Test"
 
 :Wait sprite="gameName" behaviour="printer"
 
 :SpriteCreate	sprite="startButton" type="group" style="Button"
-:SpriteSet		sprite="startButton" text="开始游戏" onClickAlpha=0 image = "UI/Button300x50.png" margin = [240, 80, 300, 540]
+:SpriteSet		sprite="startButton" text="开始游戏" onClickAlpha=0 image = "UI/Button150x50.png" margin = [200, 500] size=[250,70]
+
+:SpriteCreate	sprite="loadButton" type="group" style="Button"
+:SpriteSet		sprite="loadButton" text="加载游戏" onClickAlpha=0 image = "UI/Button150x50.png" margin = [290, 500] size=[250,70]
 
 :SpriteCreate	sprite="optionButton" type="group" style="Button"
-:SpriteSet		sprite="optionButton" text="选项" onClickAlpha=0 image = "UI/Button300x50.png" margin = [320, 80, 220, 540]
+:SpriteSet		sprite="optionButton" text="选项" onClickAlpha=0 image = "UI/Button150x50.png" margin = [380, 500] size=[250,70]
 
 :SpriteCreate	sprite="exitButton" type="group" style="Button"
-:SpriteSet		sprite="exitButton" text="退出" onClickAlpha=0 image = "UI/Button300x50.png" margin = [400, 80, 140, 540]
+:SpriteSet		sprite="exitButton" text="退出" onClickAlpha=0 image = "UI/Button150x50.png" margin = [470, 500] size=[250,70]
 
-==Start==
+==WaitUntilButtonClick==
+{
+	if scene.startButton.isClicked then
+		Script.jump("StartGame")
+	elseif scene.loadButton.isClicked then
+		Script.jump("LoadGame")
+	elseif scene.optionButton.isClicked then
+		Script.jump("Option")
+	elseif scene.exitButton.isClicked then
+		Script.jump("Exit")
+	else
+		Script.jump("WaitUntilButtonClick")
+	end
+}
 
-==Load==
+# 开始游戏
+==StartGame==
+{
+	print("Start Game now")
+}
+:Goto pos = WaitUntilButtonClick
 
+# 加载游戏
+==LoadGame==
+{
+	print("Load Game now")
+}
+:Goto pos = WaitUntilButtonClick
+
+#选项
 ==Option==
+{
+	print("Option")
+}
 
+:Goto pos = WaitUntilButtonClick
+
+# 退出游戏
 ==Exit==
+{
+	print("Exit")
+}
+{
+	quit()
+}

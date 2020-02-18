@@ -23,6 +23,12 @@ void eaScriptRunner::Update()
 		return;
 	}
 
+	// 跳过注释和标签
+	while (
+		script->Blocks()[currentPos].IsType<eaScriptLabelBlock>() || 
+		script->Blocks()[currentPos].IsType<eaScriptNoteBlock>())
+		++currentPos;
+	
 	auto& currentBlock = script->Blocks()[currentPos];
 
 	if (currentBlock.IsType<eaScriptTaskBlock>())
