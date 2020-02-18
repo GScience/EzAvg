@@ -25,6 +25,11 @@ class eaScene : public eaSaveable, public std::enable_shared_from_this<eaScene>
 	void InitScript(std::string name);
 
 public:
+	std::shared_ptr<eaSpriteGroup> GetSpriteGroup()
+	{
+		return spriteGroup;
+	}
+
 	eaSceneBackgroundColor backgroundColor;
 	std::unique_ptr<eaScriptRunner> runner;
 

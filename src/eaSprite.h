@@ -240,10 +240,8 @@ public:
 
 	std::string name;
 
-protected:
 	eaRenderRect GetRenderRect();
 
-public:
 	void SendMessage(const std::string& msg);
 
 	int GetZOrder() const
@@ -284,7 +282,7 @@ public:
 	/*
 	绘制
 	*/
-	virtual void Draw(SDL_Renderer* renderer) = 0;
+	virtual void Draw(SDL_Renderer* renderer, double groupAlpha) = 0;
 
 	/*
 	刷新

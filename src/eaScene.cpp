@@ -88,7 +88,7 @@ void eaScene::Draw(SDL_Renderer* renderer)
 		0);
 
 	SDL_RenderClear(renderer);
-	spriteGroup->Draw(renderer);
+	spriteGroup->Draw(renderer, 1);
 }
 
 void eaScene::Update()

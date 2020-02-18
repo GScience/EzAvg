@@ -370,13 +370,13 @@ void eaSpriteText::SetText(std::string str)
 	text = str;
 }
 
-void eaSpriteText::Draw(SDL_Renderer * renderer)
+void eaSpriteText::Draw(SDL_Renderer * renderer, double groupAlpha)
 {
 	if (textTexture != nullptr)
 	{
 		auto renderRect = GetRenderRect();
 		auto margin = SDL_Rect{ renderRect.x,renderRect.y,renderRect.width,renderRect.height };
-		SDL_SetTextureAlphaMod(textTexture, (uint8_t)(alpha * 255));
+		SDL_SetTextureAlphaMod(textTexture, (uint8_t)(groupAlpha * alpha * 255));
 		SDL_RenderCopy(renderer, textTexture, nullptr, &margin);
 	}
 }

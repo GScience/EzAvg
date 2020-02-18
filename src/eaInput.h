@@ -1,4 +1,8 @@
 #pragma once
+#include <memory>
+
+class eaScene;
+class eaSprite;
 
 enum MouseButton
 {
@@ -15,6 +19,9 @@ struct MousePoint
 
 class eaInput
 {
+	static bool CheckSpriteInteraction(std::shared_ptr<eaSprite> sprite);
+	static void UpdateSceneInteraction(std::shared_ptr<eaScene> scene);
+
 public:
 	static MousePoint GetMousePoint();
 	static bool GetButtonDown(MouseButton button);
@@ -22,4 +29,6 @@ public:
 	static bool GetButton(MouseButton button);
 
 	static void Update();
+
+	static void Reset();
 };

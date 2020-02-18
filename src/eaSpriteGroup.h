@@ -25,7 +25,7 @@ public:
 
 	eaSpriteGroup();
 
-	void Draw(SDL_Renderer* renderer) override;
+	void Draw(SDL_Renderer* renderer, double groupAlpha) override;
 	void Update() override;
 
 	void Save() override;

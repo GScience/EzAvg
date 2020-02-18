@@ -64,7 +64,7 @@ public:
 	/*
 	绘制
 	*/
-	void Draw(SDL_Renderer* renderer) override;
+	void Draw(SDL_Renderer* renderer, double groupAlpha) override;
 
 	void Save() override;
 	void Load() override;

@@ -39,7 +39,8 @@ void eaApplication::Update()
 {
 	if (!isActive)
 	{
-		eaTime::ResetDeltaTime();
+		eaTime::Reset();
+		eaInput::Reset();
 		return;
 	}
 
@@ -80,6 +81,12 @@ void eaApplication::SetApplicationSize(int width, int height)
 	{
 		width, height
 	};
+}
+
+void eaApplication::LoadScene(std::string scriptName)
+{
+	eaInput::Reset();
+	scene = eaScene::Load(scriptName);
 }
 
 void eaApplication::Run(std::vector<std::string> args)

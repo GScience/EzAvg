@@ -49,10 +49,7 @@ public:
 	/*
 	加载场景并卸载当前场景
 	*/
-	void LoadScene(std::string scriptName)
-	{
-		scene = eaScene::Load(scriptName);
-	}
+	void LoadScene(std::string scriptName);
 	
 	/*
 	设置窗体大小

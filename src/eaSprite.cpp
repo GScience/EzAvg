@@ -425,7 +425,11 @@ void eaSpriteBehaviour::SendMessage(const string& msg)
 	if (!lua_isfunction(L, -1))
 		return;
 
-	lua_pcall(L, 0, 0, 0);
+	if (lua_pcall(L, 0, 0, 0) != LUA_OK)
+	{
+		eaApplication::GetLogger().Log("LuaError", "发送消息"s + msg + "时出现异常。位置：" + L.GetCurrentInfo());
+		throw eaLuaError();
+	}
 }
 
 eaPropertyValue eaSpriteBehaviour::Get(const std::string& str)

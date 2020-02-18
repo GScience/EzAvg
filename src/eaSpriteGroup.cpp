@@ -226,7 +226,7 @@ eaSpriteGroup::eaSpriteGroup()
 		);
 }
 
-void eaSpriteGroup::Draw(SDL_Renderer* renderer)
+void eaSpriteGroup::Draw(SDL_Renderer* renderer, double groupAlpha)
 {
 	sort(sprites.begin(), sprites.end(), [](std::shared_ptr<eaSprite> a, std::shared_ptr<eaSprite> b)
 		{
@@ -236,7 +236,7 @@ void eaSpriteGroup::Draw(SDL_Renderer* renderer)
 	for (auto& sprite : sprites)
 	{
 		if (sprite->enabled && !sprite->destroyed)
-			sprite->Draw(renderer);
+			sprite->Draw(renderer, groupAlpha * alpha);
 	}
 }
 

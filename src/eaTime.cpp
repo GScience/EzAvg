@@ -13,7 +13,7 @@ void eaTime::Update()
 	time.currentTime = SDL_GetTicks();
 }
 
-void eaTime::ResetDeltaTime()
+void eaTime::Reset()
 {
 	time.currentTime = SDL_GetTicks();
 	time.lastUpdateTime = time.currentTime;

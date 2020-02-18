@@ -14,7 +14,7 @@ Styles.Button =
 		verticalLayout = "center",
 		horizontalLayout = "center",
 		color = {0.8,0.8,0.8},
-		fontSize = 36,
+		fontSize = 24,
 		zOrder = 1
 	},
 	behaviours = 
@@ -28,7 +28,7 @@ Styles.Button =
 	{
 		text="Text.text",
 		image="Image.image",
-		transparent="Image.alpha",
-		onClickAlpha="buttonBehaviour.onClickAlpha"
+		color="Image.color",
+		colorOnClick="buttonBehaviour.colorOnClick"
 	}
 }

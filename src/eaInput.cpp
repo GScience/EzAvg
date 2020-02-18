@@ -1,5 +1,8 @@
 #include <SDL.h>
+#include "eaApplication.h"
 #include "eaInput.h"
+
+using namespace std;
 
 bool previousLeftButtonState = false;
 bool previousRightButtonState = false;
@@ -9,6 +12,8 @@ bool currentLeftButtonState = false;
 bool currentRightButtonState = false;
 bool currentMiddleButtonState = false;
 
+vector<shared_ptr<eaSprite>> previousSelectedSprites;
+vector<shared_ptr<eaSprite>> currentSelectedSprites;
 
 MousePoint eaInput::GetMousePoint()
 {
@@ -70,8 +75,72 @@ void eaInput::Update()
 	previousLeftButtonState = currentLeftButtonState;
 	previousRightButtonState = currentRightButtonState;
 	previousMiddleButtonState = currentMiddleButtonState;
+	previousSelectedSprites = currentSelectedSprites;
 
+	// 获取当前状态
 	currentLeftButtonState = mouseState & SDL_BUTTON(SDL_BUTTON_LEFT);
 	currentRightButtonState = mouseState & SDL_BUTTON(SDL_BUTTON_RIGHT);
 	currentMiddleButtonState = mouseState & SDL_BUTTON(SDL_BUTTON_MIDDLE);
+
+	// 刷新精灵交互状态	
+	auto currentScene = eaApplication::instance->CurrentScene();
+	if (currentScene != nullptr)
+		UpdateSceneInteraction(currentScene);
+}
+
+bool eaInput::CheckSpriteInteraction(shared_ptr<eaSprite> sprite)
+{
+	// 判断是否在区域
+	auto rect = sprite->GetRenderRect();
+	auto mousePos = GetMousePoint();
+
+	if (rect.x > mousePos.x || rect.y > mousePos.y ||
+		rect.x + rect.width < mousePos.x || rect.y + rect.height < mousePos.y)
+		return false;
+
+	currentSelectedSprites.push_back(sprite);
+
+	// 如果是组，对组内所有对象进行刷新
+	if (sprite->GetType() == "group")
+	{
+		auto spriteGroup = reinterpret_pointer_cast<eaSpriteGroup>(sprite);
+		auto sprites = spriteGroup->GetSprites();
+		for (auto subSprite = sprites.rbegin(); subSprite != sprites.rend(); ++subSprite)
+		{
+			if (CheckSpriteInteraction(*subSprite))
+				break;
+		}
+	}
+
+	// 发送消息
+	if (GetButtonDown(MouseButtonLeft))
+		sprite->SendMessage("onMouseDown");
+	else if(GetButtonUp(MouseButtonLeft))
+		sprite->SendMessage("onMouseUp");
+
+	return true;
+}
+
+void eaInput::UpdateSceneInteraction(shared_ptr<eaScene> scene)
+{
+	// 获取最新的状态
+	currentSelectedSprites.clear();
+
+	CheckSpriteInteraction(scene->GetSpriteGroup());
+
+	// 向不存在的精灵发送鼠标离开事件
+	for (auto i = 0; i < previousSelectedSprites.size(); ++i)
+	{
+		if (
+			i >= currentSelectedSprites.size() || 
+			previousSelectedSprites[i] != currentSelectedSprites[i]
+			)
+			previousSelectedSprites[i]->SendMessage("onMouseLeave");
+	}
+}
+
+void eaInput::Reset()
+{
+	previousSelectedSprites.clear();
+	currentSelectedSprites.clear();
 }

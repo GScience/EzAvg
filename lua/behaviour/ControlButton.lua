@@ -1,14 +1,25 @@
 local p = {}
 
 p.enabled = true
-p.onClickAlpha = 0.5
+p.colorOnClick = {0.5,0.5,0.5}
 
 function p.update()
-	if Input.getButton(0) then
-		sprite.transparent = p.onClickAlpha
-	else
-		sprite.transparent = 1
-	end
+
+end
+
+function p.onMouseDown()
+	print("down")
+	sprite.color = p.colorOnClick
+end
+
+function p.onMouseUp()
+	print("up")
+	sprite.color = {1,1,1}
+end
+
+function p.onMouseLeave()
+	print("leave")
+	sprite.color = {1,1,1}
 end
 
 return p

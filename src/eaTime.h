@@ -15,5 +15,5 @@ public:
 	static void Update();
 	static double DeltaTime();
 	static double NonScaledDeltaTime();
-	static void ResetDeltaTime();
+	static void Reset();
 };
