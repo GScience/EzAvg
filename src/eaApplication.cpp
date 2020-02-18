@@ -2,6 +2,7 @@
 #include <lua.hpp>
 #include <SDL_ttf.h>
 #include <SDL_image.h>
+#include <thread>
 #include "eaApplication.h"
 #include "eaTime.h"
 #include "eaInput.h"
@@ -20,7 +21,7 @@ void eaApplication::InitWindow()
 		SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
 		applicationSize.width, applicationSize.height,
 		SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_RESIZABLE);
-	sdlRenderer = SDL_CreateRenderer(sdlWindow, -1, 0);
+	sdlRenderer = SDL_CreateRenderer(sdlWindow, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
 	SDL_RenderSetLogicalSize(sdlRenderer, applicationSize.width, applicationSize.height);
 }
 
@@ -41,6 +42,7 @@ void eaApplication::Update()
 	{
 		eaTime::Reset();
 		eaInput::Reset();
+		this_thread::sleep_for(chrono::milliseconds(500));
 		return;
 	}
 
