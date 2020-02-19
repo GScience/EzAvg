@@ -1,6 +1,7 @@
 #include <lua.hpp>
 #include "eaScriptRunner.h"
 #include "eaApplication.h"
+#include "eaInput.h"
 
 using namespace std;
 
@@ -11,12 +12,24 @@ void eaScriptRunner::Update()
 	if (script == nullptr)
 		return;
 
+	// 如果正在显示文本
+	if (isSettingText)
+	{
+		auto result = scene->GetSpriteGroup()->GetProperty("printedAllText");
+		if ((result == nullptr || result.ToBoolean()) && eaInput::GetButtonDown(MouseButtonLeft))
+			isSettingText = false;
+		else
+			return;
+	}
+
+	// 正在执行任务
 	if (currentTask != nullptr && !currentTask->IsFinished())
 	{
 		currentTask->Update();
 		return;
 	}
 
+	// 是否结束所有脚本
 	if (currentPos >= (long long) script->Blocks().size())
 	{
 		enable = false;
@@ -40,7 +53,10 @@ void eaScriptRunner::Update()
 	else if (currentBlock.IsType<eaScriptTextBlock>())
 	{
 		auto block = currentBlock.Get<eaScriptTextBlock>();
-		eaApplication::GetLogger().Log("Message", GetStr(block->text.GetRawStr()));
+		auto str = GetStr(block->text);
+
+		scene->GetSpriteGroup()->SetProperty("text", str);
+		isSettingText = true;
 	}
 	else if (currentBlock.IsType<eaScriptLuaBlock>())
 	{

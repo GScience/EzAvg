@@ -47,6 +47,10 @@ class eaScriptRunner : public eaSaveable
 	std::shared_ptr<eaScriptTask> currentTask;
 	std::shared_ptr<eaScene> scene;
 
+	/*
+	是否正在设置文本
+	*/
+	bool isSettingText = false;
 public:
 	eaScriptRunner::eaScriptRunner(std::shared_ptr<eaScene> scene) 
 		:scene(scene) {}

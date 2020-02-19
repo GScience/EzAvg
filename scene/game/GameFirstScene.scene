@@ -1,15 +1,6 @@
 :Init
-{
-	scene.text="测试一下啦啦啦啦啦啦啦啦啦啦啊"
-}
+Hello World
 
-==wait==
-{
-	if scene.printedAllText == false or Input.getButtonDown(0) == false then
-		Script.jump("wait")
-	end
-}
+Hello World 2
 
-{
-	scene.text="123"
-}
+Hello World 3
