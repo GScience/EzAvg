@@ -1,7 +1,7 @@
 local p = {}
 
 p.enabled = true
-p.speed = 0.1
+p.speed = 1
 
 function p.update()
 	local alpha = sprite.alpha

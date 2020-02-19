@@ -79,6 +79,21 @@ void eaApplication::SetApplicationSize(int width, int height)
 	SDL_SetWindowSize(eaApplication::GetWindow(), (int)width, (int)height);
 	SDL_SetWindowPosition(eaApplication::GetWindow(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
 
+	SDL_RenderSetLogicalSize(sdlRenderer, width, height);
+
+	if (scene != nullptr)
+	{
+		eaSpriteBox box;
+		
+		box.x = 0;
+		box.y = 0;
+		box.width = width;
+		box.height = height;
+
+		scene->GetSpriteGroup()->box = box;
+		scene->GetSpriteGroup()->OnLayoutChanged();
+	}
+
 	applicationSize = eaApplicationSize
 	{
 		width, height
@@ -124,11 +139,6 @@ void eaApplication::Run(std::vector<std::string> args)
 				{
 					switch (e.window.event)
 					{
-						case SDL_WINDOWEVENT_SIZE_CHANGED:
-						{
-							SDL_RenderSetLogicalSize(sdlRenderer, applicationSize.width, applicationSize.height);
-							break;
-						}
 						case SDL_WINDOWEVENT_FOCUS_LOST:
 						{
 							isActive = false;

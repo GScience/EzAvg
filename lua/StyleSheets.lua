@@ -3,24 +3,42 @@ Styles = {}
 
 Styles.GameScene =
 {
+	-- 文本框
 	_MainText=
 	{
-		type = "text",
-		order = 10000,
-		behaviours = 
+		type = "group",
+		zOrder = 1000,
+		margin={409,25,25,25},
+		-- 背景
+		Image=
 		{
-			textPrinter =
+			type = "image",
+			zOrder = 1,
+			image="UI/Dialog718x462.png"
+		},
+		-- 文本
+		Text=
+		{
+			type = "text",
+			zOrder = 2,
+			margin={20,35,20,35},
+			fontSize = 30,
+			behaviours = 
 			{
-				type="AnimTextPrinter",
-				speed=10
+				textPrinter =
+				{
+					type="AnimTextPrinter",
+					speed=10
+				}
 			}
 		}
 	},
 	backgroundColor={1,1,1},
 	propertyTable=
 	{
-		text="_MainText.textPrinter.text",
-		printedAllText="_MainText.textPrinter.isFinished"
+		text="_MainText.Text.textPrinter.text",
+		printedAllText="_MainText.Text.textPrinter.isFinished",
+		image="_MainText.Text.Image.image"
 	}
 }
 

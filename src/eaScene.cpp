@@ -20,6 +20,7 @@ eaScene::eaScene(string name)
 	{
 		0,0,windowSize.width,windowSize.height
 	};
+	spriteGroup->OnLayoutChanged();
 
 	// 为属性绑定器添加属性
 	spriteGroup->propertyBinder["backgroundColor"] = eaPropertyBinder(

@@ -141,9 +141,10 @@ eaSpriteGroup::eaSpriteGroup()
 						// 精灵所在精灵组
 						auto spriteGroup = reinterpret_pointer_cast<eaSpriteGroup>(sprite);
 
-						auto subName = spriteLoc.substr(0, spriteLoc.find_last_of('.'));
+						auto subName = spriteLoc.substr(0, spriteLoc.find_first_of('.'));
 
 						// 一直寻找到非精灵组对象
+						auto currentPos = subName.size() + 1;
 						while (true)
 						{
 							auto subSprite = spriteGroup->GetSprite(subName);
@@ -152,11 +153,18 @@ eaSpriteGroup::eaSpriteGroup()
 							if (subSprite == nullptr)
 								break;
 
-							auto dotPos = spriteLoc.find_first_of('.', subName.size());
+							auto dotPos = spriteLoc.find_first_of('.', currentPos);
 							if (dotPos == string::npos)
-								subName = "";
+							{
+								if (currentPos < spriteLoc.length())
+									subName = spriteLoc.substr(currentPos);
+								else
+									subName = "";
+							}
 							else
-								subName = spriteLoc.substr(dotPos + 1);
+								subName = spriteLoc.substr(currentPos, dotPos - currentPos);
+
+							currentPos += subName.size() + 1;
 
 							// 精灵组，还是精灵
 							if (subSprite->GetType() != "group")
@@ -166,6 +174,7 @@ eaSpriteGroup::eaSpriteGroup()
 							}
 							spriteGroup = reinterpret_pointer_cast<eaSpriteGroup>(subSprite);
 						}
+
 
 						// 如果subName不为空，则绑定到了行为属性
 						if (subName != "")
@@ -183,9 +192,10 @@ eaSpriteGroup::eaSpriteGroup()
 						shared_ptr<eaSprite> sprite = shared_from_this();
 						// 精灵所在精灵组
 						auto spriteGroup = reinterpret_pointer_cast<eaSpriteGroup>(sprite);
-						auto subName = spriteLoc.substr(0, spriteLoc.find_last_of('.'));
+						auto subName = spriteLoc.substr(0, spriteLoc.find_first_of('.'));
 
 						// 一直寻找到非精灵组对象
+						auto currentPos = subName.size() + 1;
 						while (true)
 						{
 							auto subSprite = spriteGroup->GetSprite(subName);
@@ -194,11 +204,18 @@ eaSpriteGroup::eaSpriteGroup()
 							if (subSprite == nullptr)
 								break;
 
-							auto dotPos = spriteLoc.find_first_of('.', subName.size());
+							auto dotPos = spriteLoc.find_first_of('.', currentPos);
 							if (dotPos == string::npos)
-								subName = "";
+							{
+								if (currentPos < spriteLoc.length())
+									subName = spriteLoc.substr(currentPos);
+								else
+									subName = "";
+							}
 							else
-								subName = spriteLoc.substr(dotPos + 1);
+								subName = spriteLoc.substr(currentPos, dotPos - currentPos);
+
+							currentPos += subName.size() + 1;
 
 							// 精灵组，还是精灵
 							if (subSprite->GetType() != "group")
@@ -235,7 +252,7 @@ void eaSpriteGroup::Draw(SDL_Renderer* renderer, double groupAlpha)
 
 	for (auto& sprite : sprites)
 	{
-		if (!sprite->destroyed)
+		if (sprite->enabled && !sprite->destroyed)
 			sprite->Draw(renderer, groupAlpha * alpha);
 	}
 }

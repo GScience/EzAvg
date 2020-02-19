@@ -18,6 +18,7 @@ function p.update()
 
 	if p.text ~= nil then
 		p.onSetText(p.text)
+		print(p.text)
 		p.text = nil
 	end
 

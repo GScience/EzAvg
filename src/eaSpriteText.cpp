@@ -145,6 +145,7 @@ void eaSpriteText::Clear()
 
 	text = "";
 
+	// 如果都小于0则清空
 	if (renderRect.width <= 0 || renderRect.height <= 0)
 	{
 		if (textSurface != nullptr)
@@ -152,15 +153,21 @@ void eaSpriteText::Clear()
 			SDL_FreeSurface(textSurface);
 			textSurface = nullptr;
 		}
+		if (lineSurface != nullptr)
+		{
+			SDL_FreeSurface(lineSurface);
+			lineSurface = nullptr;
+		}
 		return;
 	}
 
+	// 清空行Surface
 	if (lineSurface != nullptr)
 		SDL_FreeSurface(lineSurface);
-
 	lineSurface = SDL_CreateRGBSurface(0, renderRect.width, font->GetLineHeight() + shadowOffset + 1, 32, 0xff, 0xff00, 0xff0000, 0xff000000);
 	SDL_SetSurfaceBlendMode(lineSurface, SDL_BLENDMODE_NONE);
 	
+	// 清空文本surface
 	if (textSurface != nullptr &&
 		textSurface->w == renderRect.width &&
 		textSurface->h == renderRect.height)
@@ -180,6 +187,7 @@ void eaSpriteText::Clear()
 		SDL_SetSurfaceBlendMode(textSurface, SDL_BLENDMODE_NONE);
 	}
 
+	// 清空纹理
 	if (textTexture != nullptr)
 	{
 		SDL_DestroyTexture(textTexture);
@@ -215,10 +223,13 @@ void eaSpriteText::SetFont(string fontName, int fontSize)
 void eaSpriteText::SetText(std::string str)
 {
 	if (textSurface == nullptr)
+	{
+		text = str;
 		return;
+	}
 
 	auto renderRect = GetRenderRect();
-
+	
 	// 判断是否只是增加字符
 	for (size_t i = 0; i < text.size(); ++i)
 	{
