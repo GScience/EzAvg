@@ -110,7 +110,7 @@ lua/task
 引擎会对应每个精灵创建一个lua对象：sprite，其存在于该精灵所创建的域当中。对于精灵组，可以使用 sprite.childName 来访问其拥有的子精灵
 
 #### 场景
-场景可以理解成是一个精灵组，其中默认绑定了很多与场景相关的属性。当调用Init后，会把GameScene样式应用到场景上，GameScene样式内的属性如下：
+场景可以理解成是一个精灵组，其中默认绑定了很多与场景相关的属性。当调用GameInit后，会把GameScene样式应用到场景上，GameScene样式内的属性如下：
 |  属性 | 值类型 |  说明 |
 | ------------ | ------------ | ------------ |
 | text | string | 主对话框，负责显示文本块内的内容 |
@@ -202,7 +202,7 @@ return p
 #### 内置任务脚本
 ##### Init
 初始化场景
-##### CreateSprite
+##### SpriteCreate
 创建精灵
 
 | 必须 |  名称  |  类型  |     说明    |
@@ -211,19 +211,19 @@ return p
 |       | style  | string | 精灵样式 |
 |       | arg..  | valuePair.. | 需要设置的精灵参数 |
 
-##### RemoveSprite
+##### SpriteRemove
 移除精灵
 
 | 必须 |  名称  |  类型  |     说明    |
 | :---: | :-----: | :-----: | :--------: |
 |   *   | sprite | string | 精灵名称 |
 
-##### SetSprite
+##### SpriteSet
 设置精灵属性
 
 | 必须 |  名称  |  类型  |     说明    |
 | :---: | :----: | :-----: | :--------: |
-|   *   | sprite | string | 精灵名称 |
+|       | sprite | string | 精灵名称，为空则为scene |
 |       | arg    | valuePair | 需要设置的精灵参数 |
 || ... | ... | ... |
 
@@ -261,6 +261,15 @@ return p
 |       | sprite | string | 精灵名称，若未指定则默认为scene |
 |   *   | behaviour | string | 行为名称 |
 |       | keep | bool | 是否结束后保留行为 |
+
+##### GameInit
+初始化游戏，创建对话框等
+
+##### GameDialogHide
+隐藏游戏对话框
+
+##### GameDialogShow
+显示游戏对话框
 
 ### Lua精灵行为脚本
 一个完整的Lua任务脚本如下：

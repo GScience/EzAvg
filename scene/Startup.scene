@@ -1,5 +1,5 @@
 # 背景
-:SceneSet		backgroundColor=[1,1,1]
+:SpriteSet		backgroundColor=[1,1,1]
 :SpriteCreate	sprite="background" type=image image="Logo.png" alpha=0 margin=[0,0,0,0] zOrder=-1
 :BehaviourAdd	sprite="background" behaviour="fader" type="AnimFadeIn" speed=1
 

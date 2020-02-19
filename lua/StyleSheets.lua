@@ -4,11 +4,12 @@ Styles = {}
 Styles.GameScene =
 {
 	-- 文本框
-	_MainText=
+	_MainDialog=
 	{
 		type = "group",
 		zOrder = 1000,
 		margin={409,25,25,25},
+		alpha=0,
 		-- 背景
 		Image=
 		{
@@ -31,14 +32,22 @@ Styles.GameScene =
 					speed=10
 				}
 			}
+		},
+		-- 淡入淡出
+		behaviours = 
+		{
+			fader =
+			{
+				type="AnimFadeIn",
+				speed=1
+			}
 		}
 	},
-	backgroundColor={1,1,1},
 	propertyTable=
 	{
-		text="_MainText.Text.textPrinter.text",
-		printedAllText="_MainText.Text.textPrinter.isFinished",
-		image="_MainText.Text.Image.image"
+		text="_MainDialog.Text.textPrinter.text",
+		printedAllText="_MainDialog.Text.textPrinter.isFinished",
+		image="_MainDialog.Text.Image.image"
 	}
 }
 

@@ -2,12 +2,13 @@ local p = {}
 
 function p.start(args)
 
-	if args.sprite == nil then
-		logError("未指定sprite")
-		return
-	end
+	local sprite
 
-	local sprite = scene[args.sprite]
+	if args.sprite == nil then
+		sprite = scene
+	else
+		sprite = scene[args.sprite]
+	end
 
 	if sprite == nil then
 		logError("未找到精灵")

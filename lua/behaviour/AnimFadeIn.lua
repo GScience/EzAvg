@@ -18,6 +18,9 @@ end
 
 function p.isFinished()
 
+	if p.enabled == false then
+		return true
+	end
 	if p.speed > 0 then
 		return sprite.alpha >= 1
 	elseif p.speed < 0 then

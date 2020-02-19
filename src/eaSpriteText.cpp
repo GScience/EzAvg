@@ -276,6 +276,7 @@ void eaSpriteText::SetText(std::string str)
 			cursorX = 0;
 			cursorY += font->GetLineHeight() + shadowOffset;
 			isNewLine = true;
+			SDL_FillRect(lineSurface, nullptr, SDL_MapRGBA(textSurface->format, 0, 0, 0, 0));
 			continue;
 		}
 

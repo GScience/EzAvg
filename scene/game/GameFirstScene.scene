@@ -1,7 +1,28 @@
-:Init
+:GameInit
+
+测试 1
+测试 2
+测试 3
+
+测试 4
+测试 5
+
+:GameDialogHide
+
+:SpriteCreate sprite="WaitingText" type="text" color=[1,1,1] shadowColor=[0.8,0.8,0.8] fontSize=48 horizontalLayout=center verticalLayout=center
+:BehaviourAdd sprite="WaitingText" behaviour="printer" type="AnimTextPrinter" text="一个世纪过去了。。。。。。" speed=5
+:Wait sprite="WaitingText" behaviour="printer"
+:Wait time=0.5
+:BehaviourRemove sprite="WaitingText" behaviour="printer"
+:BehaviourAdd sprite="WaitingText" behaviour="textFader" type="AnimFadeIn" speed = -1
+:Wait time=0.5
+
+:GameDialogShow
 
 Hello World
 
 Hello World 2
 
 Hello World 3
+
+:GameDialogHide

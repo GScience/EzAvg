@@ -18,7 +18,6 @@ function p.update()
 
 	if p.text ~= nil then
 		p.onSetText(p.text)
-		print(p.text)
 		p.text = nil
 	end
 
@@ -54,7 +53,10 @@ function p.update()
 end
 
 function p.isFinished()
-
+	
+	if p.enabled == false then
+		return true
+	end
 	return p.currentPos > string.len(p._text)
 end
 

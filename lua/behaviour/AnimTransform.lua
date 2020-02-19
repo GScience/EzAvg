@@ -36,7 +36,10 @@ function p.update()
 end
 
 function p.isFinished()
-
+	
+	if p.enabled == false then
+		return true
+	end
 	return p._lifeTime > p.time
 end
 
