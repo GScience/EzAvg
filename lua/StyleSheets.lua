@@ -1,6 +1,29 @@
 
 Styles = {}
 
+Styles.GameScene =
+{
+	_MainText=
+	{
+		type = "text",
+		order = 10000,
+		behaviours = 
+		{
+			textPrinter =
+			{
+				type="AnimTextPrinter",
+				speed=10
+			}
+		}
+	},
+	backgroundColor={1,1,1},
+	propertyTable=
+	{
+		text="_MainText.textPrinter.text",
+		printedAllText="_MainText.textPrinter.isFinished"
+	}
+}
+
 Styles.Button = 
 {
 	Image = 

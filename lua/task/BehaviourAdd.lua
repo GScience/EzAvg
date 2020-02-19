@@ -2,11 +2,6 @@ local p = {}
 
 function p.start(args)
 
-	if args.sprite == nil then
-		logError("无法创建行为，未指定sprite")
-		return
-	end
-
 	if args.behaviour == nil then
 		logError("无法创建行为，未指定behaviour")
 		return
@@ -17,7 +12,14 @@ function p.start(args)
 		return
 	end
 
-	local sprite = scene[args.sprite]
+	local sprite
+	
+	if args.sprite == nil then
+		sprite = scene
+	else
+		sprite = scene[args.sprite]
+	end
+
 	if sprite == nil then
 		logError("无法创建行为，未找到精灵对象")
 		return

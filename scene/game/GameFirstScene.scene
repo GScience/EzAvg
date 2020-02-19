@@ -1,0 +1,15 @@
+:Init
+{
+	scene.text="测试一下啦啦啦啦啦啦啦啦啦啦啊"
+}
+
+==wait==
+{
+	if scene.printedAllText == false or Input.getButtonDown(0) == false then
+		Script.jump("wait")
+	end
+}
+
+{
+	scene.text="123"
+}

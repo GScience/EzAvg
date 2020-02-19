@@ -2,6 +2,8 @@ local p = {}
 
 p.finished = false
 p.totalTime = 0
+p._spriteName = nil
+p._behaviourName = nil
 
 function p.update()
 
@@ -12,15 +14,17 @@ function p.update()
 			p.finished = true
 		end
 
-	elseif p.waitBehaviour ~= nil then
-		local sprite=scene[p.sptire]
-		if sprite == nil then
-			p.finished = true
-			return
+	elseif p._behaviourName ~= nil then
+		local sprite
+		if p._spriteName == nil then
+			sprite = scene
+		else
+			sprite = scene[p._spriteName]
 		end
-		local behaviour=sprite[p.waitBehaviour]
+
+		local behaviour=sprite[p._behaviourName]
 		if behaviour == nil then
-			LogError("Behaviour not found")
+			logError("Behaviour not found")
 			p.finished = true
 			return
 		end
@@ -44,23 +48,12 @@ function p.start(args)
 	if args.time ~= nil then
 		p.waitTime = args.time
 		return
+	elseif args.behaviour ~= nil then
+		p._behaviourName = args.behaviour
+		p._spriteName = args.sprite
+	else
+		logError("未指定time或behaviour")
 	end
-
-	if args.sprite ~= nil then
-		if args.behaviour ~= nil then
-			p.waitBehaviour = args.behaviour
-			p.sptire = args.sprite
-			if args.keep == nil then
-				p.keepBehaviour = false
-			else
-				p.keepBehaviour = args.keep
-			end
-			return
-		end
-	end
-
-	logError("未指定time，或sprite与behaviour二者中缺少一个")
-	p.finished = true
 end
 
 return p

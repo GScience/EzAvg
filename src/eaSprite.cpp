@@ -479,6 +479,14 @@ eaPropertyValue eaSpriteBehaviour::Get(const std::string& str)
 	lua_pushstring(L, str.c_str());
 	lua_gettable(L, -2);
 
+	if (lua_isfunction(L, -1))
+	{
+		if (lua_pcall(L, 0, LUA_MULTRET, 0) != LUA_OK)
+		{
+			eaApplication::GetLogger().Log("LuaError", "获取属性" + str + "时出现异常。位置：" + L.GetCurrentInfo());
+			throw eaLuaError();
+		}
+	}
 	return ToPropertyValue(L, -1);
 }
 
@@ -488,6 +496,11 @@ void eaSpriteBehaviour::Set(const std::string& str, eaPropertyValue value)
 
 	lua_rawgeti(L, LUA_REGISTRYINDEX, objRef);
 	lua_pushstring(L, str.c_str());
+	if (lua_isfunction(L, -1))
+	{
+		eaApplication::GetLogger().Log("LuaError", "属性只读，因为其指向一个lua函数。位置：" + L.GetCurrentInfo());
+		throw eaLuaError();
+	}
 	PushPropertyValue(L, value);
 	lua_settable(L, -3);
 }

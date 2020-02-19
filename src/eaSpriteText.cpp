@@ -248,7 +248,7 @@ void eaSpriteText::SetText(std::string str)
 			while (cSignBit >> (7 - count) == 0)
 				++count;
 
-			for (auto j = 0; j < count; ++j)
+			for (auto j = 0; j < count && i + j < str.length(); ++j)
 				c += str[i + j];
 
 			// 移动到下一位

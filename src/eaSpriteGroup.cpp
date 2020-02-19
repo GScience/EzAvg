@@ -156,7 +156,7 @@ eaSpriteGroup::eaSpriteGroup()
 							if (dotPos == string::npos)
 								subName = "";
 							else
-								subName = spriteLoc.substr(dotPos);
+								subName = spriteLoc.substr(dotPos + 1);
 
 							// 精灵组，还是精灵
 							if (subSprite->GetType() != "group")
@@ -198,7 +198,7 @@ eaSpriteGroup::eaSpriteGroup()
 							if (dotPos == string::npos)
 								subName = "";
 							else
-								subName = spriteLoc.substr(dotPos);
+								subName = spriteLoc.substr(dotPos + 1);
 
 							// 精灵组，还是精灵
 							if (subSprite->GetType() != "group")

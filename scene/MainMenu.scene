@@ -42,7 +42,9 @@
 {
 	print("Start Game now")
 }
-:Goto pos = WaitUntilButtonClick
+:BehaviourAdd	behaviour="fader" type="AnimFadeIn" speed=-1
+:Wait			behaviour="fader"
+:Goto scene = "game/GameFirstScene.scene"
 
 # 加载游戏
 ==LoadGame==

@@ -220,6 +220,21 @@ return p
 |       | arg    | valuePair | 需要设置的精灵参数 |
 || ... | ... | ... |
 
+##### BehaviourAdd
+向精灵绑定行为
+| 必须 |  名称  |  类型  |     说明    |
+| :---: | :----: | :-----: | :--------: |
+|       | sprite | string | 精灵名称，若未指定则默认为scene |
+|   *   | behaviour  | string | 行为名称 |
+|   *   | type    | string | 行为类型 |
+
+##### BehaviourRemove
+移除精灵行为
+| 必须 |  名称  |  类型  |     说明    |
+| :---: | :----: | :-----: | :--------: |
+|       | sprite | string | 精灵名称，若未指定则默认为scene |
+|   *   | behaviour  | string | 行为名称 |
+
 ##### Goto
 场景内跳转
 
@@ -236,7 +251,7 @@ return p
 
 | 必须 |  名称  |   类型   |     说明    |
 | :---: | :-----: | :-------: | :--------: |
-|   *   | sprite | string | 精灵名称 |
+|       | sprite | string | 精灵名称，若未指定则默认为scene |
 |   *   | behaviour | string | 行为名称 |
 |       | keep | bool | 是否结束后保留行为 |
 

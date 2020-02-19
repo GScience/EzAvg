@@ -42,7 +42,7 @@ void eaApplication::Update()
 	{
 		eaTime::Reset();
 		eaInput::Reset();
-		this_thread::sleep_for(chrono::milliseconds(500));
+		this_thread::sleep_for(chrono::milliseconds(50));
 		return;
 	}
 
