@@ -64,7 +64,6 @@ void eaScriptRunner::Update()
 		if (GetDomain()->DoString(block->code) == -1)
 		{
 			eaApplication::GetLogger().Error("Script","Failed to run lua block with index "s + to_string(currentPos));
-			throw eaLuaError();
 		}
 	}
 
@@ -133,7 +132,6 @@ void eaScriptTask::Update()
 	if (lua_pcall(L, 0, 0, 0) != LUA_OK)
 	{
 		eaApplication::GetLogger().Error("Lua", "刷新任务"s + type + "时出现异常。位置：" + L.GetCurrentInfo());
-		throw eaLuaError();
 	}
 }
 
@@ -202,7 +200,6 @@ void eaScriptTask::Start(eaScriptTaskBlock::argList args)
 	if (lua_pcall(L, 1, 0, 0) != LUA_OK)
 	{
 		eaApplication::GetLogger().Error("Lua", "启动任务"s + type + "时出现异常。位置：" + L.GetCurrentInfo());
-		throw eaLuaError();
 	}
 }
 

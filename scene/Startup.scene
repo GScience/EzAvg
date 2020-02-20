@@ -10,7 +10,7 @@
 :Wait			time=0.5
 
 {
-	scene.popScene("popScene/MessageBox.scene", {message="测试对话框啦啦啦啦啦"})
+	scene.spopScene("popScene/MessageBox.scene", {message="测试对话框啦啦啦啦啦"})
 }
 
 # 版本号信息

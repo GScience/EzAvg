@@ -22,10 +22,13 @@ eaLogger::eaLogger()
 #endif
 }
 
-void PopErrorMsgBox(string title, string message)
+void PopMsgBox(string message)
 {
 	auto scene = eaApplication::instance->CurrentScene();
-	scene->PopScene("UI/MessageBox.scene");
+	scene->PopScene("popScene/MessageBox.scene", map<eaPropertyValue, eaPropertyValue>
+	{ 
+		{"message"s, message} 
+	});
 }
 
 void eaLogger::Log(eaLogLevel logLevel, string category, string message)
@@ -39,10 +42,13 @@ void eaLogger::Log(eaLogLevel logLevel, string category, string message)
 		cout << "[Warning][" << category << "]" << message << endl;
 		break;
 	case LevelError:
+		PopMsgBox(category + "\n" + message);
 		cout << "[Error][" << category << "]" << message << endl;
 		break;
 	case LevelCrash:
+		PopMsgBox(category + "\n" + message);
 		cout << "[CRACH][" << category << "]" << message << endl;
+		throw exception(message.c_str());
 		break;
 	}
 }

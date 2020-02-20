@@ -4,13 +4,6 @@
 
 struct lua_State;
 
-struct eaLuaError : public std::exception
-{
-	eaLuaError() :std::exception("lua code error", 1)
-	{
-	}
-};
-
 class eaLuaDomain
 {
 	int envTableRef;

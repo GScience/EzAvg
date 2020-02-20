@@ -276,8 +276,6 @@ void eaSpriteText::SetText(std::string str)
 			cursorX = 0;
 			cursorY += font->GetLineHeight() + shadowOffset;
 			isNewLine = true;
-			SDL_FillRect(lineSurface, nullptr, SDL_MapRGBA(textSurface->format, 0, 0, 0, 0));
-			continue;
 		}
 
 		// 下一行
@@ -306,21 +304,7 @@ void eaSpriteText::SetText(std::string str)
 		if (isNewLine)
 			SDL_FillRect(lineSurface, nullptr, SDL_MapRGBA(textSurface->format, 0, 0, 0, 0));
 
-		auto charSurface = TTF_RenderUTF8_Blended(*font, c.c_str(), color);
-		auto shadowSurface = TTF_RenderUTF8_Blended(*font, c.c_str(), shadow);
-		SDL_SetSurfaceBlendMode(charSurface, SDL_BLENDMODE_BLEND);
-		SDL_SetSurfaceBlendMode(shadowSurface, SDL_BLENDMODE_NONE);
-
-		SDL_Rect textRect = SDL_Rect{ cursorX , 0, wordSize.width , wordSize.height };
-		SDL_Rect shadowRect = SDL_Rect{ cursorX + shadowOffset , shadowOffset, wordSize.width ,wordSize.height };
-
-		SDL_BlitSurface(shadowSurface, nullptr, lineSurface, &shadowRect);
-		SDL_BlitSurface(charSurface, nullptr, lineSurface, &textRect);
-
-		SDL_FreeSurface(charSurface);
-		SDL_FreeSurface(shadowSurface);
-
-		// 把当前行画到surface上
+		// 计算布局
 		int lineX = 0;
 		switch (textHorizontalLayout)
 		{
@@ -358,15 +342,39 @@ void eaSpriteText::SetText(std::string str)
 			case TextLayoutVerticalUp:
 				break;
 			case TextLayoutVerticalCenter:
-				blockRect = SDL_Rect{ 0,-wordSize.width / 2, renderRect.width, renderRect.height };
+				blockRect = SDL_Rect{ 0,-font->GetLineHeight() / 2, renderRect.width, renderRect.height };
 				SDL_BlitSurface(textSurface, nullptr, textSurface, &blockRect);
 				break;
 			case TextLayoutVerticalDown:
-				blockRect = SDL_Rect{ 0,-wordSize.width, renderRect.width, renderRect.height };
+				blockRect = SDL_Rect{ 0,-font->GetLineHeight(), renderRect.width, renderRect.height };
 				SDL_BlitSurface(textSurface, nullptr, textSurface, &blockRect);
 				break;
 			}
 		}
+
+		// 对特殊字符的处理
+		if (c == "\t")
+		{
+			cursorX += wordSize.width * 4;
+			continue;
+		}
+		if (c == "\n")
+			continue;
+
+		// 绘制文本
+		auto charSurface = TTF_RenderUTF8_Blended(*font, c.c_str(), color);
+		auto shadowSurface = TTF_RenderUTF8_Blended(*font, c.c_str(), shadow);
+		SDL_SetSurfaceBlendMode(charSurface, SDL_BLENDMODE_BLEND);
+		SDL_SetSurfaceBlendMode(shadowSurface, SDL_BLENDMODE_NONE);
+
+		SDL_Rect textRect = SDL_Rect{ cursorX , 0, wordSize.width , wordSize.height };
+		SDL_Rect shadowRect = SDL_Rect{ cursorX + shadowOffset , shadowOffset, wordSize.width ,wordSize.height };
+
+		SDL_BlitSurface(shadowSurface, nullptr, lineSurface, &shadowRect);
+		SDL_BlitSurface(charSurface, nullptr, lineSurface, &textRect);
+
+		SDL_FreeSurface(charSurface);
+		SDL_FreeSurface(shadowSurface);
 
 		SDL_Rect lineRect = SDL_Rect{ lineX,lineY, renderRect.width, font->GetLineHeight() + shadowOffset };
 		SDL_BlitSurface(lineSurface, nullptr, textSurface, &lineRect);
