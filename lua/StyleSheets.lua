@@ -81,6 +81,8 @@ Styles.Button =
 		image="Image.image",
 		color="Image.color",
 		colorOnClick="buttonBehaviour.colorOnClick",
+		colorOnEnter="buttonBehaviour.colorOnEnter",
+		colorNormal="buttonBehaviour.colorNormal",
 		isClicked="buttonBehaviour._isClicked"
 	}
 }

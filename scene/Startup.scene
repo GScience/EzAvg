@@ -10,7 +10,10 @@
 :Wait			time=0.5
 
 {
-	scene.popScene("popScene/MessageBox.scene", {message="测试对话框啦啦啦啦啦"})
+	scene.popScene("popScene/MessageBox.scene", {message="内部测试版本\n功能还不完善"})
+}
+{
+	scene.popScene("popScene/MessageBox.scene", {message="测试使用"})
 }
 
 # 版本号信息

@@ -131,7 +131,7 @@ void eaInput::UpdateSceneInteraction(shared_ptr<eaScene> scene)
 
 	CheckSpriteInteraction(scene->GetSpriteGroup());
 
-	// 向不存在的精灵发送鼠标离开事件
+	// 处理鼠标离开事件
 	for (auto i = 0; i < previousSelectedSprites.size(); ++i)
 	{
 		if (
@@ -139,6 +139,16 @@ void eaInput::UpdateSceneInteraction(shared_ptr<eaScene> scene)
 			previousSelectedSprites[i] != currentSelectedSprites[i]
 			)
 			previousSelectedSprites[i]->SendMessage("onMouseLeave");
+	}
+
+	// 处理鼠标进入事件
+	for (auto i = 0; i < currentSelectedSprites.size(); ++i)
+	{
+		if (
+			i >= previousSelectedSprites.size() ||
+			previousSelectedSprites[i] != currentSelectedSprites[i]
+			)
+			currentSelectedSprites[i]->SendMessage("onMouseEnter");
 	}
 }
 
