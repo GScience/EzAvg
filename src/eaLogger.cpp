@@ -24,7 +24,7 @@ eaLogger::eaLogger()
 
 void PopMsgBox(string message)
 {
-	auto scene = eaApplication::instance->CurrentScene();
+	auto scene = eaApplication::instance->GetActiveScene();
 	scene->PopScene("popScene/MessageBox.scene", map<eaPropertyValue, eaPropertyValue>
 	{ 
 		{"message"s, message} 

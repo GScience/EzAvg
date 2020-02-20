@@ -33,7 +33,7 @@ class eaGlobalFunction
 		lua_settop(L, 0);
 
 		if (space == "scene")
-			resultCount = eaApplication::instance->CurrentScene()->GetDomain()->DoFile(name + ".lua");
+			resultCount = eaApplication::instance->GetActiveScene()->GetDomain()->DoFile(name + ".lua");
 		else
 			resultCount = eaApplication::GetDomain()->DoFile(name + ".lua");
 
@@ -137,7 +137,7 @@ class eaScriptFunction
 	*/
 	LuaFunc(jump, Script)
 	{
-		auto scene = eaApplication::instance->CurrentScene();
+		auto scene = eaApplication::instance->GetActiveScene();
 
 		// 标签
 		if (lua_type(L, 1) == LUA_TSTRING)
@@ -161,7 +161,7 @@ class eaScriptFunction
 	*/
 	LuaFunc(getNextPos, Script)
 	{
-		auto scene = eaApplication::instance->CurrentScene();
+		auto scene = eaApplication::instance->GetActiveScene();
 
 		lua_pushinteger(L, scene->runner->GetNextPos());
 

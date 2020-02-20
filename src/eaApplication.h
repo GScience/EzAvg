@@ -57,7 +57,7 @@ public:
 	*/
 	void SetApplicationSize(int width, int height);
 
-	std::shared_ptr<eaScene> CurrentScene()
+	std::shared_ptr<eaScene> GetActiveScene()
 	{
 		auto currentScene = scene;
 		// 获取最深层

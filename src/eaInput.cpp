@@ -83,7 +83,7 @@ void eaInput::Update()
 	currentMiddleButtonState = mouseState & SDL_BUTTON(SDL_BUTTON_MIDDLE);
 
 	// 刷新精灵交互状态	
-	auto currentScene = eaApplication::instance->CurrentScene();
+	auto currentScene = eaApplication::instance->GetActiveScene();
 	if (currentScene != nullptr)
 		UpdateSceneInteraction(currentScene);
 }

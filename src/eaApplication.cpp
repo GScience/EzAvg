@@ -58,6 +58,8 @@ void eaApplication::Draw()
 	if (!isActive)
 		return;
 
+	SDL_SetRenderDrawColor(sdlRenderer, 0, 0, 0, 0);
+
 	SDL_RenderClear(sdlRenderer);
 	if (scene != nullptr)
 		scene->Draw(sdlRenderer);
