@@ -68,3 +68,69 @@ std::string& eaLua::GetCurrentInfo() const
 {
 	return currentDebugInfo;
 }
+
+eaPropertyValue::eaTable ToTableValue(lua_State* L, int index)
+{
+	eaPropertyValue::eaTable table;
+
+	if (index < 0)
+		--index;
+
+	lua_pushnil(L);
+	while (lua_next(L, index))
+	{
+		eaPropertyValue name = ToPropertyValue(L, -2);
+		eaPropertyValue value = ToPropertyValue(L, -1);
+
+		table[name] = value;
+		lua_pop(L, 1);
+	}
+
+	return table;
+}
+
+eaPropertyValue ToPropertyValue(lua_State * L, int index)
+{
+	switch (lua_type(L, index))
+	{
+	case LUA_TNUMBER:
+		return make_shared<double>(lua_tonumber(L, index));
+	case LUA_TBOOLEAN:
+		return make_shared<bool>(lua_toboolean(L, index));
+		break;
+	case LUA_TSTRING:
+		return make_shared<string>(lua_tostring(L, index));
+		break;
+	case LUA_TTABLE:
+		return ToTableValue(L, index);
+		break;
+	default:
+		return nullptr;
+		break;
+	}
+}
+
+void PushTable(lua_State * L, eaPropertyValue::eaTable table)
+{
+	lua_createtable(L, 0, 0);
+	for (auto& pair : table)
+	{
+		PushPropertyValue(L, pair.first);
+		PushPropertyValue(L, pair.second);
+		lua_settable(L, -3);
+	}
+}
+
+void PushPropertyValue(lua_State * L, eaPropertyValue value)
+{
+	if (value.IsBoolean())
+		lua_pushboolean(L, value.ToBoolean());
+	else if (value.IsNumber())
+		lua_pushnumber(L, value.ToNumber());
+	else if (value.IsString())
+		lua_pushstring(L, value.ToString().c_str());
+	else if (value.IsTable())
+		PushTable(L, value.ToTable());
+	else
+		lua_pushnil(L);
+}

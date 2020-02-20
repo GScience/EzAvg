@@ -59,7 +59,11 @@ public:
 
 	std::shared_ptr<eaScene> CurrentScene()
 	{
-		return scene;
+		auto currentScene = scene;
+		// 获取最深层
+		while (currentScene->GetPopScene() != nullptr)
+			currentScene = currentScene->GetPopScene();
+		return currentScene;
 	}
 
 	void Save() override;

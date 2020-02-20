@@ -1,0 +1,15 @@
+# 消息框
+
+:SpriteCreate	sprite=MsgBoxBackground type=image image="UI/MessageBox650x400.png" margin=[184, 187] zOrder=1 size=[650, 400]
+:SpriteCreate	sprite=MsgBoxButton type=group style="Button"
+:SpriteSet		sprite=MsgBoxButton image="UI/Button250x70.png" margin=[495, 387] zOrder=2 size=[250, 70] text="确定"
+
+:SpriteCreate	sprite=MsgBoxMessage type=text text={arg.message} verticalLayout=center horizontalLayout=center margin=[189, 237] zOrder=1 size=[550, 250]
+
+{
+	if scene.MsgBoxButton.isClicked then
+		scene.close()
+	else
+		Script.jump("$")
+	end
+}

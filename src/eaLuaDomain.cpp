@@ -41,7 +41,7 @@ int eaLuaDomain::DoString(string str)
 	if (result != LUA_OK)
 	{
 		string err = lua_tostring(L, -1);
-		eaApplication::GetLogger().Log("LuaError", "Failed to load a code string because: " + err);
+		eaApplication::GetLogger().Error("Lua", "Failed to load a code string because: " + err);
 		return -1;
 	}
 	lua_rawgeti(L, LUA_REGISTRYINDEX, envTableRef);
@@ -50,7 +50,7 @@ int eaLuaDomain::DoString(string str)
 	result = lua_pcall(L, 0, LUA_MULTRET, 0);
 	if (result != LUA_OK)
 	{
-		eaApplication::GetLogger().Log("LuaError", "Failed to call a funciton. \n\tcurrent position at " + L.GetCurrentInfo());
+		eaApplication::GetLogger().Error("Lua", "Failed to call a funciton. \n\tcurrent position at " + L.GetCurrentInfo());
 		return -1;
 	}
 	int resultCount = lua_gettop(L);
@@ -63,7 +63,7 @@ int eaLuaDomain::DoFile(string str)
 	struct stat buffer;
 	if (stat(str.c_str(), &buffer) != 0)
 	{
-		eaApplication::GetLogger().Log("LuaError", "File " + str + " not exists");
+		eaApplication::GetLogger().Error("Lua", "File " + str + " not exists");
 		return -1;
 	}
 
@@ -71,7 +71,7 @@ int eaLuaDomain::DoFile(string str)
 	if (result != LUA_OK)
 	{
 		string err = lua_tostring(L, -1);
-		eaApplication::GetLogger().Log("LuaError", "Failed to load a file because: " + err);
+		eaApplication::GetLogger().Error("Lua", "Failed to load a file because: " + err);
 		return -1;
 	}
 
@@ -81,7 +81,7 @@ int eaLuaDomain::DoFile(string str)
 	result = lua_pcall(L, 0, LUA_MULTRET, 0);
 	if (result != LUA_OK)
 	{
-		eaApplication::GetLogger().Log("LuaError", "Failed to call a funciton. \n\tcurrent position at " + L.GetCurrentInfo());
+		eaApplication::GetLogger().Error("Lua", "Failed to call a funciton. \n\tcurrent position at " + L.GetCurrentInfo());
 		return -1;
 	}
 	int resultCount = lua_gettop(L);

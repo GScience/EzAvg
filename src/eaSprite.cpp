@@ -192,48 +192,6 @@ eaRenderRect eaSprite::GetRenderRect()
 	};
 }
 
-static eaPropertyValue ToPropertyValue(lua_State* L, int index);
-
-static eaPropertyValue::eaTable ToTableValue(lua_State* L, int index)
-{
-	eaPropertyValue::eaTable table;
-
-	if (index < 0)
-		--index;
-
-	lua_pushnil(L);
-	while (lua_next(L, index))
-	{
-		eaPropertyValue name = ToPropertyValue(L, -2);
-		eaPropertyValue value = ToPropertyValue(L, -1);
-
-		table[name] = value;
-		lua_pop(L, 1);
-	}
-
-	return table;
-}
-
-static eaPropertyValue ToPropertyValue(lua_State* L, int index)
-{
-	switch (lua_type(L, index))
-	{
-	case LUA_TNUMBER:
-		return make_shared<double>(lua_tonumber(L, index));
-	case LUA_TBOOLEAN:
-		return make_shared<bool>(lua_toboolean(L, index));
-		break;
-	case LUA_TSTRING:
-		return make_shared<string>(lua_tostring(L, index));
-		break;
-	case LUA_TTABLE:
-		return ToTableValue(L, index);
-		break;
-	default:
-		return nullptr;
-		break;
-	}
-}
 
 /*
 设置属性
@@ -254,33 +212,6 @@ static int SpritePropertySet(lua_State* L)
 	sprite->SetProperty(name, ToPropertyValue(L, 3));
 
 	return 0;
-}
-
-static void PushPropertyValue(lua_State* L, eaPropertyValue value);
-
-static void PushTable(lua_State* L, eaPropertyValue::eaTable table)
-{
-	lua_createtable(L, 0, 0);
-	for (auto& pair : table)
-	{
-		PushPropertyValue(L, pair.first);
-		PushPropertyValue(L, pair.second);
-		lua_settable(L, -3);
-	}
-}
-
-static void PushPropertyValue(lua_State* L, eaPropertyValue value)
-{
-	if (value.IsBoolean())
-		lua_pushboolean(L, value.ToBoolean());
-	else if (value.IsNumber())
-		lua_pushnumber(L, value.ToNumber());
-	else if (value.IsString())
-		lua_pushstring(L, value.ToString().c_str());
-	else if (value.IsTable())
-		PushTable(L, value.ToTable());
-	else
-		lua_pushnil(L);
 }
 
 /*
@@ -410,7 +341,7 @@ void eaSpriteBehaviour::Update()
 
 	if (lua_pcall(L, 0, 0, 0) != LUA_OK)
 	{
-		eaApplication::GetLogger().Log("LuaError", "刷新行为"s + type + "时出现异常。位置：" + L.GetCurrentInfo());
+		eaApplication::GetLogger().Error("Lua", "刷新行为"s + type + "时出现异常。位置：" + L.GetCurrentInfo());
 		throw eaLuaError();
 	}
 }
@@ -466,7 +397,7 @@ void eaSpriteBehaviour::SendMessage(const string& msg)
 
 	if (lua_pcall(L, 0, 0, 0) != LUA_OK)
 	{
-		eaApplication::GetLogger().Log("LuaError", "发送消息"s + msg + "时出现异常。位置：" + L.GetCurrentInfo());
+		eaApplication::GetLogger().Error("Lua", "发送消息"s + msg + "时出现异常。位置：" + L.GetCurrentInfo());
 		throw eaLuaError();
 	}
 }
@@ -483,7 +414,7 @@ eaPropertyValue eaSpriteBehaviour::Get(const std::string& str)
 	{
 		if (lua_pcall(L, 0, LUA_MULTRET, 0) != LUA_OK)
 		{
-			eaApplication::GetLogger().Log("LuaError", "获取属性" + str + "时出现异常。位置：" + L.GetCurrentInfo());
+			eaApplication::GetLogger().Error("Lua", "获取属性" + str + "时出现异常。位置：" + L.GetCurrentInfo());
 			throw eaLuaError();
 		}
 	}
@@ -498,7 +429,7 @@ void eaSpriteBehaviour::Set(const std::string& str, eaPropertyValue value)
 	lua_pushstring(L, str.c_str());
 	if (lua_isfunction(L, -1))
 	{
-		eaApplication::GetLogger().Log("LuaError", "属性只读，因为其指向一个lua函数。位置：" + L.GetCurrentInfo());
+		eaApplication::GetLogger().Error("Lua", "属性只读，因为其指向一个lua函数。位置：" + L.GetCurrentInfo());
 		throw eaLuaError();
 	}
 	PushPropertyValue(L, value);

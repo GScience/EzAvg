@@ -4,6 +4,7 @@
 #include <windows.h>
 #endif
 
+#include "eaApplication.h"
 #include "ealogger.h"
 
 using namespace std;
@@ -21,7 +22,27 @@ eaLogger::eaLogger()
 #endif
 }
 
-void eaLogger::Log(string category, string message)
+void PopErrorMsgBox(string title, string message)
 {
-	cout << "[" << category << "]" << message << endl;
+	auto scene = eaApplication::instance->CurrentScene();
+	scene->PopScene("UI/MessageBox.scene");
+}
+
+void eaLogger::Log(eaLogLevel logLevel, string category, string message)
+{
+	switch (logLevel)
+	{
+	case LevelInfo:
+		cout << "[Info][" << category << "]" << message << endl;
+		break;
+	case LevelWarning:
+		cout << "[Warning][" << category << "]" << message << endl;
+		break;
+	case LevelError:
+		cout << "[Error][" << category << "]" << message << endl;
+		break;
+	case LevelCrash:
+		cout << "[CRACH][" << category << "]" << message << endl;
+		break;
+	}
 }

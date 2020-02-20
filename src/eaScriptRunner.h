@@ -83,7 +83,13 @@ public:
 
 	bool Jump(std::string label)
 	{
-		auto pos = script->GetLabelPos(label);
+		long long pos;
+
+		if (label == "$")
+			pos = GetNextPos() - 1;
+		else
+			pos = script->GetLabelPos(label);
+
 		return Jump(pos);
 	}
 

@@ -60,7 +60,7 @@ std::shared_ptr<void> eaResources::Load(string rawName, size_t type)
 		auto error = eaScript::GetError();
 		if (error != "")
 		{
-			eaApplication::GetLogger().Log("Resources.Sprite", name + ": " + error);
+			eaApplication::GetLogger().Error("Resources", "加载脚本时出现异常， " + name + ": " + error);
 		}
 		resDict[name] = result;
 		return result;

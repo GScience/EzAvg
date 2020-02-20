@@ -23,7 +23,7 @@ eaFont::eaFont(const string& fontType)
 	fontSize = stoi(fontSizeStr);
 	font = TTF_OpenFont(("font/" + fontName).c_str(), fontSize);
 	if (font == nullptr)
-		eaApplication::GetLogger().Log("Resources.Font", "无法加载字体 " + fontType);
+		eaApplication::GetLogger().Error("Resources", "无法加载字体 " + fontType);
 }
 
 eaFont::~eaFont()

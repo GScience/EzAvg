@@ -10,6 +10,7 @@
 struct eaSceneBackgroundColor
 {
 	double r, g, b = 0;
+	bool clearBackground = false;
 };
 
 /*
@@ -24,7 +25,15 @@ class eaScene : public eaSaveable, public std::enable_shared_from_this<eaScene>
 
 	void InitScript(std::string name);
 
+	std::shared_ptr<eaScene> popScene;
+	bool destroyed = false;
 public:
+
+	std::shared_ptr<eaScene> GetPopScene()
+	{
+		return popScene;
+	}
+
 	std::shared_ptr<eaSpriteGroup> GetSpriteGroup()
 	{
 		return spriteGroup;
@@ -43,6 +52,12 @@ public:
 	void Save() override;
 	void Load() override;
 
+	void PopScene(std::string sceneName, eaPropertyValue arg = nullptr);
+	void Close()
+	{
+		destroyed = true;
+	}
+
 	std::shared_ptr<eaLuaDomain> GetDomain() const
 	{
 		return domain;
@@ -59,5 +74,5 @@ public:
 
 	std::shared_ptr<eaSprite> GetSprite(std::string name);
 
-	static std::shared_ptr<eaScene> Load(std::string name);
+	static std::shared_ptr<eaScene> Load(std::string name, eaPropertyValue arg = nullptr);
 };

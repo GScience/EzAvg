@@ -9,6 +9,10 @@
 :BehaviourAdd	sprite="background" behaviour="transformAnim" type="AnimTransform" destMargin=[-150,0,150,0] time=2
 :Wait			time=0.5
 
+{
+	scene.popScene("popScene/MessageBox.scene", {message="测试对话框啦啦啦啦啦"})
+}
+
 # 版本号信息
 :SpriteCreate	sprite="version" type=text layout=center fontSize=15 alpha=0 horizontalLayout=center verticalLayout=down
 :SpriteSet		sprite="version" color=[0,0,0] text="Version beta 1.0.0" bgColor=[0,0,0]

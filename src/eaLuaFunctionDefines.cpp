@@ -53,7 +53,7 @@ class eaGlobalFunction
 	{
 		string str = GetString(1);
 
-		eaApplication::GetLogger().Log("Info", str);
+		eaApplication::GetLogger().Info("Print", str);
 
 		return 0;
 	}
@@ -78,7 +78,7 @@ class eaGlobalFunction
 			level++;
 		}
 
-		eaApplication::GetLogger().Log("Error", "发现错误： "s + err);
+		eaApplication::GetLogger().Error("Lua", "发现错误： "s + err);
 
 		return 0;
 	}
