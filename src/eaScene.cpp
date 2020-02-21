@@ -195,10 +195,13 @@ void eaScene::Save(eaProfileNode& saveNode)
 	if (popScene != nullptr)
 	{
 		auto popSceneNode = saveNode.Set("PopScene");
-		auto popSceneName = popSceneNode->Set("Name", popScene->name);
+		auto _ = popSceneNode->Set("Name", popScene->name);
 
 		popScene->Save(*popSceneNode);
 	}
+
+	// 弹出场景返回值
+	auto _ = saveNode.Set("PopSceneResult", popSceneResult);
 }
 
 void eaScene::Load(eaProfileNode& saveNode)
@@ -220,6 +223,9 @@ void eaScene::Load(eaProfileNode& saveNode)
 		popScene = Load(*popSceneName);
 		popScene->Load(*popSceneNode);
 	}
+
+	// 弹出场景返回值
+	popSceneResult = *saveNode.Get<eaPropertyValue>("PopSceneResult");
 }
 
 shared_ptr<eaScene> eaScene::Load(std::string name, eaPropertyValue value)
