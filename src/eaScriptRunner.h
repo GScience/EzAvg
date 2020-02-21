@@ -15,8 +15,6 @@ class eaScriptTask : public eaLuaBridge
 	eaScriptTask(eaScriptRunner* runner, std::string name);
 	std::shared_ptr<eaLuaDomain> domain;
 public:
-	std::string name;
-
 	const eaScriptRunner* runner;
 
 	eaScriptTask(const eaScriptTask&) = delete;

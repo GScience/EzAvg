@@ -87,7 +87,7 @@ void eaScriptRunner::Save(eaProfileNode& node)
 	if (currentTask != nullptr)
 	{
 		auto taskNode = node.Set<eaProfileNode>("Task");
-		auto _ = taskNode->Set<eaPropertyValue>("Name", currentTask->name);
+		auto _ = taskNode->Set<eaPropertyValue>("Type", currentTask->type);
 	}
 }
 
@@ -97,8 +97,8 @@ void eaScriptRunner::Load(eaProfileNode& node)
 	auto taskNode = node.Get<eaProfileNode>("Task");
 	if (taskNode != nullptr)
 	{
-		auto taskName = taskNode->Get<eaPropertyValue>("Name"); 
-		currentTask = eaScriptTask::Create(this, *taskName);
+		auto taskType = taskNode->Get<eaPropertyValue>("Type"); 
+		currentTask = eaScriptTask::Create(this, *taskType);
 		currentTask->Load(*taskNode);
 	}
 }
@@ -106,7 +106,6 @@ void eaScriptRunner::Load(eaProfileNode& node)
 eaScriptTask::eaScriptTask(eaScriptRunner* runner, string name) 
 	:eaLuaBridge(runner->GetDomain(), "task/"s + name), runner(runner)
 {
-	this->name = name;
 }
 
 bool eaScriptTask::IsFinished()

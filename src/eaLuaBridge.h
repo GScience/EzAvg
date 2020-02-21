@@ -12,11 +12,12 @@ class eaLuaBridge : public eaSaveable
 {
 protected:
 	int objRef;
-	const std::string type;
 	std::shared_ptr<eaLuaDomain> domain;
 	eaLuaBridge(std::shared_ptr<eaLuaDomain> owner, std::string type);
 
 public:
+	const std::string type;
+
 	virtual ~eaLuaBridge();
 	void Dispose();
 
