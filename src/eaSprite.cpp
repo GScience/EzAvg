@@ -18,18 +18,18 @@ void eaSprite::Save(eaProfileNode& node)
 		auto _ = node.Set<eaPropertyValue>(binder.first, getFunc());
 	}
 	// 保存行为
-	auto behavioursNode = node.Set<eaProfileNode>("Behaviours");
+	auto behavioursNode = node.Set("Behaviours");
 	for (auto& behaviour : behaviours)
 	{
-		auto behaviourNode = behavioursNode->Set<eaProfileNode>(behaviour->name);
-		auto _ = behaviourNode->Set<eaPropertyValue>("Type", behaviour->type);
+		auto behaviourNode = behavioursNode->Set(behaviour->name);
+		auto _ = behaviourNode->Set("Type", behaviour->type);
 		behaviour->Save(*behaviourNode);
 	}
 }
 
 void eaSprite::Load(eaProfileNode& node)
 {
-	// 加载属性
+	// 加载属性表
 	for (auto& binder : propertyBinder)
 	{
 		auto& getFunc = binder.second.get;
@@ -40,7 +40,7 @@ void eaSprite::Load(eaProfileNode& node)
 		setFunc(*node.Get<eaPropertyValue>(binder.first));
 	}
 	// 加载行为
-	auto behavioursNode = node.Set<eaProfileNode>("Behaviours");
+	auto behavioursNode = node.Get<eaProfileNode>("Behaviours");
 	for (auto& data : behavioursNode->GetData())
 	{
 		auto behaviourName = data.first;
@@ -283,7 +283,7 @@ static int SpriteAddBehaviour(lua_State* L)
 	string behaviourName = lua_tostring(L, 1);
 	string behaviourType = lua_tostring(L, 2);
 
-	auto behaviour = sprite->AddBehaviour(behaviourName, behaviourType);
+	auto behaviour = sprite->AddBehaviour(behaviourName, "behaviour/"s + behaviourType);
 
 	if (behaviour == nullptr)
 		lua_pushnil(L);
@@ -376,7 +376,7 @@ void eaSprite::BindDomain(std::shared_ptr<eaLuaDomain> ownerDomain)
 }
 
 eaSpriteBehaviour::eaSpriteBehaviour(eaSprite* sprite, const std::string& name, const std::string& type)
-	:eaLuaBridge(sprite->GetDomain(), "behaviour/" + type), name(name)
+	:eaLuaBridge(sprite->GetDomain(), type), name(name)
 {
 	auto& L = eaApplication::GetLua();
 

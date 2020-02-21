@@ -99,10 +99,11 @@ void eaApplication::LoadScene(std::string scriptName)
 	scene = eaScene::Load(scriptName);
 }
 
+eaProfileNode testNode;
+
 void eaApplication::LoadProfile(std::string profileName)
 {
-	eaProfileNode saveNode;
-	auto sceneNode = saveNode.Get<eaProfileNode>("Scene");
+	auto sceneNode = testNode.Get<eaProfileNode>("Scene");
 	auto sceneName = sceneNode->Get<eaPropertyValue>("Name");
 	LoadScene(*sceneName);
 	scene->Load(*sceneNode);
@@ -110,9 +111,8 @@ void eaApplication::LoadProfile(std::string profileName)
 
 void eaApplication::SaveProfile(std::string profileName)
 {
-	eaProfileNode saveNode;
-	auto sceneNode = saveNode.Set<eaProfileNode>("Scene");
-	auto _ = sceneNode->Set<eaPropertyValue>("Name", scene->name);
+	auto sceneNode = testNode.Set("Scene");
+	auto _ = sceneNode->Set("Name", scene->name);
 	scene->Save(*sceneNode);
 }
 

@@ -16,9 +16,9 @@ end
 
 function p.update()
 
-	if p.text ~= nil then
+	if p.text ~= 0 then
 		p.onSetText(p.text)
-		p.text = nil
+		p.text = 0
 	end
 
 	if p.currentPos > string.len(p._text) then

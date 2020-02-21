@@ -181,31 +181,29 @@ void eaScene::Update()
 	}
 }
 
-void eaScene::Save(eaProfileNode& node)
+void eaScene::Save(eaProfileNode& saveNode)
 {
 	// 运行器节点
-	eaProfileNode saveNode;
-	auto sceneNode = saveNode.Set<eaProfileNode>("Runner");
+	auto sceneNode = saveNode.Set("Runner");
 	runner->Save(*sceneNode);
 
 	// 精灵组节点
-	auto spritesNode = saveNode.Set<eaProfileNode>("Sprites");
+	auto spritesNode = saveNode.Set("Sprites");
 	spriteGroup->Save(*spritesNode);
 
 	// 弹出场景节点节点
 	if (popScene != nullptr)
 	{
-		auto popSceneNode = saveNode.Set<eaProfileNode>("PopScene");
-		auto popSceneName = popSceneNode->Set<eaPropertyValue>("Name", popScene->name);
+		auto popSceneNode = saveNode.Set("PopScene");
+		auto popSceneName = popSceneNode->Set("Name", popScene->name);
 
 		popScene->Save(*popSceneNode);
 	}
 }
 
-void eaScene::Load(eaProfileNode& node)
+void eaScene::Load(eaProfileNode& saveNode)
 {
 	// 运行器节点
-	eaProfileNode saveNode;
 	auto sceneNode = saveNode.Get<eaProfileNode>("Runner");
 	runner->Load(*sceneNode);
 

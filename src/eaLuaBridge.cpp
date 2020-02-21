@@ -33,7 +33,7 @@ void eaLuaBridge::Dispose()
 
 void eaLuaBridge::Save(eaProfileNode& node)
 {
-	auto luaNode = node.Set<eaProfileNode>("LuaObj");
+	auto luaNode = node.Set("LuaObj");
 
 	if (objRef == LUA_REFNIL)
 		return;
@@ -51,8 +51,8 @@ void eaLuaBridge::Save(eaProfileNode& node)
 			auto name = lua_tostring(L, -2);
 			eaPropertyValue value = ToPropertyValue(L, -1);
 
-			if (value != nullptr)
-				auto _ = luaNode->Set<eaPropertyValue>(name, value);
+			if (value != nullptr || lua_isnil(L, -2))
+				auto _ = luaNode->Set(name, value);
 		}
 		lua_pop(L, 1);
 	}

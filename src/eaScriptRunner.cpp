@@ -28,6 +28,7 @@ void eaScriptRunner::Update()
 		currentTask->Update();
 		return;
 	}
+	currentTask = nullptr;
 
 	// 是否结束所有脚本
 	if (nextPos >= (long long) script->Blocks().size())
@@ -47,7 +48,7 @@ void eaScriptRunner::Update()
 	if (currentBlock.IsType<eaScriptTaskBlock>())
 	{
 		auto block = currentBlock.Get<eaScriptTaskBlock>();
-		currentTask = eaScriptTask::Create(this, block->task);
+		currentTask = eaScriptTask::Create(this, "task/"s + block->task);
 		currentTask->Start(block->args);
 	}
 	else if (currentBlock.IsType<eaScriptTextBlock>())
@@ -83,17 +84,20 @@ void eaScriptRunner::Run(std::shared_ptr<eaScript> script)
 
 void eaScriptRunner::Save(eaProfileNode& node)
 {
-	auto _ = node.Set<eaPropertyValue>("NextPos", (double)(GetNextPos() - 1));
+	auto _1 = node.Set<eaPropertyValue>("NextPos", (double)(GetNextPos()));
+	auto _2 = node.Set<eaPropertyValue>("IsSettingText", eaPropertyValue(make_shared<bool>(isSettingText)));
 	if (currentTask != nullptr)
 	{
-		auto taskNode = node.Set<eaProfileNode>("Task");
-		auto _ = taskNode->Set<eaPropertyValue>("Type", currentTask->type);
+		auto taskNode = node.Set("Task");
+		auto _ = taskNode->Set("Type", currentTask->type);
+		currentTask->Save(*taskNode);
 	}
 }
 
 void eaScriptRunner::Load(eaProfileNode& node)
 {
 	nextPos = (int) node.Get<eaPropertyValue>("NextPos")->ToNumber();
+	isSettingText = node.Get<eaPropertyValue>("IsSettingText")->ToBoolean();
 	auto taskNode = node.Get<eaProfileNode>("Task");
 	if (taskNode != nullptr)
 	{
@@ -104,7 +108,7 @@ void eaScriptRunner::Load(eaProfileNode& node)
 }
 
 eaScriptTask::eaScriptTask(eaScriptRunner* runner, string name) 
-	:eaLuaBridge(runner->GetDomain(), "task/"s + name), runner(runner)
+	:eaLuaBridge(runner->GetDomain(), name), runner(runner)
 {
 }
 

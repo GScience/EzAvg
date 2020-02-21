@@ -283,14 +283,14 @@ void eaSpriteGroup::Update()
 void eaSpriteGroup::Save(eaProfileNode& node)
 {
 	eaSprite::Save(node);
-	auto spritesNode = node.Set<eaProfileNode>("Sprites");
+	auto spritesNode = node.Set("Sprites");
 	for (auto& sprite : sprites)
 	{
 		// 为精灵创建节点
-		auto spriteNode = spritesNode->Set<eaProfileNode>(sprite->name);
+		auto spriteNode = spritesNode->Set(sprite->name);
 		auto spriteType = sprite->GetType();
 
-		auto _ = spriteNode->Set<eaPropertyValue>("type", spriteType);
+		auto _ = spriteNode->Set("type", spriteType);
 
 		if (spriteType == "group")
 			reinterpret_pointer_cast<eaSpriteGroup>(sprite)->Save(*spriteNode);
@@ -301,6 +301,9 @@ void eaSpriteGroup::Save(eaProfileNode& node)
 
 void eaSpriteGroup::Load(eaProfileNode& node)
 {
+	// 优先加载属性表
+	auto propertyTable = node.Get<eaPropertyValue>("propertyTable");
+	SetProperty("propertyTable", *propertyTable);
 	eaSprite::Load(node);
 	auto spritesNode = node.Get<eaProfileNode>("Sprites");
 	for (auto& data : spritesNode->GetData())
