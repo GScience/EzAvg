@@ -15,6 +15,8 @@ class eaScriptTask : public eaLuaBridge
 	eaScriptTask(eaScriptRunner* runner, std::string name);
 	std::shared_ptr<eaLuaDomain> domain;
 public:
+	std::string name;
+
 	const eaScriptRunner* runner;
 
 	eaScriptTask(const eaScriptTask&) = delete;
@@ -22,9 +24,6 @@ public:
 	bool IsFinished();
 	void Update();
 	void Start(eaScriptTaskBlock::argList args);
-
-	void Save() override;
-	void Load() override;
 
 	static std::shared_ptr<eaScriptTask> Create(eaScriptRunner* runner, std::string name)
 	{
@@ -42,7 +41,7 @@ class eaScriptRunner : public eaSaveable
 	friend class eaScene;
 
 	std::shared_ptr<eaScript> script;
-	long long currentPos = 0;
+	long long nextPos = 0;
 
 	std::shared_ptr<eaScriptTask> currentTask;
 	std::shared_ptr<eaScene> scene;
@@ -76,7 +75,7 @@ public:
 		if (currentTask != nullptr)
 			currentTask->Dispose();
 
-		currentPos = pos;
+		nextPos = pos;
 
 		return true;
 	}
@@ -95,7 +94,7 @@ public:
 
 	long long GetNextPos()
 	{
-		return currentPos;
+		return nextPos;
 	}
 
 	/*
@@ -103,6 +102,6 @@ public:
 	*/
 	void Update();
 
-	void Save() override;
-	void Load() override;
+	void Save(eaProfileNode& node) override;
+	void Load(eaProfileNode& node) override;
 };

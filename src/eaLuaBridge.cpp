@@ -28,10 +28,12 @@ void eaLuaBridge::Dispose()
 }
 
 
-void eaLuaBridge::Save()
+void eaLuaBridge::Save(eaProfileNode& node)
 {
+
 }
 
-void eaLuaBridge::Load()
+void eaLuaBridge::Load(eaProfileNode& node)
 {
+
 }

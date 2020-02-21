@@ -57,6 +57,8 @@ eaScene::eaScene(string name)
 {
 	auto& L = eaApplication::GetLua();
 
+	this->name = name;
+
 	domain = eaLuaDomain::Create(name, eaApplication::GetDomain());
 
 	spriteGroup = eaSpriteGroup::Create(domain, "scene");
@@ -179,14 +181,47 @@ void eaScene::Update()
 	}
 }
 
-void eaScene::Save()
+void eaScene::Save(eaProfileNode& node)
 {
-	spriteGroup->Save();
+	// 运行器节点
+	eaProfileNode saveNode;
+	auto sceneNode = saveNode.Set<eaProfileNode>("Runner");
+	runner->Save(*sceneNode);
+
+	// 精灵组节点
+	auto spritesNode = saveNode.Set<eaProfileNode>("Sprites");
+	spriteGroup->Save(*spritesNode);
+
+	// 弹出场景节点节点
+	if (popScene != nullptr)
+	{
+		auto popSceneNode = saveNode.Set<eaProfileNode>("PopScene");
+		auto popSceneName = popSceneNode->Set<eaPropertyValue>("Name", popScene->name);
+
+		popScene->Save(*popSceneNode);
+	}
 }
 
-void eaScene::Load()
+void eaScene::Load(eaProfileNode& node)
 {
-	spriteGroup->Load();
+	// 运行器节点
+	eaProfileNode saveNode;
+	auto sceneNode = saveNode.Get<eaProfileNode>("Runner");
+	runner->Load(*sceneNode);
+
+	// 精灵组节点
+	auto spritesNode = saveNode.Get<eaProfileNode>("Sprites");
+	spriteGroup->Load(*spritesNode);
+
+	// 弹出场景节点节点
+	if (popScene != nullptr)
+	{
+		auto popSceneNode = saveNode.Get<eaProfileNode>("PopScene");
+		auto popSceneName = popSceneNode->Get<eaPropertyValue>("Name");
+
+		popScene = Load(*popSceneName);
+		popScene->Load(*popSceneNode);
+	}
 }
 
 shared_ptr<eaScene> eaScene::Load(std::string name, eaPropertyValue value)

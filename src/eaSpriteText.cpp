@@ -400,13 +400,3 @@ void eaSpriteText::Draw(SDL_Renderer * renderer, double groupAlpha)
 		SDL_RenderCopy(renderer, textTexture, nullptr, &margin);
 	}
 }
-
-void eaSpriteText::Save()
-{
-
-}
-
-void eaSpriteText::Load()
-{
-
-}

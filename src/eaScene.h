@@ -18,6 +18,10 @@ struct eaSceneBackgroundColor
 */
 class eaScene : public eaSaveable, public std::enable_shared_from_this<eaScene>
 {
+public:
+	std::string name;
+
+private:
 	std::shared_ptr<eaSpriteGroup> spriteGroup;
 	std::shared_ptr<eaLuaDomain> domain;
 	
@@ -51,8 +55,8 @@ public:
 	void Draw(SDL_Renderer* renderer);
 	void Update();
 
-	void Save() override;
-	void Load() override;
+	void Save(eaProfileNode& node) override;
+	void Load(eaProfileNode& node) override;
 
 	void PopScene(std::string sceneName, eaPropertyValue arg = nullptr);
 

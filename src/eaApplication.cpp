@@ -3,6 +3,7 @@
 #include <SDL_ttf.h>
 #include <SDL_image.h>
 #include <thread>
+#include "eaProfileNode.h"
 #include "eaApplication.h"
 #include "eaTime.h"
 #include "eaInput.h"
@@ -66,16 +67,6 @@ void eaApplication::Draw()
 	SDL_RenderPresent(sdlRenderer);
 }
 
-void eaApplication::Save()
-{
-	scene->Save();
-}
-
-void eaApplication::Load()
-{
-	scene->Load();
-}
-
 void eaApplication::SetApplicationSize(int width, int height)
 {
 	SDL_SetWindowSize(eaApplication::GetWindow(), (int)width, (int)height);
@@ -106,6 +97,23 @@ void eaApplication::LoadScene(std::string scriptName)
 {
 	eaInput::Reset();
 	scene = eaScene::Load(scriptName);
+}
+
+void eaApplication::LoadProfile(std::string profileName)
+{
+	eaProfileNode saveNode;
+	auto sceneNode = saveNode.Get<eaProfileNode>("Scene");
+	auto sceneName = sceneNode->Get<eaPropertyValue>("Name");
+	LoadScene(*sceneName);
+	scene->Load(*sceneNode);
+}
+
+void eaApplication::SaveProfile(std::string profileName)
+{
+	eaProfileNode saveNode;
+	auto sceneNode = saveNode.Set<eaProfileNode>("Scene");
+	auto _ = sceneNode->Set<eaPropertyValue>("Name", scene->name);
+	scene->Save(*sceneNode);
 }
 
 void eaApplication::Run(std::vector<std::string> args)

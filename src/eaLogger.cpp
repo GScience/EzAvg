@@ -1,4 +1,5 @@
 #include <iostream>
+#include <SDL.h>
 
 #ifdef _WIN32
 #include <windows.h>
@@ -42,12 +43,12 @@ void eaLogger::Log(eaLogLevel logLevel, string category, string message)
 		cout << "[Warning][" << category << "]" << message << endl;
 		break;
 	case LevelError:
-		PopMsgBox(category + "\n" + message);
 		cout << "[Error][" << category << "]" << message << endl;
+		PopMsgBox(category + "\n" + message);
 		break;
 	case LevelCrash:
-		PopMsgBox(category + "\n" + message);
 		cout << "[CRACH][" << category << "]" << message << endl;
+		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "CRACH", message.c_str(), nullptr);
 		throw exception(message.c_str());
 		break;
 	}

@@ -25,6 +25,6 @@ public:
 		return objRef;
 	}
 
-	void Save() override;
-	void Load() override;
+	void Save(eaProfileNode& node) override;
+	void Load(eaProfileNode& node) override;
 };

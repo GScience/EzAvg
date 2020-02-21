@@ -127,6 +127,30 @@ class eaApplicationFunction
 
 		return 0;
 	}
+
+	/*
+	void loadProfile(string profileName)
+	*/
+	LuaFunc(loadProfile, Application)
+	{
+		string profileName = GetString(1);
+
+		eaApplication::instance->LoadProfile(profileName);
+
+		return 0;
+	}
+
+	/*
+	void saveProfile(string profileName)
+	*/
+	LuaFunc(saveProfile, Application)
+	{
+		string profileName = GetString(1);
+
+		eaApplication::instance->SaveProfile(profileName);
+
+		return 0;
+	}
 };
 
 class eaScriptFunction

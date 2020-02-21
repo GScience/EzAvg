@@ -15,7 +15,7 @@ struct eaApplicationSize
 	int height = 500;
 };
 
-class eaApplication : public eaSaveable
+class eaApplication
 {
 	std::shared_ptr<eaScene> scene;
 	std::shared_ptr<eaLuaDomain> globalDomain;
@@ -53,6 +53,16 @@ public:
 	void LoadScene(std::string scriptName);
 	
 	/*
+	加载存档
+	*/
+	void LoadProfile(std::string profileName);
+
+	/*
+	保存存档
+	*/
+	void SaveProfile(std::string profileName);
+
+	/*
 	设置窗体大小
 	*/
 	void SetApplicationSize(int width, int height);
@@ -60,14 +70,14 @@ public:
 	std::shared_ptr<eaScene> GetActiveScene()
 	{
 		auto currentScene = scene;
+		if (currentScene == nullptr)
+			eaApplication::GetLogger().Crash("Scene", "未找到活跃场景");
+
 		// 获取最深层
 		while (currentScene->GetPopScene() != nullptr)
 			currentScene = currentScene->GetPopScene();
 		return currentScene;
 	}
-
-	void Save() override;
-	void Load() override;
 
 	static eaLogger& GetLogger()
 	{

@@ -5,6 +5,32 @@
 
 using namespace std;
 
+void eaSprite::Save(eaProfileNode& node)
+{
+	for (auto& binder : propertyBinder)
+	{
+		auto& getFunc = binder.second.get;
+		auto& setFunc = binder.second.set;
+		if (getFunc == nullptr || setFunc == nullptr)
+			continue;
+
+		node.Set<eaPropertyValue>(binder.first, getFunc());
+	}
+}
+
+void eaSprite::Load(eaProfileNode& node)
+{
+	for (auto& binder : propertyBinder)
+	{
+		auto& getFunc = binder.second.get;
+		auto& setFunc = binder.second.set;
+		if (getFunc == nullptr || setFunc == nullptr)
+			continue;
+
+		setFunc(*node.Get<eaPropertyValue>(binder.first));
+	}
+}
+
 void eaSprite::Update()
 {
 	for (auto behaviour = behaviours.begin(); behaviour != behaviours.end();)

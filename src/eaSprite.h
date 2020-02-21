@@ -163,6 +163,12 @@ public:
 	virtual void Draw(SDL_Renderer* renderer, double groupAlpha) = 0;
 
 	/*
+	保存
+	*/
+	virtual void Save(eaProfileNode& node) override;
+	virtual void Load(eaProfileNode& node) override;
+
+	/*
 	刷新
 	*/
 	virtual void Update();

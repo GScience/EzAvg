@@ -18,14 +18,6 @@ void eaSpriteImage::Draw(SDL_Renderer* renderer, double groupAlpha)
 	}
 }
 
-void eaSpriteImage::Save()
-{
-}
-
-void eaSpriteImage::Load()
-{
-}
-
 eaSpriteImage::eaSpriteImage()
 {
 	propertyBinder["color"] = eaPropertyBinder(

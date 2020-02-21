@@ -4,6 +4,10 @@
 测试 2
 测试 3
 
+{
+	Application.saveProfile("test")
+}
+
 测试 4
 测试 5
 

@@ -14,14 +14,7 @@ static int SpriteGroupAddSprite(lua_State* L)
 	string spriteName = lua_tostring(L, 1);
 	string spriteType = lua_tostring(L, 2);
 
-	std::shared_ptr<eaSprite> sprite;
-
-	if (spriteType == "image")
-		sprite = spriteGroup->AddSprite<eaSpriteImage>(spriteName);
-	else if (spriteType == "text")
-		sprite = spriteGroup->AddSprite<eaSpriteText>(spriteName);
-	else if (spriteType == "group")
-		sprite = spriteGroup->AddSprite<eaSpriteGroup>(spriteName);
+	std::shared_ptr<eaSprite> sprite = spriteGroup->AddSprite(spriteName, spriteType);
 
 	if (sprite == nullptr)
 		lua_pushnil(L);
@@ -59,6 +52,17 @@ static int SpriteGroupSpriteIterator(lua_State* L)
 	lua_replace(L, -2);
 
 	return 2;
+}
+
+std::shared_ptr<eaSprite> eaSpriteGroup::AddSprite(std::string name, std::string type)
+{
+	if (type == "image")
+		return AddSprite<eaSpriteImage>(name);
+	else if (type == "text")
+		return AddSprite<eaSpriteText>(name);
+	else if (type == "group")
+		return AddSprite<eaSpriteGroup>(name);
+	return nullptr;
 }
 
 eaSpriteGroup::eaSpriteGroup()
@@ -144,7 +148,7 @@ eaSpriteGroup::eaSpriteGroup()
 						auto subName = spriteLoc.substr(0, spriteLoc.find_first_of('.'));
 
 						// 一直寻找到非精灵组对象
-						auto currentPos = subName.size() + 1;
+						auto nextPos = subName.size() + 1;
 						while (true)
 						{
 							auto subSprite = spriteGroup->GetSprite(subName);
@@ -153,18 +157,18 @@ eaSpriteGroup::eaSpriteGroup()
 							if (subSprite == nullptr)
 								break;
 
-							auto dotPos = spriteLoc.find_first_of('.', currentPos);
+							auto dotPos = spriteLoc.find_first_of('.', nextPos);
 							if (dotPos == string::npos)
 							{
-								if (currentPos < spriteLoc.length())
-									subName = spriteLoc.substr(currentPos);
+								if (nextPos < spriteLoc.length())
+									subName = spriteLoc.substr(nextPos);
 								else
 									subName = "";
 							}
 							else
-								subName = spriteLoc.substr(currentPos, dotPos - currentPos);
+								subName = spriteLoc.substr(nextPos, dotPos - nextPos);
 
-							currentPos += subName.size() + 1;
+							nextPos += subName.size() + 1;
 
 							// 精灵组，还是精灵
 							if (subSprite->GetType() != "group")
@@ -195,7 +199,7 @@ eaSpriteGroup::eaSpriteGroup()
 						auto subName = spriteLoc.substr(0, spriteLoc.find_first_of('.'));
 
 						// 一直寻找到非精灵组对象
-						auto currentPos = subName.size() + 1;
+						auto nextPos = subName.size() + 1;
 						while (true)
 						{
 							auto subSprite = spriteGroup->GetSprite(subName);
@@ -204,18 +208,18 @@ eaSpriteGroup::eaSpriteGroup()
 							if (subSprite == nullptr)
 								break;
 
-							auto dotPos = spriteLoc.find_first_of('.', currentPos);
+							auto dotPos = spriteLoc.find_first_of('.', nextPos);
 							if (dotPos == string::npos)
 							{
-								if (currentPos < spriteLoc.length())
-									subName = spriteLoc.substr(currentPos);
+								if (nextPos < spriteLoc.length())
+									subName = spriteLoc.substr(nextPos);
 								else
 									subName = "";
 							}
 							else
-								subName = spriteLoc.substr(currentPos, dotPos - currentPos);
+								subName = spriteLoc.substr(nextPos, dotPos - nextPos);
 
-							currentPos += subName.size() + 1;
+							nextPos += subName.size() + 1;
 
 							// 精灵组，还是精灵
 							if (subSprite->GetType() != "group")
@@ -276,12 +280,39 @@ void eaSpriteGroup::Update()
 	}
 }
 
-void eaSpriteGroup::Save()
+void eaSpriteGroup::Save(eaProfileNode& node)
 {
+	eaSprite::Save(node);
+	auto spritesNode = node.Set<eaProfileNode>("Sprites");
+	for (auto& sprite : sprites)
+	{
+		// 为精灵创建节点
+		auto spriteNode = spritesNode->Set<eaProfileNode>(sprite->name);
+		auto spriteType = sprite->GetType();
+
+		auto _ = spriteNode->Set<eaPropertyValue>("type", spriteType);
+
+		if (spriteType == "group")
+			reinterpret_pointer_cast<eaSpriteGroup>(sprite)->Save(*spriteNode);
+		else
+			sprite->Save(*spriteNode);
+	}
 }
 
-void eaSpriteGroup::Load()
+void eaSpriteGroup::Load(eaProfileNode& node)
 {
+	eaSprite::Load(node);
+	auto spritesNode = node.Get<eaProfileNode>("Sprites");
+	for (auto& data : spritesNode->GetData())
+	{
+		auto name = data.first;
+		auto spriteNode = reinterpret_pointer_cast<eaProfileNode>(data.second);
+
+		auto spriteType = spriteNode->Get<eaPropertyValue>("type");
+
+		auto sprite = AddSprite(name, *spriteType);
+		sprite->Load(*spriteNode);
+	}
 }
 
 void eaSpriteGroup::OnLayoutChanged()

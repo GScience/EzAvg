@@ -28,8 +28,8 @@ public:
 	void Draw(SDL_Renderer* renderer, double groupAlpha) override;
 	void Update() override;
 
-	void Save() override;
-	void Load() override;
+	void Save(eaProfileNode& node) override;
+	void Load(eaProfileNode& node) override;
 
 	void OnLayoutChanged() override;
 
@@ -47,6 +47,8 @@ public:
 		obj->OnLayoutChanged();
 		return obj;
 	}
+
+	std::shared_ptr<eaSprite> AddSprite(std::string name, std::string type);
 
 	template<class T> std::shared_ptr<T> AddSprite(std::string name)
 	{

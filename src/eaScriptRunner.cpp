@@ -30,7 +30,7 @@ void eaScriptRunner::Update()
 	}
 
 	// 是否结束所有脚本
-	if (currentPos >= (long long) script->Blocks().size())
+	if (nextPos >= (long long) script->Blocks().size())
 	{
 		enable = false;
 		return;
@@ -38,11 +38,11 @@ void eaScriptRunner::Update()
 
 	// 跳过注释和标签
 	while (
-		script->Blocks()[currentPos].IsType<eaScriptLabelBlock>() || 
-		script->Blocks()[currentPos].IsType<eaScriptNoteBlock>())
-		++currentPos;
+		script->Blocks()[nextPos].IsType<eaScriptLabelBlock>() || 
+		script->Blocks()[nextPos].IsType<eaScriptNoteBlock>())
+		++nextPos;
 	
-	auto& currentBlock = script->Blocks()[currentPos];
+	auto& currentBlock = script->Blocks()[nextPos];
 
 	if (currentBlock.IsType<eaScriptTaskBlock>())
 	{
@@ -63,11 +63,11 @@ void eaScriptRunner::Update()
 		auto block = currentBlock.Get<eaScriptLuaBlock>();
 		if (GetDomain()->DoString(block->code) == -1)
 		{
-			eaApplication::GetLogger().Error("Script","Failed to run lua block with index "s + to_string(currentPos));
+			eaApplication::GetLogger().Error("Script","Failed to run lua block with index "s + to_string(nextPos));
 		}
 	}
 
-	++currentPos;
+	++nextPos;
 }
 
 eaScriptRunner::~eaScriptRunner()
@@ -81,19 +81,32 @@ void eaScriptRunner::Run(std::shared_ptr<eaScript> script)
 	enable = true;
 }
 
-void eaScriptRunner::Save()
+void eaScriptRunner::Save(eaProfileNode& node)
 {
-
+	auto _ = node.Set<eaPropertyValue>("NextPos", (double)(GetNextPos() - 1));
+	if (currentTask != nullptr)
+	{
+		auto taskNode = node.Set<eaProfileNode>("Task");
+		auto _ = taskNode->Set<eaPropertyValue>("Name", currentTask->name);
+	}
 }
 
-void eaScriptRunner::Load()
+void eaScriptRunner::Load(eaProfileNode& node)
 {
-	currentTask->Load();
+	nextPos = (int) node.Get<eaPropertyValue>("NextPos")->ToNumber();
+	auto taskNode = node.Get<eaProfileNode>("Task");
+	if (taskNode != nullptr)
+	{
+		auto taskName = taskNode->Get<eaPropertyValue>("Name"); 
+		currentTask = eaScriptTask::Create(this, *taskName);
+		currentTask->Load(*taskNode);
+	}
 }
 
 eaScriptTask::eaScriptTask(eaScriptRunner* runner, string name) 
 	:eaLuaBridge(runner->GetDomain(), "task/"s + name), runner(runner)
 {
+	this->name = name;
 }
 
 bool eaScriptTask::IsFinished()
@@ -201,14 +214,6 @@ void eaScriptTask::Start(eaScriptTaskBlock::argList args)
 	{
 		eaApplication::GetLogger().Error("Lua", "启动任务"s + type + "时出现异常。位置：" + L.GetCurrentInfo());
 	}
-}
-
-void eaScriptTask::Save()
-{
-}
-
-void eaScriptTask::Load()
-{
 }
 
 std::string eaScriptRunner::GetStr(const eaScriptString& scriptStr) const
