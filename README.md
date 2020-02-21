@@ -65,6 +65,7 @@ lua/task
 | margin | table(<br>number,<br>number,<br>number,<br>number)<br>table(<br>number,<br>number)  |  精灵距离精灵盒边界的距离，从小到大依次是up,right,button,left，或者直接给up和left |
 | size | table(<br>number,<br>number)  |  精灵的大小，从小到大依次是width, height |
 | box | table(<br>number,<br>number,<br>number,<br>number)  |  精灵盒的大小，从小到大依次是x,y,width,height |
+| rect | table(<br>number,<br>number,<br>number,<br>number)  |  精灵渲染区域大小，从小到大依次是x,y,width,height |
 | alpha | number | 精灵透明度，最终影响精灵透明度的还有父精灵组的透明度 |
 
 |  方法 | 返回值 |  说明 |
@@ -116,10 +117,12 @@ lua/task
 | text | string | 主对话框，负责显示文本块内的内容 |
 | printedAllText | boolean | 只读，是否显示完所有文本 |
 | arg | any | 场景创建时的参数，可以为nil |
+| popSceneResult | any | 弹出场景的返回值，只读 |
 
 |  方法 | 返回值 |  说明 |
 | ------------ | ------------ | ------------ |
 | popScene(string name, any arg) | nil | 弹出场景，场景弹出后暂停下层场景的刷新 |
+| close(any result) | nil | 关闭当前场景并设置返回值 |
 
 #### 扩展
 若希望通过加入自己的Lua脚本来扩展引擎，请必须详细查看本节

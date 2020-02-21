@@ -10,10 +10,16 @@
 :Wait			time=0.5
 
 {
-	scene.popScene("popScene/MessageBox.scene", {message="内部测试版本\n功能还不完善"})
+	scene.popScene("popScene/MessageBox.scene", {message="内部测试版本\n功能还不完善，是否可以容忍BUG？", buttons={"是","否"}})
 }
 {
-	scene.popScene("popScene/MessageBox.scene", {message="测试使用"})
+	if scene.popSceneResult == "否" then
+		Script.jump("$")
+		scene.popScene("popScene/MessageBox.scene", {message="如果让你必须容忍BUG，你是否可以？", buttons={"是","否"}})
+	end
+}
+{
+	scene.popScene("popScene/MessageBox.scene", {message="仅供测试使用"})
 }
 
 # 版本号信息

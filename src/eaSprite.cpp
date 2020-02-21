@@ -147,6 +147,19 @@ eaSprite::eaSprite()
 			shared_from_this()->OnLayoutChanged();
 		}
 	);
+	propertyBinder["rect"] = eaPropertyBinder
+	(
+		[&]()->eaPropertyValue
+		{
+			auto rect = GetRenderRect();
+			return
+			{
+				rect.x,rect.y,
+				rect.width,rect.height
+			};
+		},
+		nullptr
+	);
 	propertyBinder["alpha"] = eaPropertyBinder(
 		[&]()->eaPropertyValue
 		{

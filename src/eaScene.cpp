@@ -19,7 +19,8 @@ static int ScenePopScene(lua_State* L)
 static int SceneClose(lua_State* L)
 {
 	auto scene = (eaScene*)lua_tointeger(L, lua_upvalueindex(1));
-	scene->Close();
+	auto result = ToPropertyValue(L, 1);
+	scene->Close(result);
 	return 0;
 }
 
@@ -36,6 +37,10 @@ static int SceneGet(lua_State* L)
 	{
 		lua_pushinteger(L, (long long)scene);
 		lua_pushcclosure(L, SceneClose, 1);
+	}
+	else if (name == "popSceneResult"s)
+	{
+		PushPropertyValue(L, scene->GetPopSceneResult());
 	}
 	else
 	{
@@ -145,6 +150,9 @@ void eaScene::Draw(SDL_Renderer* renderer)
 
 void eaScene::PopScene(string name, eaPropertyValue arg)
 {
+	if (popScene != nullptr)
+		eaApplication::GetLogger().Warning("Scene", "当前场景已经拥有一个弹出场景，新弹出的场景将覆盖已弹出场景。");
+
 	popScene = Load(name, arg);
 }
 void eaScene::Update()
@@ -155,7 +163,10 @@ void eaScene::Update()
 	if (popScene != nullptr)
 	{
 		if (popScene->destroyed)
+		{
+			popSceneResult = popScene->result;
 			popScene = nullptr;
+		}
 		else
 			popScene->Update();
 	}

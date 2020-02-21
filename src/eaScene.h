@@ -21,18 +21,20 @@ class eaScene : public eaSaveable, public std::enable_shared_from_this<eaScene>
 	std::shared_ptr<eaSpriteGroup> spriteGroup;
 	std::shared_ptr<eaLuaDomain> domain;
 	
+	bool destroyed = false;
+
 	eaScene(std::string name);
 
 	void InitScript(std::string name);
 
 	std::shared_ptr<eaScene> popScene;
-	bool destroyed = false;
+	eaPropertyValue result;
+	eaPropertyValue popSceneResult;
 public:
-
-	std::shared_ptr<eaScene> GetPopScene()
-	{
-		return popScene;
-	}
+	/*
+	是否需要保存
+	*/
+	bool needSave = true;
 
 	std::shared_ptr<eaSpriteGroup> GetSpriteGroup()
 	{
@@ -53,8 +55,20 @@ public:
 	void Load() override;
 
 	void PopScene(std::string sceneName, eaPropertyValue arg = nullptr);
-	void Close()
+
+	std::shared_ptr<eaScene> GetPopScene()
 	{
+		return popScene;
+	}
+
+	const eaPropertyValue& GetPopSceneResult() const
+	{
+		return popSceneResult;
+	}
+
+	void Close(eaPropertyValue result)
+	{
+		this->result = result;
 		destroyed = true;
 	}
 
