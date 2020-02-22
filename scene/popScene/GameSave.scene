@@ -15,7 +15,12 @@
 		applyStyle(button, Styles.Button)
 		button.image="UI/Button250x70.png"
 		button.size={250,70}
-		button.text="存档 " .. i
+		local info = Application.getProfileInfo(i)
+		if info == nil then
+			button.text="存档 " .. i .. ": 空"
+		else
+			button.text="存档 " .. i .. ": " .. info
+		end
 	end
 
 	local button=scene.SaveButtonGroup.addSprite("CancelButton", "group")

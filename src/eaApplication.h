@@ -63,6 +63,11 @@ public:
 	void SaveProfile(std::string profileName);
 
 	/*
+	获取存档信息
+	*/
+	std::string GetProfileInfo(std::string profileName);
+
+	/*
 	设置窗体大小
 	*/
 	void SetApplicationSize(int width, int height);

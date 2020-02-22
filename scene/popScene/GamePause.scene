@@ -2,6 +2,7 @@
 {
 	require("Style")
 	scene.addBehaviour("SceneBehaviour", "ScenePause")
+	scene.needSave = false
 }
 
 :SpriteCreate	sprite=ButtonGroup	type=group margin=[0, 187, 0, 187] zOrder=2

@@ -122,9 +122,7 @@ class eaApplicationFunction
 	LuaFunc(loadScene, Application)
 	{
 		string name = GetString(1);
-
 		eaApplication::instance->LoadScene(name);
-
 		return 0;
 	}
 
@@ -134,9 +132,7 @@ class eaApplicationFunction
 	LuaFunc(loadProfile, Application)
 	{
 		string profileName = GetString(1);
-
 		eaApplication::instance->LoadProfile(profileName);
-
 		return 0;
 	}
 
@@ -146,10 +142,22 @@ class eaApplicationFunction
 	LuaFunc(saveProfile, Application)
 	{
 		string profileName = GetString(1);
-
 		eaApplication::instance->SaveProfile(profileName);
-
 		return 0;
+	}
+
+	/*
+	string getProfileInfo(string profileName)
+	*/
+	LuaFunc(getProfileInfo, Application)
+	{
+		string profileName = GetString(1);
+		auto profileInfo = eaApplication::instance->GetProfileInfo(profileName);
+		if (profileInfo == "")
+			lua_pushnil(L);
+		else
+			lua_pushstring(L, profileInfo.c_str());
+		return 1;
 	}
 };
 

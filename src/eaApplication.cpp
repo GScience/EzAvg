@@ -118,6 +118,11 @@ void eaApplication::SaveProfile(std::string profileName)
 	scene->Save(sceneNode);
 }
 
+string eaApplication::GetProfileInfo(std::string profileName)
+{
+	return "";
+}
+
 void eaApplication::Run(std::vector<std::string> args)
 {
 	bool debugMode = false;

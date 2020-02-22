@@ -50,6 +50,7 @@
 ==LoadGame==
 {
 	print("Load Game now")
+	scene.popScene("popScene/GameLoad.scene")
 }
 :Goto pos = WaitUntilButtonClick
 

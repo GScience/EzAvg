@@ -209,7 +209,21 @@ void eaSpriteText::Redraw()
 
 eaSpriteText::~eaSpriteText()
 {
-	SDL_FreeSurface(textSurface);
+	if (lineSurface != nullptr)
+	{
+		SDL_FreeSurface(lineSurface);
+		lineSurface = nullptr;
+	}
+	if (textSurface != nullptr)
+	{
+		SDL_FreeSurface(textSurface);
+		textSurface = nullptr;
+	}
+	if (textTexture != nullptr)
+	{
+		SDL_DestroyTexture(textTexture);
+		textTexture = nullptr;
+	}
 }
 
 void eaSpriteText::SetFont(string fontName, int fontSize)

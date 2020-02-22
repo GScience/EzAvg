@@ -20,7 +20,6 @@ eaLua::eaLua()
 void eaLua::Update()
 {
 	lua_settop(L, 0);
-	lua_gc(L, LUA_GCCOLLECT, 0);
 }
 
 void eaLua::LoadFunction()
