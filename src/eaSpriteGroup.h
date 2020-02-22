@@ -25,11 +25,16 @@ public:
 
 	eaSpriteGroup();
 
+	~eaSpriteGroup() override
+	{
+
+	}
+
 	void Draw(SDL_Renderer* renderer, double groupAlpha) override;
 	void Update() override;
 
-	void Save(eaProfileNode& node) override;
-	void Load(eaProfileNode& node) override;
+	void Save(std::shared_ptr<eaProfileNode> node)  override;
+	void Load(std::shared_ptr<eaProfileNode> node)  override;
 
 	void OnLayoutChanged() override;
 

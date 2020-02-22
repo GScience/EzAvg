@@ -1,5 +1,6 @@
 # 暂停场景
 {
+	require("Style")
 	scene.addBehaviour("SceneBehaviour", "ScenePause")
 }
 
@@ -23,23 +24,30 @@
 	end
 }
 
-{
-	Application.saveProfile("test")
-}
-
+==ListenButton==
 # 监听按钮
 {
+	Script.jump("$")
 	for k,v in pairs(buttons) do
-		if scene == nil then
-			print("scene is nil")
-		end
-		if scene.ButtonGroup == nil then
-			print("scene is nil")
-		end
 		if scene.ButtonGroup["Button" .. k].isClicked then
-			scene.close()
+			if (v == "保存") then
+				scene.popScene("popScene/GameSave.scene")
+			elseif (v == "退出") then
+				Script.jump("ExitCheck")
+				scene.popScene("popScene/MessageBox.scene",  {message="是否要退出游戏，所有未保存记录将丢失", buttons={"是", "否"}})
+			elseif (v == "继续") then
+				scene.close()
+			end
 			return
 		end
 	end
-	Script.jump("$")
+}
+
+==ExitCheck==
+{
+	if scene.popSceneResult == "是" then
+		Game.loadScene('MainMenu.scene')
+	else
+		Script.jump("ListenButton")
+	end
 }

@@ -4,6 +4,7 @@
 #include "eaApplication.h"
 #include "eaResources.h"
 #include "eaScene.h"
+#include "eaInput.h"
 
 using namespace std;
 
@@ -58,6 +59,24 @@ static int SceneGet(lua_State* L)
 	return 1;
 }
 
+static int SceneSet(lua_State* L)
+{
+	auto scene = (eaScene*)lua_tointeger(L, lua_upvalueindex(1));
+	auto name = lua_tostring(L, 2);
+	if (name == "needSave"s)
+		scene->needSave = lua_toboolean(L, 3);
+	else
+	{
+		lua_rawgeti(L, LUA_REGISTRYINDEX, scene->GetSpriteGroup()->GetDomain()->GetEnvTableRef());
+		lua_pushstring(L, "sprite");
+		lua_gettable(L, -2);
+		lua_pushstring(L, name);
+		lua_pushvalue(L, 3);
+		lua_settable(L, -3);
+	}
+	return 0;
+}
+
 eaScene::eaScene(string name)
 {
 	auto& L = eaApplication::GetLua();
@@ -106,23 +125,25 @@ eaScene::eaScene(string name)
 	lua_pushstring(L, "__index");
 	lua_pushinteger(L, (long long)this);
 	lua_pushcclosure(L, SceneGet, 1);
-
 	lua_settable(L, -3);
 	
-	lua_rawgeti(L, LUA_REGISTRYINDEX, spriteGroup->GetDomain()->GetEnvTableRef());
 	lua_pushstring(L, "__newindex");
-	lua_pushstring(L, "sprite");
-	lua_gettable(L, -3);
-
-	lua_settable(L, -4);
-
-	lua_pop(L, 1);
+	lua_pushinteger(L, (long long)this);
+	lua_pushcclosure(L, SceneSet, 1);
+	lua_settable(L, -3);
 
 	// 设置元表
 	lua_setmetatable(L, -2);
 
 	// 把scene对象放入域
 	lua_settable(L, -3);
+}
+
+void eaScene::Close(eaPropertyValue result)
+{
+	this->result = result;
+	runner = nullptr;
+	destroyed = true;
 }
 
 void eaScene::InitScript(std::string name)
@@ -172,77 +193,79 @@ void eaScene::Update()
 		if (popScene->destroyed)
 		{
 			popSceneResult = popScene->result;
+			eaInput::Reset();
 			popScene = nullptr;
+			spriteGroup->Update();
 		}
 		else
 			popScene->Update();
 	}
 	else
 	{
-		if (runner->enable)
+		if (runner != nullptr && runner->enable)
 			runner->Update();
 
 		spriteGroup->Update();
 	}
 }
 
-void eaScene::Save(eaProfileNode& saveNode)
+void eaScene::Save(shared_ptr<eaProfileNode> saveNode)
 {
 	auto& L = eaApplication::GetLua();
 
 	// 变量节点
-	auto luaNode = saveNode.Set("Lua");
-	domain->Save(*luaNode);
+	auto luaNode = saveNode->Set("Lua");
+	domain->Save(luaNode);
 
 	// 运行器节点
-	auto sceneNode = saveNode.Set("Runner");
-	runner->Save(*sceneNode);
+	auto sceneNode = saveNode->Set("Runner");
+	runner->Save(sceneNode);
 
 	// 精灵组节点
-	auto spritesNode = saveNode.Set("Sprites");
-	spriteGroup->Save(*spritesNode);
+	auto spritesNode = saveNode->Set("Sprites");
+	spriteGroup->Save(spritesNode);
 
 	// 弹出场景节点节点
-	if (popScene != nullptr)
+	if (popScene != nullptr && popScene->needSave)
 	{
-		auto popSceneNode = saveNode.Set("PopScene");
+		auto popSceneNode = saveNode->Set("PopScene");
 		auto _ = popSceneNode->Set("Name", popScene->name);
 
-		popScene->Save(*popSceneNode);
+		popScene->Save(popSceneNode);
 	}
 
 	// 弹出场景返回值
-	auto _ = saveNode.Set("PopSceneResult", popSceneResult);
+	auto _ = saveNode->Set("PopSceneResult", popSceneResult);
 }
 
-void eaScene::Load(eaProfileNode& saveNode)
+void eaScene::Load(shared_ptr<eaProfileNode> saveNode)
 {
 	auto& L = eaApplication::GetLua();
 
 	// 变量节点
-	auto luaNode = saveNode.Get<eaProfileNode>("Lua");
-	domain->Load(*luaNode);
+	auto luaNode = saveNode->Get<eaProfileNode>("Lua");
+	domain->Load(luaNode);
 
 	// 运行器节点
-	auto sceneNode = saveNode.Get<eaProfileNode>("Runner");
-	runner->Load(*sceneNode);
+	auto sceneNode = saveNode->Get<eaProfileNode>("Runner");
+	runner->Load(sceneNode);
 
 	// 精灵组节点
-	auto spritesNode = saveNode.Get<eaProfileNode>("Sprites");
-	spriteGroup->Load(*spritesNode);
+	auto spritesNode = saveNode->Get<eaProfileNode>("Sprites");
+	spriteGroup->Load(spritesNode);
 
-	auto popSceneNode = saveNode.Get<eaProfileNode>("PopScene");
+	auto popSceneNode = saveNode->Get<eaProfileNode>("PopScene");
 	// 弹出场景节点节点
 	if (popSceneNode != nullptr)
 	{
 		auto popSceneName = popSceneNode->Get<eaPropertyValue>("Name");
 
 		popScene = Load(*popSceneName);
-		popScene->Load(*popSceneNode);
+		popScene->Load(popSceneNode);
 	}
 
 	// 弹出场景返回值
-	popSceneResult = *saveNode.Get<eaPropertyValue>("PopSceneResult");
+	popSceneResult = *saveNode->Get<eaPropertyValue>("PopSceneResult");
 }
 
 shared_ptr<eaScene> eaScene::Load(std::string name, eaPropertyValue value)

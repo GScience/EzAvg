@@ -9,7 +9,8 @@
 	end
 }
 
-# 消息框
+:SpriteSet		alpha=0
+
 :SpriteCreate	sprite=MsgBoxBackground type=image image="UI/MessageBox650x400.png" margin=[184, 187] zOrder=1 size=[650, 400]
 :SpriteCreate	sprite=MsgBoxMessage type=text text={arg.message} verticalLayout=center horizontalLayout=center margin=[189, 237] zOrder=1 size=[550, 250]
 
@@ -26,6 +27,10 @@
 		button.text=v
 	end
 }
+
+# 消息框弹出动画
+:BehaviourAdd		behaviour="MsgBoxAnim" type="AnimFadeIn" speed=10
+:Wait				behaviour="MsgBoxAnim"
 
 # 监听按钮
 {

@@ -8,7 +8,7 @@ p.destroyed = false
 
 -- 行为刷新
 function p.update()
-	if Input.getKeyUp("Escape") then
+	if Input.getKeyDown("Escape") then
 		scene.popScene("popScene/GamePause.scene")
 	end
 end

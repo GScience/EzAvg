@@ -22,12 +22,12 @@ end
 
 function p.onMouseDown()
 	sprite.color = p.colorOnClick
+	p._isClicked = true
+	p._clickedFrameCount = Time.frameCount()
 end
 
 function p.onMouseUp()
 	sprite.color = p.colorNormal
-	p._isClicked = true
-	p._clickedFrameCount = Time.frameCount()
 end
 
 function p.onMouseLeave()

@@ -94,7 +94,7 @@ std::shared_ptr<eaLuaDomain> eaLuaDomain::Create(const std::string& domain, std:
 	return std::shared_ptr<eaLuaDomain>(new eaLuaDomain(eaApplication::GetLua(), domain, owner));
 }
 
-void eaLuaDomain::Save(eaProfileNode& node)
+void eaLuaDomain::Save(std::shared_ptr<eaProfileNode> node) 
 {
 	lua_rawgeti(L, LUA_REGISTRYINDEX, envTableRef);
 	
@@ -121,18 +121,18 @@ void eaLuaDomain::Save(eaProfileNode& node)
 			eaPropertyValue value = ToPropertyValue(L, -1);
 
 			if (value != nullptr || lua_isnil(L, -2))
-				auto _ = node.Set(dataName, value);
+				auto _ = node->Set(dataName, value);
 			
 		}
 		lua_pop(L, 1);
 	}
 }
 
-void eaLuaDomain::Load(eaProfileNode& node)
+void eaLuaDomain::Load(std::shared_ptr<eaProfileNode> node) 
 {
 	lua_rawgeti(L, LUA_REGISTRYINDEX, envTableRef);
 
-	for (auto& data : node.GetData())
+	for (auto& data : node->GetData())
 	{
 		auto dataName = data.first;
 		auto value = *reinterpret_pointer_cast<eaPropertyValue>(data.second);

@@ -100,6 +100,6 @@ public:
 	*/
 	void Update();
 
-	void Save(eaProfileNode& node) override;
-	void Load(eaProfileNode& node) override;
+	void Save(std::shared_ptr<eaProfileNode> node)  override;
+	void Load(std::shared_ptr<eaProfileNode> node)  override;
 };

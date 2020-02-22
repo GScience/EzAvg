@@ -165,8 +165,8 @@ public:
 	/*
 	保存
 	*/
-	virtual void Save(eaProfileNode& node) override;
-	virtual void Load(eaProfileNode& node) override;
+	virtual void Save(std::shared_ptr<eaProfileNode> node)  override;
+	virtual void Load(std::shared_ptr<eaProfileNode> node)  override;
 
 	/*
 	刷新

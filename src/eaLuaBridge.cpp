@@ -31,9 +31,9 @@ void eaLuaBridge::Dispose()
 }
 
 
-void eaLuaBridge::Save(eaProfileNode& node)
+void eaLuaBridge::Save(std::shared_ptr<eaProfileNode> node) 
 {
-	auto luaNode = node.Set("LuaObj");
+	auto luaNode = node->Set("LuaObj");
 
 	if (objRef == LUA_REFNIL)
 		return;
@@ -56,9 +56,10 @@ void eaLuaBridge::Save(eaProfileNode& node)
 		}
 		lua_pop(L, 1);
 	}
+	lua_pop(L, 2);
 }
 
-void eaLuaBridge::Load(eaProfileNode& node)
+void eaLuaBridge::Load(std::shared_ptr<eaProfileNode> node) 
 {
 	if (objRef == LUA_REFNIL)
 		return;
@@ -68,11 +69,12 @@ void eaLuaBridge::Load(eaProfileNode& node)
 	// 加载Lua对象的所有值
 	lua_rawgeti(L, LUA_REGISTRYINDEX, objRef);
 
-	auto luaNode = node.Get<eaProfileNode>("LuaObj");
+	auto luaNode = node->Get<eaProfileNode>("LuaObj");
 	for (auto& data : luaNode->GetData())
 	{
 		lua_pushstring(L, data.first.c_str());
 		PushPropertyValue(L, *reinterpret_pointer_cast<eaPropertyValue>(data.second));
 		lua_settable(L, -3);
 	}
+	lua_pop(L, 1);
 }

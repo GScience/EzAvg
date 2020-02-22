@@ -7,10 +7,6 @@
 测试 4
 测试 5
 
-{
-	Application.loadProfile("test")
-}
-
 :GameDialogHide
 
 :SpriteCreate sprite="WaitingText" type="text" color=[1,1,1] shadowColor=[0.8,0.8,0.8] fontSize=48 horizontalLayout=center verticalLayout=center

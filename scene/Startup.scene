@@ -9,20 +9,6 @@
 :BehaviourAdd	sprite="background" behaviour="transformAnim" type="AnimTransform" destMargin=[-150,0,150,0] time=2
 :Wait			time=0.5
 
-{
-	scene.popScene("popScene/MessageBox.scene", {message="内部测试版本\n功能还不完善，是否可以容忍BUG？", buttons={"是","否"}})
-	Application.saveProfile("test")
-}
-{
-	if scene.popSceneResult == "否" then
-		Script.jump("$")
-		scene.popScene("popScene/MessageBox.scene", {message="如果让你必须容忍BUG，你是否可以？", buttons={"是","否"}})
-	end
-}
-{
-	scene.popScene("popScene/MessageBox.scene", {message="仅供测试使用"})
-}
-
 # 版本号信息
 :SpriteCreate	sprite="version" type=text layout=center fontSize=15 alpha=0 horizontalLayout=center verticalLayout=down
 :SpriteSet		sprite="version" color=[0,0,0] text="Version beta 1.0.0" bgColor=[0,0,0]
@@ -40,10 +26,6 @@
 :BehaviourAdd	sprite="background" behaviour="transformAnim2" type="AnimTransform" destMargin=[-500,0,500,0] time=5
 :BehaviourAdd	sprite="background" behaviour="fader2" type="AnimFadeIn" speed=-1
 :SpriteRemove	sprite="loadingStage"
-
-{
-	Application.loadProfile("test")
-}
 
 # 等待最后淡出
 :Wait sprite="background" behaviour="fader2"

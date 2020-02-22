@@ -76,34 +76,34 @@ eaScriptRunner::~eaScriptRunner()
 	auto& L = eaApplication::GetLua();
 }
 
-void eaScriptRunner::Run(std::shared_ptr<eaScript> script)
+void eaScriptRunner::Run(shared_ptr<eaScript> script)
 {
 	this->script = script;
 	enable = true;
 }
 
-void eaScriptRunner::Save(eaProfileNode& node)
+void eaScriptRunner::Save(shared_ptr<eaProfileNode> node) 
 {
-	auto _1 = node.Set<eaPropertyValue>("NextPos", (double)(GetNextPos()));
-	auto _2 = node.Set<eaPropertyValue>("IsSettingText", eaPropertyValue(make_shared<bool>(isSettingText)));
+	auto _1 = node->Set<eaPropertyValue>("NextPos", (double)(GetNextPos()));
+	auto _2 = node->Set<eaPropertyValue>("IsSettingText", eaPropertyValue(make_shared<bool>(isSettingText)));
 	if (currentTask != nullptr)
 	{
-		auto taskNode = node.Set("Task");
+		auto taskNode = node->Set("Task");
 		auto _ = taskNode->Set("Type", currentTask->type);
-		currentTask->Save(*taskNode);
+		currentTask->Save(taskNode);
 	}
 }
 
-void eaScriptRunner::Load(eaProfileNode& node)
+void eaScriptRunner::Load(shared_ptr<eaProfileNode> node) 
 {
-	nextPos = (int) node.Get<eaPropertyValue>("NextPos")->ToNumber();
-	isSettingText = node.Get<eaPropertyValue>("IsSettingText")->ToBoolean();
-	auto taskNode = node.Get<eaProfileNode>("Task");
+	nextPos = (int) node->Get<eaPropertyValue>("NextPos")->ToNumber();
+	isSettingText = node->Get<eaPropertyValue>("IsSettingText")->ToBoolean();
+	auto taskNode = node->Get<eaProfileNode>("Task");
 	if (taskNode != nullptr)
 	{
 		auto taskType = taskNode->Get<eaPropertyValue>("Type"); 
 		currentTask = eaScriptTask::Create(this, *taskType);
-		currentTask->Load(*taskNode);
+		currentTask->Load(taskNode);
 	}
 }
 

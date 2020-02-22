@@ -1,0 +1,52 @@
+# 保存场景
+{
+	require("Style")
+	require("Config")
+	scene.needSave = false
+}
+
+:SpriteCreate	sprite=SaveButtonGroup type=group margin=[0, 187, 0, 187] zOrder=2
+:BehaviourAdd	sprite=SaveButtonGroup behaviour=ButtonGroupLayout type=LayoutVertical
+
+# 创建存档位
+{
+	for i=1,Config.maxSaveCount,1 do
+		local button=scene.SaveButtonGroup.addSprite("SaveButton" .. i, "group")
+		applyStyle(button, Styles.Button)
+		button.image="UI/Button250x70.png"
+		button.size={250,70}
+		button.text="存档 " .. i
+	end
+
+	local button=scene.SaveButtonGroup.addSprite("CancelButton", "group")
+	applyStyle(button, Styles.Button)
+	button.image="UI/Button250x70.png"
+	button.size={250,70}
+	button.text="取消"
+}
+
+# 监听按钮
+{
+	if scene.SaveButtonGroup.CancelButton.isClicked then
+		scene.close()
+		return
+	end
+	for i=1,Config.maxSaveCount,1 do
+		if scene.SaveButtonGroup["SaveButton" .. i].isClicked then
+			SaveTo = i
+			Script.jump("Save")
+			return
+		end
+	end
+
+	Script.jump("$")
+}
+
+==Save==
+{
+	Application.saveProfile(tostring(SaveTo))
+	scene.popScene("popScene/MessageBox.scene",  {message="成功保存到存档位 " .. SaveTo, buttons={"OK"}})
+}
+{
+	scene.close()
+}

@@ -5,7 +5,7 @@
 
 using namespace std;
 
-void eaSprite::Save(eaProfileNode& node)
+void eaSprite::Save(shared_ptr<eaProfileNode> node) 
 {
 	// 保存属性
 	for (auto& binder : propertyBinder)
@@ -15,19 +15,19 @@ void eaSprite::Save(eaProfileNode& node)
 		if (getFunc == nullptr || setFunc == nullptr)
 			continue;
 
-		auto _ = node.Set<eaPropertyValue>(binder.first, getFunc());
+		auto _ = node->Set<eaPropertyValue>(binder.first, getFunc());
 	}
 	// 保存行为
-	auto behavioursNode = node.Set("Behaviours");
+	auto behavioursNode = node->Set("Behaviours");
 	for (auto& behaviour : behaviours)
 	{
 		auto behaviourNode = behavioursNode->Set(behaviour->name);
 		auto _ = behaviourNode->Set("Type", behaviour->type);
-		behaviour->Save(*behaviourNode);
+		behaviour->Save(behaviourNode);
 	}
 }
 
-void eaSprite::Load(eaProfileNode& node)
+void eaSprite::Load(shared_ptr<eaProfileNode> node) 
 {
 	// 加载属性表
 	for (auto& binder : propertyBinder)
@@ -37,17 +37,17 @@ void eaSprite::Load(eaProfileNode& node)
 		if (getFunc == nullptr || setFunc == nullptr)
 			continue;
 
-		setFunc(*node.Get<eaPropertyValue>(binder.first));
+		setFunc(*node->Get<eaPropertyValue>(binder.first));
 	}
 	// 加载行为
-	auto behavioursNode = node.Get<eaProfileNode>("Behaviours");
+	auto behavioursNode = node->Get<eaProfileNode>("Behaviours");
 	for (auto& data : behavioursNode->GetData())
 	{
 		auto behaviourName = data.first;
 		auto behaviourNode = reinterpret_pointer_cast<eaProfileNode>(data.second);
 		auto behaviourType = behaviourNode->Get<eaPropertyValue>("Type");
 		auto behaviour = AddBehaviour(behaviourName, *behaviourType);
-		behaviour->Load(*behaviourNode);
+		behaviour->Load(behaviourNode);
 	}
 }
 

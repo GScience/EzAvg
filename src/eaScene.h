@@ -54,8 +54,8 @@ public:
 	void Draw(SDL_Renderer* renderer);
 	void Update();
 
-	void Save(eaProfileNode& node) override;
-	void Load(eaProfileNode& node) override;
+	void Save(std::shared_ptr<eaProfileNode> node)  override;
+	void Load(std::shared_ptr<eaProfileNode> node)  override;
 
 	void PopScene(std::string sceneName, eaPropertyValue arg = nullptr);
 
@@ -69,11 +69,7 @@ public:
 		return popSceneResult;
 	}
 
-	void Close(eaPropertyValue result)
-	{
-		this->result = result;
-		destroyed = true;
-	}
+	void Close(eaPropertyValue result);
 
 	std::shared_ptr<eaLuaDomain> GetDomain() const
 	{
