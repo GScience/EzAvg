@@ -15,7 +15,7 @@
 :SpriteCreate	sprite=MsgBoxMessage type=text text={arg.message} verticalLayout=center horizontalLayout=center margin=[189, 237] zOrder=1 size=[550, 250]
 
 :SpriteCreate	sprite=ButtonGroup	type=group margin=[495, 187, 185, 187] zOrder=2
-:BehaviourAdd	sprite=ButtonGroup behaviour=ButtonGroupLayout type=LayoutHorizontal
+:BehaviourAdd	sprite=ButtonGroup behaviour=ButtonGroupLayout type=LayoutHorizontal verticalLayout=top
 
 # 创建按钮
 {
