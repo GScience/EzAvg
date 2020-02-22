@@ -9,7 +9,7 @@
 
 struct eaSceneBackgroundColor
 {
-	double r, g, b = -1;
+	double r = -1, g = -1, b = -1;
 };
 
 /*

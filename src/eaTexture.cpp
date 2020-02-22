@@ -7,11 +7,14 @@ eaTexture::eaTexture(std::string name) :name(name)
 {
 	auto surface = IMG_Load(("image/" + name).c_str());
 	if (surface == nullptr)
+	{
 		eaApplication::GetLogger().Error("Resources", "无法加载图像 " + name);
+		return;
+	}
 	texture = SDL_CreateTextureFromSurface(eaApplication::GetRenderer(), surface);
-	SDL_FreeSurface(surface);
 	height = surface->h;
 	width = surface->w;
+	SDL_FreeSurface(surface);
 	SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
 }
 

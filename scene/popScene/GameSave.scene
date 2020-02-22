@@ -31,6 +31,7 @@
 }
 
 # 监听按钮
+==ListenButton==
 {
 	if scene.SaveButtonGroup.CancelButton.isClicked then
 		scene.close()
@@ -50,8 +51,7 @@
 ==Save==
 {
 	Application.saveProfile(tostring(SaveTo))
+	Script.jump("ListenButton")
 	scene.popScene("popScene/MessageBox.scene",  {message="成功保存到存档位 " .. SaveTo, buttons={"OK"}})
 }
-{
-	scene.close()
-}
+
