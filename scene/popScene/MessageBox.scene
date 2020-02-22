@@ -10,8 +10,8 @@
 }
 
 # 消息框
-
 :SpriteCreate	sprite=MsgBoxBackground type=image image="UI/MessageBox650x400.png" margin=[184, 187] zOrder=1 size=[650, 400]
+:SpriteCreate	sprite=MsgBoxMessage type=text text={arg.message} verticalLayout=center horizontalLayout=center margin=[189, 237] zOrder=1 size=[550, 250]
 
 :SpriteCreate	sprite=ButtonGroup	type=group margin=[495, 187, 185, 187] zOrder=2
 :BehaviourAdd	sprite=ButtonGroup behaviour=ButtonGroupLayout type=LayoutHorizontal
@@ -26,8 +26,8 @@
 		button.text=v
 	end
 }
-:SpriteCreate	sprite=MsgBoxMessage type=text text={arg.message} verticalLayout=center horizontalLayout=center margin=[189, 237] zOrder=1 size=[550, 250]
 
+# 监听按钮
 {
 	for k,v in pairs(arg.buttons) do
 		if scene.ButtonGroup["Button" .. k].isClicked then

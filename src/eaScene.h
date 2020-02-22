@@ -9,8 +9,7 @@
 
 struct eaSceneBackgroundColor
 {
-	double r, g, b = 0;
-	bool clearBackground = false;
+	double r, g, b = -1;
 };
 
 /*

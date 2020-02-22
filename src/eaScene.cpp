@@ -11,8 +11,13 @@ static int ScenePopScene(lua_State* L)
 {
 	auto scene = (eaScene*)lua_tointeger(L, lua_upvalueindex(1));
 	auto sceneName = lua_tostring(L, 1);
-	auto value = ToPropertyValue(L, 2);
-	scene->PopScene(sceneName, value);
+	if (lua_gettop(L) > 1)
+	{
+		auto value = ToPropertyValue(L, 2);
+		scene->PopScene(sceneName, value);
+	}
+	else
+		scene->PopScene(sceneName);
 	return 0;
 }
 
@@ -81,7 +86,6 @@ eaScene::eaScene(string name)
 			backgroundColor.r = value[1];
 			backgroundColor.g = value[2];
 			backgroundColor.b = value[3];
-			backgroundColor.clearBackground = true;
 		}
 	);
 
@@ -133,7 +137,7 @@ void eaScene::Draw(SDL_Renderer* renderer)
 	if (destroyed)
 		eaApplication::GetLogger().Error("Scene", "无法渲染已销毁场景");
 
-	if (backgroundColor.clearBackground)
+	if (backgroundColor.r > 0)
 	{
 		SDL_SetRenderDrawColor(
 			renderer,
@@ -157,6 +161,7 @@ void eaScene::PopScene(string name, eaPropertyValue arg)
 
 	popScene = Load(name, arg);
 }
+
 void eaScene::Update()
 {
 	if (destroyed)
@@ -183,6 +188,12 @@ void eaScene::Update()
 
 void eaScene::Save(eaProfileNode& saveNode)
 {
+	auto& L = eaApplication::GetLua();
+
+	// 变量节点
+	auto luaNode = saveNode.Set("Lua");
+	domain->Save(*luaNode);
+
 	// 运行器节点
 	auto sceneNode = saveNode.Set("Runner");
 	runner->Save(*sceneNode);
@@ -206,6 +217,12 @@ void eaScene::Save(eaProfileNode& saveNode)
 
 void eaScene::Load(eaProfileNode& saveNode)
 {
+	auto& L = eaApplication::GetLua();
+
+	// 变量节点
+	auto luaNode = saveNode.Get<eaProfileNode>("Lua");
+	domain->Load(*luaNode);
+
 	// 运行器节点
 	auto sceneNode = saveNode.Get<eaProfileNode>("Runner");
 	runner->Load(*sceneNode);
@@ -214,10 +231,10 @@ void eaScene::Load(eaProfileNode& saveNode)
 	auto spritesNode = saveNode.Get<eaProfileNode>("Sprites");
 	spriteGroup->Load(*spritesNode);
 
+	auto popSceneNode = saveNode.Get<eaProfileNode>("PopScene");
 	// 弹出场景节点节点
-	if (popScene != nullptr)
+	if (popSceneNode != nullptr)
 	{
-		auto popSceneNode = saveNode.Get<eaProfileNode>("PopScene");
 		auto popSceneName = popSceneNode->Get<eaPropertyValue>("Name");
 
 		popScene = Load(*popSceneName);

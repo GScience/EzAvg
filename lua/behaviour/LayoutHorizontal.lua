@@ -11,7 +11,8 @@ p.destroyed = false
 -- 间距
 p.space=10
 -- 布局类型
-p.layout=1
+p.verticalLayout="center"
+p.horizontalLayout="center"
 
 sprite.autoLayout = false
 
@@ -24,7 +25,15 @@ function p.update()
 		if v.size[1] ~= 0 then
 			local spriteBox = v.box
 			spriteBox[1] = sprite.rect[1] + totalWidth
-			spriteBox[2]  = sprite.rect[2]
+
+			if (p.verticalLayout == "top") then
+				spriteBox[2]  = sprite.rect[2]
+			elseif (p.verticalLayout == "center") then
+				spriteBox[2]  = sprite.rect[2] + sprite.rect[4] / 2 - v.size[2] / 2 
+			elseif (p.verticalLayout == "bottom") then
+				spriteBox[2]  = sprite.rect[2] + sprite.rect[4] - v.size[2]
+			end
+
 			spriteBox[3]  = v.size[1]
 			spriteBox[4]  = sprite.rect[4]
 			v.box = spriteBox
@@ -34,14 +43,14 @@ function p.update()
 		end
 	end
 
-	if p.layout == 1 then
+	if p.horizontalLayout == "center" then
 		local offset = sprite.rect[3] / 2 - totalWidth / 2
 		for k,v in sprite.iter do
 			local spriteBox = v.box
 			spriteBox[1] =  spriteBox[1] + offset
 			v.box = spriteBox
 		end
-	elseif p.layout == 2 then
+	elseif p.horizontalLayout== "right" then
 		local offset = sprite.rect[3] - totalWidth
 		for k,v in sprite.iter do
 			local spriteBox = v.box

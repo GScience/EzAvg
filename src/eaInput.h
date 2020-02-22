@@ -28,6 +28,10 @@ public:
 	static bool GetButtonUp(MouseButton button);
 	static bool GetButton(MouseButton button);
 
+	static bool GetKeyDown(const std::string& key);
+	static bool GetKeyUp(const std::string& key);
+	static bool GetKey(const std::string& key);
+
 	static void Update();
 
 	static void Reset();

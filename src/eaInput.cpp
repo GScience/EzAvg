@@ -15,11 +15,45 @@ bool currentMiddleButtonState = false;
 vector<shared_ptr<eaSprite>> previousSelectedSprites;
 vector<shared_ptr<eaSprite>> currentSelectedSprites;
 
+vector<bool> previousKeyState;
+vector<bool> currentKeyState;
+
 MousePoint eaInput::GetMousePoint()
 {
 	MousePoint point;
 	SDL_GetMouseState(&point.x, &point.y);
 	return point;
+}
+
+bool eaInput::GetKeyDown(const std::string& key)
+{
+	auto scanCode = SDL_GetScancodeFromName(key.c_str());
+	if (scanCode == SDL_SCANCODE_UNKNOWN
+		|| scanCode >= currentKeyState.size()
+		|| scanCode >= previousKeyState.size())
+		return false;
+
+	return currentKeyState[scanCode] && !previousKeyState[scanCode];
+}
+
+bool eaInput::GetKeyUp(const std::string& key)
+{
+	auto scanCode = SDL_GetScancodeFromName(key.c_str());
+	if (scanCode == SDL_SCANCODE_UNKNOWN 
+		|| scanCode >= currentKeyState.size()
+		|| scanCode >= previousKeyState.size())
+		return false;
+
+	return !currentKeyState[scanCode] && previousKeyState[scanCode];
+}
+
+bool eaInput::GetKey(const std::string& key)
+{
+	auto scanCode = SDL_GetScancodeFromName(key.c_str());
+	if (scanCode == SDL_SCANCODE_UNKNOWN || scanCode >= currentKeyState.size())
+		return false;
+	bool result = currentKeyState[scanCode];
+	return result;
 }
 
 bool eaInput::GetButtonDown(MouseButton button)
@@ -76,12 +110,19 @@ void eaInput::Update()
 	previousRightButtonState = currentRightButtonState;
 	previousMiddleButtonState = currentMiddleButtonState;
 	previousSelectedSprites = currentSelectedSprites;
+	previousKeyState = currentKeyState;
 
 	// 获取当前状态
 	currentLeftButtonState = mouseState & SDL_BUTTON(SDL_BUTTON_LEFT);
 	currentRightButtonState = mouseState & SDL_BUTTON(SDL_BUTTON_RIGHT);
 	currentMiddleButtonState = mouseState & SDL_BUTTON(SDL_BUTTON_MIDDLE);
-
+	
+	int keyCount;
+	auto keyStates = SDL_GetKeyboardState(&keyCount);
+	currentKeyState.resize(keyCount);
+	for (auto i = 0; i < keyCount; ++i)
+		currentKeyState[i] = keyStates[i];
+	
 	// 刷新精灵交互状态	
 	auto currentScene = eaApplication::instance->GetActiveScene();
 	if (currentScene != nullptr)

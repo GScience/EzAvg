@@ -48,6 +48,13 @@ Styles.GameScene =
 		text="_MainDialog.Text.textPrinter.text",
 		printedAllText="_MainDialog.Text.textPrinter.isFinished",
 		image="_MainDialog.Text.Image.image"
+	},
+	behaviours = 
+	{
+		SceneBehaviour =
+		{
+			type="SceneGame"
+		}
 	}
 }
 

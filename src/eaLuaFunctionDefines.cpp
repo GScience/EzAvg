@@ -231,6 +231,36 @@ class eaTimeFunction
 class eaInputFunc
 {
 	/*
+	bool getKey(string key)
+	*/
+	LuaFunc(getKey, Input)
+	{
+		auto key = GetString(1);
+		lua_pushboolean(L, eaInput::GetKey(key));
+		return 1;
+	}
+
+	/*
+	bool getKeyDown(string key)
+	*/
+	LuaFunc(getKeyDown, Input)
+	{
+		auto key = GetString(1);
+		lua_pushboolean(L, eaInput::GetKeyDown(key));
+		return 1;
+	}
+
+	/*
+	bool getKeyUp(string key)
+	*/
+	LuaFunc(getKeyUp, Input)
+	{
+		auto key = GetString(1);
+		lua_pushboolean(L, eaInput::GetKeyUp(key));
+		return 1;
+	}
+
+	/*
 	bool getButton(int button)
 	*/
 	LuaFunc(getButton, Input)

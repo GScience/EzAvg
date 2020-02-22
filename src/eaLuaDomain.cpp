@@ -50,7 +50,7 @@ int eaLuaDomain::DoString(string str)
 	result = lua_pcall(L, 0, LUA_MULTRET, 0);
 	if (result != LUA_OK)
 	{
-		eaApplication::GetLogger().Error("Lua", "Failed to call a funciton. \n\tcurrent position at " + L.GetCurrentInfo());
+		eaApplication::GetLogger().Error("Lua", "Failed to call a funciton. \n\tcurrent position at " + L.GetCurrentInfo() + "\n Code: " + str);
 		return -1;
 	}
 	int resultCount = lua_gettop(L);
@@ -92,4 +92,52 @@ int eaLuaDomain::DoFile(string str)
 std::shared_ptr<eaLuaDomain> eaLuaDomain::Create(const std::string& domain, std::shared_ptr<eaLuaDomain> owner)
 {
 	return std::shared_ptr<eaLuaDomain>(new eaLuaDomain(eaApplication::GetLua(), domain, owner));
+}
+
+void eaLuaDomain::Save(eaProfileNode& node)
+{
+	lua_rawgeti(L, LUA_REGISTRYINDEX, envTableRef);
+	
+	lua_pushnil(L);
+	while (lua_next(L, -2))
+	{
+		if (lua_isstring(L, -2))
+		{
+			// 跳过由C创建的带索引的table
+			if (lua_getmetatable(L, -1))
+			{
+				lua_pushstring(L, "__index");
+				lua_gettable(L, -2);
+				bool isCTable = !lua_isnil(L, -1);
+				lua_pop(L, 2);
+				if (isCTable)
+				{
+					lua_pop(L, 1);
+					continue;
+				}
+			}
+
+			auto dataName = lua_tostring(L, -2);
+			eaPropertyValue value = ToPropertyValue(L, -1);
+
+			if (value != nullptr || lua_isnil(L, -2))
+				auto _ = node.Set(dataName, value);
+			
+		}
+		lua_pop(L, 1);
+	}
+}
+
+void eaLuaDomain::Load(eaProfileNode& node)
+{
+	lua_rawgeti(L, LUA_REGISTRYINDEX, envTableRef);
+
+	for (auto& data : node.GetData())
+	{
+		auto dataName = data.first;
+		auto value = *reinterpret_pointer_cast<eaPropertyValue>(data.second);
+		lua_pushstring(L, dataName.c_str());
+		PushPropertyValue(L, value);
+		lua_settable(L, -3);
+	}
 }

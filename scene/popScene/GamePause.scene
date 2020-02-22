@@ -1,0 +1,45 @@
+# 暂停场景
+{
+	scene.addBehaviour("SceneBehaviour", "ScenePause")
+}
+
+:SpriteCreate	sprite=ButtonGroup	type=group margin=[0, 187, 0, 187] zOrder=2
+:BehaviourAdd	sprite=ButtonGroup behaviour=ButtonGroupLayout type=LayoutVertical
+
+# 创建按钮
+{
+	buttons = 
+	{
+		"继续",
+		"保存",
+		"退出"
+	}
+	for k,v in pairs(buttons) do
+		local button=scene.ButtonGroup.addSprite("Button" .. k, "group")
+		applyStyle(button, Styles.Button)
+		button.image="UI/Button250x70.png"
+		button.size={250,70}
+		button.text=v
+	end
+}
+
+{
+	Application.saveProfile("test")
+}
+
+# 监听按钮
+{
+	for k,v in pairs(buttons) do
+		if scene == nil then
+			print("scene is nil")
+		end
+		if scene.ButtonGroup == nil then
+			print("scene is nil")
+		end
+		if scene.ButtonGroup["Button" .. k].isClicked then
+			scene.close()
+			return
+		end
+	end
+	Script.jump("$")
+}
