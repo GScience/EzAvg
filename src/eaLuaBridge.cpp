@@ -56,7 +56,7 @@ void eaLuaBridge::Save(std::shared_ptr<eaProfileNode> node)
 		}
 		lua_pop(L, 1);
 	}
-	lua_pop(L, 2);
+	lua_settop(L, 0);
 }
 
 void eaLuaBridge::Load(std::shared_ptr<eaProfileNode> node) 
@@ -76,5 +76,5 @@ void eaLuaBridge::Load(std::shared_ptr<eaProfileNode> node)
 		PushPropertyValue(L, *reinterpret_pointer_cast<eaPropertyValue>(data.second));
 		lua_settable(L, -3);
 	}
-	lua_pop(L, 1);
+	lua_settop(L, 0);
 }

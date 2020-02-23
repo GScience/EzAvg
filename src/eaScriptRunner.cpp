@@ -15,7 +15,7 @@ void eaScriptRunner::Update()
 	// 如果正在显示文本
 	if (isSettingText)
 	{
-		auto result = scene->GetSpriteGroup()->GetProperty("printedAllText");
+		auto result = spriteGroup->GetProperty("printedAllText");
 		if ((result == nullptr || result.ToBoolean()) && eaInput::GetButtonDown(MouseButtonLeft))
 			isSettingText = false;
 		else
@@ -56,7 +56,7 @@ void eaScriptRunner::Update()
 		auto block = currentBlock.Get<eaScriptTextBlock>();
 		auto str = GetStr(block->text);
 
-		scene->GetSpriteGroup()->SetProperty("text", str);
+		spriteGroup->SetProperty("text", str);
 		isSettingText = true;
 	}
 	else if (currentBlock.IsType<eaScriptLuaBlock>())
@@ -131,6 +131,8 @@ bool eaScriptTask::IsFinished()
 		isFinished = true;
 	lua_pop(L, 1);
 
+	lua_settop(L, 0);
+
 	return isFinished;
 }
 
@@ -149,6 +151,7 @@ void eaScriptTask::Update()
 	{
 		eaApplication::GetLogger().Error("Lua", "刷新任务"s + type + "时出现异常。位置：" + L.GetCurrentInfo());
 	}
+	lua_settop(L, 0);
 }
 
 void easPushObject(eaLua& L, const eaScriptRunner* runner, eaScriptObject obj)
@@ -217,6 +220,7 @@ void eaScriptTask::Start(eaScriptTaskBlock::argList args)
 	{
 		eaApplication::GetLogger().Error("Lua", "启动任务"s + type + "时出现异常。位置：" + L.GetCurrentInfo());
 	}
+	lua_settop(L, 0);
 }
 
 std::string eaScriptRunner::GetStr(const eaScriptString& scriptStr) const
@@ -285,5 +289,5 @@ std::string eaScriptRunner::GetStr(const eaScriptString& scriptStr) const
 
 const shared_ptr<eaLuaDomain> eaScriptRunner::GetDomain() const
 {
-	return scene->GetDomain();
+	return domain;
 }

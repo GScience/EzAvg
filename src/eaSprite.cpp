@@ -373,6 +373,8 @@ void eaSprite::BindDomain(std::shared_ptr<eaLuaDomain> ownerDomain)
 
 	// 把sprite对象放入域
 	lua_settable(L, -3);
+
+	lua_settop(L, 0);
 }
 
 eaSpriteBehaviour::eaSpriteBehaviour(eaSprite* sprite, const std::string& name, const std::string& type)
@@ -402,6 +404,7 @@ void eaSpriteBehaviour::Update()
 	{
 		eaApplication::GetLogger().Error("Lua", "刷新行为"s + type + "时出现异常。位置：" + L.GetCurrentInfo());
 	}
+	lua_settop(L, 0);
 }
 
 bool eaSpriteBehaviour::IsEnabled()
@@ -416,7 +419,8 @@ bool eaSpriteBehaviour::IsEnabled()
 	lua_pushstring(L, "enabled");
 	lua_gettable(L, -2);
 	bool isEnable = lua_toboolean(L, -1);
-	lua_pop(L, 1);
+
+	lua_settop(L, 0);
 
 	return isEnable;
 }
@@ -434,7 +438,8 @@ bool eaSpriteBehaviour::IsDestroyed()
 	lua_pushstring(L, "destroyed");
 	lua_gettable(L, -2);
 	bool isEnable = lua_toboolean(L, -1);
-	lua_pop(L, 1);
+	
+	lua_settop(L, 0);
 
 	return isEnable;
 }
@@ -457,6 +462,7 @@ void eaSpriteBehaviour::SendMessage(const string& msg)
 	{
 		eaApplication::GetLogger().Error("Lua", "发送消息"s + msg + "时出现异常。位置：" + L.GetCurrentInfo());
 	}
+	lua_settop(L, 0);
 }
 
 eaPropertyValue eaSpriteBehaviour::Get(const std::string& str)

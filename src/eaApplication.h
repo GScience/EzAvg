@@ -17,6 +17,7 @@ struct eaApplicationSize
 
 class eaApplication
 {
+	std::shared_ptr<eaScene> oldScene;
 	std::shared_ptr<eaScene> scene;
 	std::shared_ptr<eaLuaDomain> globalDomain;
 

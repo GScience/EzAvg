@@ -16,7 +16,7 @@ vector<eaLuaFunction> eaLuaFuncTable;
 class eaGlobalFunction
 {
 	/*
-	void require(string name, string space)
+	array require(string name, string space)
 	*/
 	LuaFunc(require, )
 	{

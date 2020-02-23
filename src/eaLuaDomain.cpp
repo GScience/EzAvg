@@ -27,6 +27,7 @@ eaLuaDomain::eaLuaDomain(const eaLua& L, const string& domain, std::shared_ptr<e
 	lua_setmetatable(L, -2);
 
 	envTableRef = luaL_ref(L, LUA_REGISTRYINDEX);
+	lua_settop(L, 0);
 }
 
 eaLuaDomain::~eaLuaDomain()
@@ -126,6 +127,7 @@ void eaLuaDomain::Save(std::shared_ptr<eaProfileNode> node)
 		}
 		lua_pop(L, 1);
 	}
+	lua_settop(L, 0);
 }
 
 void eaLuaDomain::Load(std::shared_ptr<eaProfileNode> node) 
@@ -140,4 +142,5 @@ void eaLuaDomain::Load(std::shared_ptr<eaProfileNode> node)
 		PushPropertyValue(L, value);
 		lua_settable(L, -3);
 	}
+	lua_settop(L, 0);
 }

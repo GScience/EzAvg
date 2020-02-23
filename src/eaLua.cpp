@@ -47,6 +47,7 @@ void eaLua::LoadFunction()
 		lua_pushcfunction(L, *func.ptr);
 		lua_settable(L, -3);
 	}
+	lua_settop(L, 0);
 }
 
 static void DebugHook(lua_State* L, lua_Debug* ar)

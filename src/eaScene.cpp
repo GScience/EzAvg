@@ -137,19 +137,20 @@ eaScene::eaScene(string name)
 
 	// 把scene对象放入域
 	lua_settable(L, -3);
+
+	lua_settop(L, 0);
 }
 
 void eaScene::Close(eaPropertyValue result)
 {
 	this->result = result;
-	runner = nullptr;
 	destroyed = true;
 }
 
 void eaScene::InitScript(std::string name)
 {
 	auto script = eaResources::Load<eaScript>(name);
-	runner = make_unique<eaScriptRunner>(shared_from_this());
+	runner = make_unique<eaScriptRunner>(domain, spriteGroup);
 	runner->Run(script);
 }	
 
@@ -277,6 +278,8 @@ shared_ptr<eaScene> eaScene::Load(std::string name, eaPropertyValue value)
 	lua_pushstring(L, "arg");
 	PushPropertyValue(L, value);
 	lua_settable(L, -3);
+
+	lua_settop(L, 0);
 
 	scene->InitScript(name);
 	return scene;

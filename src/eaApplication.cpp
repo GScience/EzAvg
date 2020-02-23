@@ -69,6 +69,8 @@ void eaApplication::Start()
 
 void eaApplication::Update()
 {
+	oldScene = nullptr;
+
 	if (!isActive)
 	{
 		eaTime::Reset();
@@ -126,6 +128,7 @@ void eaApplication::SetApplicationSize(int width, int height)
 void eaApplication::LoadScene(std::string scriptName)
 {
 	eaInput::Reset();
+	oldScene = scene;
 	scene = eaScene::Load(scriptName);
 }
 
