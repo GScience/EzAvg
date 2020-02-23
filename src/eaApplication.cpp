@@ -54,8 +54,6 @@ void eaApplication::InitWindow()
 		SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_RESIZABLE);
 	sdlRenderer = SDL_CreateRenderer(sdlWindow, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
 	SDL_RenderSetLogicalSize(sdlRenderer, applicationSize.width, applicationSize.height);
-
-	persistedPath = SDL_GetPrefPath("ExampleCompany", "EzAvgGame");
 }
 
 void eaApplication::InitApplication()

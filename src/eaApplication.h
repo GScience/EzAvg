@@ -75,7 +75,7 @@ public:
 	/*
 	获取保存目录
 	*/
-	std::string persistedPath;
+	std::string persistedPath = "/";
 
 	std::shared_ptr<eaScene> GetActiveScene()
 	{
