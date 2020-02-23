@@ -52,7 +52,7 @@ void eaLuaBridge::Save(std::shared_ptr<eaProfileNode> node)
 			eaPropertyValue value = ToPropertyValue(L, -1);
 
 			if (value != nullptr || lua_isnil(L, -2))
-				auto _ = luaNode->Set(name, value);
+				luaNode->Set(name, value);
 		}
 		lua_pop(L, 1);
 	}

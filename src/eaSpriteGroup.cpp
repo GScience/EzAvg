@@ -290,7 +290,7 @@ void eaSpriteGroup::Save(shared_ptr<eaProfileNode> node)
 		auto spriteNode = spritesNode->Set(sprite->name);
 		auto spriteType = sprite->GetType();
 
-		auto _ = spriteNode->Set("type", spriteType);
+		spriteNode->Set("type", spriteType);
 
 		if (spriteType == "group")
 			reinterpret_pointer_cast<eaSpriteGroup>(sprite)->Save(spriteNode);

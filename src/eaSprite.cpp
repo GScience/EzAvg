@@ -15,14 +15,14 @@ void eaSprite::Save(shared_ptr<eaProfileNode> node)
 		if (getFunc == nullptr || setFunc == nullptr)
 			continue;
 
-		auto _ = node->Set<eaPropertyValue>(binder.first, getFunc());
+		node->Set<eaPropertyValue>(binder.first, getFunc());
 	}
 	// 保存行为
 	auto behavioursNode = node->Set("Behaviours");
 	for (auto& behaviour : behaviours)
 	{
 		auto behaviourNode = behavioursNode->Set(behaviour->name);
-		auto _ = behaviourNode->Set("Type", behaviour->type);
+		behaviourNode->Set("Type", behaviour->type);
 		behaviour->Save(behaviourNode);
 	}
 }

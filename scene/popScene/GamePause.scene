@@ -14,6 +14,7 @@
 	{
 		"继续",
 		"保存",
+		"加载",
 		"退出"
 	}
 	for k,v in pairs(buttons) do
@@ -35,9 +36,11 @@
 				scene.popScene("popScene/GameSave.scene")
 			elseif (v == "退出") then
 				Script.jump("ExitCheck")
-				scene.popScene("popScene/MessageBox.scene",  {message="是否要退出游戏，所有未保存记录将丢失", buttons={"是", "否"}})
+				scene.popScene("popScene/MessageBox.scene", {message="是否要退出游戏，所有未保存记录将丢失", buttons={"是", "否"}})
 			elseif (v == "继续") then
 				scene.close()
+			elseif (v == "加载") then
+				scene.popScene("popScene/GameLoad.scene")
 			end
 			return
 		end

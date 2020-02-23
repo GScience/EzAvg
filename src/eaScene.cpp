@@ -229,13 +229,13 @@ void eaScene::Save(shared_ptr<eaProfileNode> saveNode)
 	if (popScene != nullptr && popScene->needSave)
 	{
 		auto popSceneNode = saveNode->Set("PopScene");
-		auto _ = popSceneNode->Set("Name", popScene->name);
+		popSceneNode->Set("Name", popScene->name);
 
 		popScene->Save(popSceneNode);
 	}
 
 	// 弹出场景返回值
-	auto _ = saveNode->Set("PopSceneResult", popSceneResult);
+	saveNode->Set("PopSceneResult", popSceneResult);
 }
 
 void eaScene::Load(shared_ptr<eaProfileNode> saveNode)

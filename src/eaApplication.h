@@ -72,6 +72,11 @@ public:
 	*/
 	void SetApplicationSize(int width, int height);
 
+	/*
+	获取保存目录
+	*/
+	std::string persistedPath;
+
 	std::shared_ptr<eaScene> GetActiveScene()
 	{
 		auto currentScene = scene;

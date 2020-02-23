@@ -13,8 +13,9 @@
 	for i=1,Config.maxSaveCount,1 do
 		local button=scene.SaveButtonGroup.addSprite("SaveButton" .. i, "group")
 		applyStyle(button, Styles.Button)
-		button.image="UI/Button250x70.png"
-		button.size={250,70}
+		button.image="UI/Button300x50.png"
+		button.size={300,50}
+		button.fontSize=16
 		local info = Application.getProfileInfo(i)
 		if info == nil then
 			button.text="存档 " .. i .. ": 空"
@@ -51,7 +52,9 @@
 ==Save==
 {
 	Application.saveProfile(tostring(SaveTo))
-	Script.jump("ListenButton")
 	scene.popScene("popScene/MessageBox.scene",  {message="成功保存到存档位 " .. SaveTo, buttons={"OK"}})
 }
 
+{
+	scene.close()
+}

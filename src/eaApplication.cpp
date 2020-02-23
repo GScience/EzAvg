@@ -3,6 +3,8 @@
 #include <SDL_ttf.h>
 #include <SDL_image.h>
 #include <thread>
+#include <fstream>
+#include <chrono>
 #include "eaProfileNode.h"
 #include "eaApplication.h"
 #include "eaTime.h"
@@ -11,6 +13,34 @@
 using namespace std;
 
 eaApplication* eaApplication::instance;
+
+/*
+保存文件格式
+------------------------
+|    eaProfileHead     |
+------------------------
+|Save Info Size(uint64)|
+------------------------
+|    Save Info(str)    |
+------------------------
+|   Save Data (Node)   |
+------------------------
+*/
+struct eaProfileHead
+{
+	char magic[2]{ 'E', 's' };
+	uint8_t version = 1;
+	bool isCompressed;
+
+	bool Check()
+	{
+		eaProfileHead head;
+		return
+			magic[0] == head.magic[0] &&
+			magic[1] == head.magic[1] &&
+			version == head.version;
+	}
+};
 
 void eaApplication::InitWindow()
 {
@@ -24,6 +54,8 @@ void eaApplication::InitWindow()
 		SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_RESIZABLE);
 	sdlRenderer = SDL_CreateRenderer(sdlWindow, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
 	SDL_RenderSetLogicalSize(sdlRenderer, applicationSize.width, applicationSize.height);
+
+	persistedPath = SDL_GetPrefPath("ExampleCompany", "EzAvgGame");
 }
 
 void eaApplication::InitApplication()
@@ -103,6 +135,31 @@ void eaApplication::LoadProfile(std::string profileName)
 {
 	eaProfileNode saveNode;
 
+	auto file = ifstream(persistedPath + profileName + ".sav", ios::binary);
+	
+	if (!file)
+	{
+		GetLogger().Error("Application", "无法读取文档"s + profileName + "，存档不存在");
+		return;
+	}
+
+	// 读入保存头
+	eaProfileHead saveHead;
+	file.read(reinterpret_cast<char*>(&saveHead), sizeof(saveHead));
+	if (!saveHead.Check())
+	{
+		GetLogger().Error("Application", "无法读取文档"s + profileName + "，版本不正确或者文件内部错误");
+		return;
+	}
+	uint64_t infoSize;
+	file.read(reinterpret_cast<char*>(&infoSize), sizeof(infoSize));
+	string saveInfo;
+	saveInfo.resize(infoSize);
+	file.read(&saveInfo[0], saveInfo.size());
+
+	// 读取文档
+	saveNode.ReadFromStream(file);
+
 	auto sceneNode = saveNode.Get<eaProfileNode>("Scene");
 	auto sceneName = sceneNode->Get<eaPropertyValue>("Name");
 	LoadScene(*sceneName);
@@ -114,13 +171,54 @@ void eaApplication::SaveProfile(std::string profileName)
 	eaProfileNode saveNode;
 
 	auto sceneNode = saveNode.Set("Scene");
-	auto _ = sceneNode->Set("Name", scene->name);
+	sceneNode->Set("Name", scene->name);
 	scene->Save(sceneNode);
+
+	auto file = ofstream(persistedPath + profileName + ".sav", ios::binary);
+
+	// 写入保存头
+	eaProfileHead saveHead;
+
+	auto now = chrono::system_clock::now();
+	time_t now_c = chrono::system_clock::to_time_t(now);
+	tm now_tm = *localtime(&now_c);
+
+	string saveInfo =
+		to_string(now_tm.tm_year + 1900) + "年" +
+		to_string(now_tm.tm_mon + 1) + "月" +
+		to_string(now_tm.tm_mday) + "日" +
+		to_string(now_tm.tm_hour) + ":" + to_string(now_tm.tm_min) + ":" + to_string(now_tm.tm_sec);
+
+	file.write(reinterpret_cast<char*>(&saveHead), sizeof(saveHead));
+	uint64_t infoSize = saveInfo.size();
+	file.write(reinterpret_cast<char*>(&infoSize), sizeof(infoSize));
+	file.write(&saveInfo[0], saveInfo.size());
+
+	// 写入存档
+	saveNode.WriteToStream(file);
 }
 
 string eaApplication::GetProfileInfo(std::string profileName)
 {
-	return "";
+	auto file = ifstream(persistedPath + profileName + ".sav", ios::binary);
+	if (!file)
+		return "";
+
+	// 读入保存头
+	eaProfileHead saveHead;
+	file.read(reinterpret_cast<char*>(&saveHead), sizeof(saveHead));
+	if (!saveHead.Check())
+	{
+		GetLogger().Error("Application", "无法读取文档"s + profileName + "，版本不正确或者文件内部错误");
+		return "";
+	}
+	uint64_t infoSize;
+	file.read(reinterpret_cast<char*>(&infoSize), sizeof(infoSize));
+	string saveInfo;
+	saveInfo.resize(infoSize);
+	file.read(&saveInfo[0], saveInfo.size());
+
+	return saveInfo;
 }
 
 void eaApplication::Run(std::vector<std::string> args)

@@ -106,6 +106,19 @@ class eaApplicationFunction
 	}
 
 	/*
+	void setInfo(string org, string app)
+	*/
+	LuaFunc(setInfo, Application)
+	{
+		string org = GetString(1);
+		string app = GetString(2);
+
+		eaApplication::instance->persistedPath = SDL_GetPrefPath(org.c_str(), app.c_str());
+
+		return 0;
+	}
+
+	/*
 	void setTitle(string title)
 	*/
 	LuaFunc(setTitle, Application)

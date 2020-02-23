@@ -85,6 +85,7 @@ Styles.Button =
 	propertyTable=
 	{
 		text="Text.text",
+		fontSize="Text.fontSize",
 		image="Image.image",
 		color="Image.color",
 		colorOnClick="buttonBehaviour.colorOnClick",

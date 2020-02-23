@@ -121,7 +121,7 @@ void eaLuaDomain::Save(std::shared_ptr<eaProfileNode> node)
 			eaPropertyValue value = ToPropertyValue(L, -1);
 
 			if (value != nullptr || lua_isnil(L, -2))
-				auto _ = node->Set(dataName, value);
+				node->Set(dataName, value);
 			
 		}
 		lua_pop(L, 1);

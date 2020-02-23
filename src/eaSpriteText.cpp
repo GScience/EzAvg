@@ -284,16 +284,12 @@ void eaSpriteText::SetText(std::string str)
 
 		bool isNewLine = false;
 
-		// 换行符
-		if (c == "\n")
-		{
-			cursorX = 0;
-			cursorY += font->GetLineHeight() + shadowOffset;
-			isNewLine = true;
-		}
+		// 忽略/r
+		if (c == "\r")
+			continue;
 
 		// 下一行
-		if (cursorX + wordSize.width + shadowOffset > renderRect.width)
+		if (c == "\n" || cursorX + wordSize.width + shadowOffset > renderRect.width)
 		{
 			cursorX = 0;
 			cursorY += font->GetLineHeight() + shadowOffset;
@@ -347,7 +343,7 @@ void eaSpriteText::SetText(std::string str)
 			break;
 		}
 
-		// 调整垂直布局
+		// 垂直布局新行的移动
 		if (isNewLine)
 		{
 			SDL_Rect blockRect;
@@ -367,33 +363,39 @@ void eaSpriteText::SetText(std::string str)
 		}
 
 		// 对特殊字符的处理
+		bool isControlChar = false;
+
 		if (c == "\t")
 		{
 			cursorX += wordSize.width * 4;
-			continue;
+			isControlChar = true;
 		}
 		if (c == "\n")
-			continue;
+		{
+			isControlChar = true;
+		}
 
 		// 绘制文本
-		auto charSurface = TTF_RenderUTF8_Blended(*font, c.c_str(), color);
-		auto shadowSurface = TTF_RenderUTF8_Blended(*font, c.c_str(), shadow);
-		SDL_SetSurfaceBlendMode(charSurface, SDL_BLENDMODE_BLEND);
-		SDL_SetSurfaceBlendMode(shadowSurface, SDL_BLENDMODE_NONE);
+		if (!isControlChar)
+		{
+			auto charSurface = TTF_RenderUTF8_Blended(*font, c.c_str(), color);
+			auto shadowSurface = TTF_RenderUTF8_Blended(*font, c.c_str(), shadow);
+			SDL_SetSurfaceBlendMode(charSurface, SDL_BLENDMODE_BLEND);
+			SDL_SetSurfaceBlendMode(shadowSurface, SDL_BLENDMODE_NONE);
 
-		SDL_Rect textRect = SDL_Rect{ cursorX , 0, wordSize.width , wordSize.height };
-		SDL_Rect shadowRect = SDL_Rect{ cursorX + shadowOffset , shadowOffset, wordSize.width ,wordSize.height };
+			SDL_Rect textRect = SDL_Rect{ cursorX , 0, wordSize.width , wordSize.height };
+			SDL_Rect shadowRect = SDL_Rect{ cursorX + shadowOffset , shadowOffset, wordSize.width ,wordSize.height };
 
-		SDL_BlitSurface(shadowSurface, nullptr, lineSurface, &shadowRect);
-		SDL_BlitSurface(charSurface, nullptr, lineSurface, &textRect);
+			SDL_BlitSurface(shadowSurface, nullptr, lineSurface, &shadowRect);
+			SDL_BlitSurface(charSurface, nullptr, lineSurface, &textRect);
 
-		SDL_FreeSurface(charSurface);
-		SDL_FreeSurface(shadowSurface);
+			SDL_FreeSurface(charSurface);
+			SDL_FreeSurface(shadowSurface);
 
+			cursorX += wordSize.width;
+		}
 		SDL_Rect lineRect = SDL_Rect{ lineX,lineY, renderRect.width, font->GetLineHeight() + shadowOffset };
 		SDL_BlitSurface(lineSurface, nullptr, textSurface, &lineRect);
-
-		cursorX += wordSize.width;
 	}
 
 	if (textTexture != nullptr)

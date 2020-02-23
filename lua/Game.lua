@@ -6,6 +6,7 @@ function Game.start()
 	print('已启动')
 	Application.setTitle(Config.title)
 	Application.setApplicationSize(Config.applicationSize[1], Config.applicationSize[2])
+	Application.setInfo(Config.org, Config.app)
 
 	Game.loadScene('Startup.scene')
 end
