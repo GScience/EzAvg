@@ -1,8 +1,11 @@
 message("EzAvg building has started")
 
 if (MSVC)
-	message("MSVC detected. Force using UTF-8")
+	message("MSVC detected.")
+	message("Force using UTF-8")
 	add_compile_options("/utf-8")
+	message("Disable CRT Warnings")
+	add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 endif()
 
 message("Find dependent packages")
