@@ -23,9 +23,7 @@ MousePoint currentMousePoint;
 
 MousePoint eaInput::GetMousePoint()
 {
-	MousePoint point;
-	SDL_GetMouseState(&point.x, &point.y);
-	return point;
+	return currentMousePoint;
 }
 
 MousePoint eaInput::GetMousePointDelta()
@@ -138,7 +136,18 @@ void eaInput::Update()
 	for (auto i = 0; i < keyCount; ++i)
 		currentKeyState[i] = keyStates[i];
 
+	SDL_Rect rect;
+	float scale;
+	SDL_RenderGetViewport(eaApplication::GetRenderer(), &rect);
+	SDL_RenderGetScale(eaApplication::GetRenderer(), &scale, nullptr);
 	SDL_GetMouseState(&currentMousePoint.x, &currentMousePoint.y);
+
+	currentMousePoint.x = (int) (currentMousePoint.x / scale) - rect.x;
+	currentMousePoint.y = (int) (currentMousePoint.y / scale) - rect.y;
+
+	// 兼容触摸的偏移计算
+	if (GetButtonDown(MouseButtonLeft))
+		previousMousePoint = currentMousePoint;
 
 	// 刷新精灵交互状态	
 	auto currentScene = eaApplication::instance->GetActiveScene();
