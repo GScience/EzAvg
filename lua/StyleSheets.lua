@@ -3,13 +3,18 @@ Styles = {}
 
 Styles.GameScene =
 {
+	alpha=0,
+	Background=
+	{
+		type = "image",
+		zOrder = -1
+	},
 	-- 文本框
 	_MainDialog=
 	{
 		type = "group",
 		zOrder = 1000,
 		margin={409,25,25,25},
-		alpha=0,
 		-- 背景
 		Image=
 		{
@@ -33,7 +38,6 @@ Styles.GameScene =
 				}
 			}
 		},
-		-- 淡入淡出
 		behaviours = 
 		{
 			fader =
@@ -47,14 +51,77 @@ Styles.GameScene =
 	{
 		text="_MainDialog.Text.textPrinter.text",
 		printedAllText="_MainDialog.Text.textPrinter.isFinished",
-		image="_MainDialog.Text.Image.image"
+		background="Background.image"
 	},
 	behaviours = 
 	{
 		SceneBehaviour =
 		{
 			type="SceneGame"
+		},
+		-- 淡入淡出
+		fader =
+		{
+			type="AnimFadeIn",
+			speed=1
 		}
+	}
+}
+
+Styles.MessageBoxPopScene =
+{
+	alpha=0,
+	-- 对话框背景
+	MsgBoxBackground=
+	{
+		type = "image",
+		image="UI/MessageBox650x400.png",
+		margin={184, 187},
+		zOrder=0,
+		size={650, 400}
+	},
+	-- 对话框文本
+	MsgBoxMessage=
+	{
+		type = "text",
+		verticalLayout="center",
+		horizontalLayout="center",
+		margin={189, 237},
+		zOrder=1,
+		size={550, 250}
+	},
+	-- 对话框按钮
+	ButtonGroup=
+	{
+		type = "group",
+		margin={495, 187, 185, 187},
+		zOrder=2,
+		behaviours=
+		{
+			layoutBehaviour=
+			{
+				type="LayoutHorizontal",
+				verticalLayout="top"
+			}
+		}
+	},
+	behaviours = 
+	{
+		-- 淡入淡出
+		fader =
+		{
+			type="AnimFadeIn",
+			speed=10
+		},
+		-- 拖动
+		drager =
+		{
+			type="ControlDragable"
+		}
+	},
+	propertyTable =
+	{
+		text="MsgBoxMessage.text"
 	}
 }
 

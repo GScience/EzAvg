@@ -258,7 +258,7 @@ eaRenderRect eaSprite::GetRenderRect()
 static int SpritePropertySet(lua_State* L)
 {
 	auto sprite = (eaSprite*)lua_tointeger(L, lua_upvalueindex(1));
-	string name = lua_tostring(L, 2);
+	string name = luaL_checkstring(L, 2);
 
 	// 设置自定义对象
 	for (auto func : sprite->customLuaSetFunctions)
@@ -280,8 +280,8 @@ static int SpriteAddBehaviour(lua_State* L)
 {
 	auto sprite = (eaSprite*)lua_tointeger(L, lua_upvalueindex(1));
 
-	string behaviourName = lua_tostring(L, 1);
-	string behaviourType = lua_tostring(L, 2);
+	string behaviourName = luaL_checkstring(L, 1);
+	string behaviourType = luaL_checkstring(L, 2);
 
 	auto behaviour = sprite->AddBehaviour(behaviourName, "behaviour/"s + behaviourType);
 
@@ -299,7 +299,7 @@ static int SpriteAddBehaviour(lua_State* L)
 static int SpritePropertyGet(lua_State* L)
 {
 	auto sprite = (eaSprite*)lua_tointeger(L, lua_upvalueindex(1));
-	string name = lua_tostring(L, 2);
+	string name = luaL_checkstring(L, 2);
 
 	// 方法
 	if (name == "addBehaviour")

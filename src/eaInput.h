@@ -13,8 +13,8 @@ enum MouseButton
 
 struct MousePoint
 {
-	int x;
-	int y;
+	int x = 0;
+	int y = 0;
 };
 
 class eaInput
@@ -24,6 +24,8 @@ class eaInput
 
 public:
 	static MousePoint GetMousePoint();
+	static MousePoint GetMousePointDelta();
+
 	static bool GetButtonDown(MouseButton button);
 	static bool GetButtonUp(MouseButton button);
 	static bool GetButton(MouseButton button);

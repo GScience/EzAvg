@@ -11,7 +11,7 @@ using namespace std;
 static int ScenePopScene(lua_State* L)
 {
 	auto scene = (eaScene*)lua_tointeger(L, lua_upvalueindex(1));
-	auto sceneName = lua_tostring(L, 1);
+	auto sceneName = luaL_checkstring(L, 1);
 	if (lua_gettop(L) > 1)
 	{
 		auto value = ToPropertyValue(L, 2);
@@ -33,7 +33,7 @@ static int SceneClose(lua_State* L)
 static int SceneGet(lua_State* L)
 {
 	auto scene = (eaScene*)lua_tointeger(L, lua_upvalueindex(1));
-	auto name = lua_tostring(L, 2);
+	auto name = luaL_checkstring(L, 2);
 	if (name == "popScene"s)
 	{
 		lua_pushinteger(L, (long long)scene);
@@ -62,7 +62,7 @@ static int SceneGet(lua_State* L)
 static int SceneSet(lua_State* L)
 {
 	auto scene = (eaScene*)lua_tointeger(L, lua_upvalueindex(1));
-	auto name = lua_tostring(L, 2);
+	auto name = luaL_checkstring(L, 2);
 	if (name == "needSave"s)
 		scene->needSave = lua_toboolean(L, 3);
 	else

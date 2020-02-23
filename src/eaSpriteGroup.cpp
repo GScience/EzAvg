@@ -11,8 +11,8 @@ static int SpriteGroupAddSprite(lua_State* L)
 {
 	auto spriteGroup = (eaSpriteGroup*)lua_tointeger(L, lua_upvalueindex(1));
 
-	string spriteName = lua_tostring(L, 1);
-	string spriteType = lua_tostring(L, 2);
+	string spriteName = luaL_checkstring(L, 1);
+	string spriteType = luaL_checkstring(L, 2);
 
 	std::shared_ptr<eaSprite> sprite = spriteGroup->AddSprite(spriteName, spriteType);
 
@@ -188,7 +188,7 @@ eaSpriteGroup::eaSpriteGroup()
 								return sprite->GetBehaviour(subName)->Get(propertyName);
 							return nullptr;
 						}
-						return sprite->propertyBinder[propertyName].get();
+						return sprite->GetProperty(propertyName);
 					},
 					[this, spriteLoc, propertyName](eaPropertyValue value)
 					{
@@ -238,7 +238,7 @@ eaSpriteGroup::eaSpriteGroup()
 								return behaviour->Set(propertyName, value);
 							return;
 						}
-						return sprite->propertyBinder[propertyName].set(value);
+						return sprite->SetProperty(propertyName, value);
 					}
 					);
 				propertyTable[pair.first] = pair.second;

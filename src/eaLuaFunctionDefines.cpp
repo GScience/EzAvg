@@ -185,12 +185,12 @@ class eaScriptFunction
 		auto scene = eaApplication::instance->GetActiveScene();
 
 		// 标签
-		if (lua_type(L, 1) == LUA_TSTRING)
+		if (lua_isstring(L, 1))
 		{
 			string labelName = lua_tostring(L, 1);
 			lua_pushboolean(L, scene->runner->Jump(labelName));
 		}
-		else if (lua_type(L, 1) == LUA_TNUMBER)
+		else if (lua_isinteger(L, 1))
 		{
 			long long pos = lua_tointeger(L, 1);
 			lua_pushboolean(L, scene->runner->Jump(pos));
@@ -308,6 +308,44 @@ class eaInputFunc
 	{
 		auto button = (MouseButton)(int)GetNumber(1);
 		lua_pushboolean(L, eaInput::GetButtonUp(button));
+		return 1;
+	}
+
+	/*
+	table getMousePoint()
+	*/
+	LuaFunc(getMousePoint, Input)
+	{
+		auto pos = eaInput::GetMousePoint();
+
+		lua_newtable(L);
+		lua_pushinteger(L, 1);
+		lua_pushnumber(L, pos.x);
+		lua_settable(L, -3);
+
+		lua_pushinteger(L, 2);
+		lua_pushnumber(L, pos.y);
+		lua_settable(L, -3);
+
+		return 1;
+	}
+
+	/*
+	table getMousePointDelta()
+	*/
+	LuaFunc(getMousePointDelta, Input)
+	{
+		auto pos = eaInput::GetMousePointDelta();
+
+		lua_newtable(L);
+		lua_pushinteger(L, 1);
+		lua_pushnumber(L, pos.x);
+		lua_settable(L, -3);
+
+		lua_pushinteger(L, 2);
+		lua_pushnumber(L, pos.y);
+		lua_settable(L, -3);
+
 		return 1;
 	}
 };

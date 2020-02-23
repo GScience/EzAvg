@@ -280,7 +280,7 @@ std::string eaScriptRunner::GetStr(const eaScriptString& scriptStr) const
 
 		GetDomain()->DoString(luaCode);
 		if (!lua_isnil(L, -1))
-			buffer += lua_tostring(L, -1);
+			buffer += luaL_checkstring(L, -1);
 		lua_pop(L, 1);
 	}
 

@@ -42,6 +42,15 @@ struct eaProfileHead
 	}
 };
 
+eaApplication::~eaApplication()
+{
+	eaInput::Reset();
+	oldScene = nullptr;
+	scene = nullptr;
+	globalDomain = nullptr;
+	lua_close(lua);
+}
+
 void eaApplication::InitWindow()
 {
 	SDL_Init(SDL_INIT_EVERYTHING);

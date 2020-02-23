@@ -8,7 +8,7 @@ function Game.start()
 	Application.setApplicationSize(Config.applicationSize[1], Config.applicationSize[2])
 	Application.setInfo(Config.org, Config.app)
 
-	Game.loadScene('Startup.scene')
+	Game.loadScene('game/GameFirstScene.scene')
 end
 
 function Game.update()

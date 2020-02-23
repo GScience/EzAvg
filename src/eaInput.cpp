@@ -18,11 +18,22 @@ vector<shared_ptr<eaSprite>> currentSelectedSprites;
 vector<bool> previousKeyState;
 vector<bool> currentKeyState;
 
+MousePoint previousMousePoint;
+MousePoint currentMousePoint;
+
 MousePoint eaInput::GetMousePoint()
 {
 	MousePoint point;
 	SDL_GetMouseState(&point.x, &point.y);
 	return point;
+}
+
+MousePoint eaInput::GetMousePointDelta()
+{
+	MousePoint delta;
+	delta.x = currentMousePoint.x - previousMousePoint.x;
+	delta.y = currentMousePoint.y - previousMousePoint.y;
+	return delta;
 }
 
 bool eaInput::GetKeyDown(const std::string& key)
@@ -109,9 +120,13 @@ void eaInput::Update()
 	previousLeftButtonState = currentLeftButtonState;
 	previousRightButtonState = currentRightButtonState;
 	previousMiddleButtonState = currentMiddleButtonState;
+
 	previousSelectedSprites = currentSelectedSprites;
+
 	previousKeyState = currentKeyState;
 
+	previousMousePoint = currentMousePoint;
+	
 	// 获取当前状态
 	currentLeftButtonState = mouseState & SDL_BUTTON(SDL_BUTTON_LEFT);
 	currentRightButtonState = mouseState & SDL_BUTTON(SDL_BUTTON_RIGHT);
@@ -122,7 +137,9 @@ void eaInput::Update()
 	currentKeyState.resize(keyCount);
 	for (auto i = 0; i < keyCount; ++i)
 		currentKeyState[i] = keyStates[i];
-	
+
+	SDL_GetMouseState(&currentMousePoint.x, &currentMousePoint.y);
+
 	// 刷新精灵交互状态	
 	auto currentScene = eaApplication::instance->GetActiveScene();
 	if (currentScene != nullptr)

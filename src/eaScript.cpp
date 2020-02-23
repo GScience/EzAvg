@@ -296,7 +296,7 @@ eaScriptObject eaScriptReader::ReadLuaBlock()
 	// 读到新行
 	c = Get();
 
-	if (Eof() && c != '\n')
+	if (!Eof() && c != '\n')
 	{
 		AddError(line, pos, "Lua块末端花括号后应换行或文件结尾");
 		SkipLine();

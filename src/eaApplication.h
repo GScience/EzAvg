@@ -39,6 +39,7 @@ public:
 	{
 		instance = this;
 	}
+	~eaApplication();
 
 private:
 	void InitWindow();
